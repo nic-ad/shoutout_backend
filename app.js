@@ -16,7 +16,10 @@ const app = new App({
 app.message("shoutout", async ({ message, say }) => {
   // say() sends a message to the channel where the event was triggered
   try {
-    await say(`Hey there <@${message.user}>!`);
+    const sender = `<@${message.user}>`
+    const matches = message.text.matchAll(/<@[0-9A-Z]{11}>/g)
+    const recipients = Array.from(matches, m => m[0])
+    say(`Sender: ${sender}, Recipients: ${recipients}`)
     console.log(message);
   } catch (error) {
     console.log(error);
