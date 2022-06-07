@@ -46,7 +46,7 @@ app.message("shoutout", async ({ message, say }) => {
     const recipients = recipient_ids.map(
       async (slack_id) => await Person.findOne({ slack_id }).exec()
     );
-    new Message({ author, recipients, text: message.text }).save()
+    new Message({ author, recipients, text: message.text }).save();
     const messages = await Message.find().exec();
     say(JSON.stringify(messages));
   } catch (error) {
