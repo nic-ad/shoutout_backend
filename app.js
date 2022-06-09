@@ -7,17 +7,21 @@ const app = new App({
   appToken: process.env.SLACK_APP_TOKEN,
   signingSecret: process.env.SLACK_SIGNING_SECRET,
   socketMode: true,
-  token: process.env.SLACK_BOT_TOKEN
+  token: process.env.SLACK_BOT_TOKEN,
 });
 
 /**
+ * FIXME: if you shoutout yourself, you get added to the database twice
  * @param {string} slack_id
  * @returns {Object}
  */
 async function findOrCreatePerson(slack_id) {
   const person = await Person.findOne({ slack_id }).exec();
   if (person) return person;
-  return await Person.create({ slack_id });
+
+  const info = await app.client.users.info({ user: slack_id });
+  const { real_name, email } = info.user.profile;
+  return await Person.create({ slack_name: real_name, email, slack_id });
 }
 
 /**
@@ -32,8 +36,7 @@ function findOrCreateRecipients(messageText) {
 }
 
 // Listens to incoming messages that contain "shoutout"
-app.message("shoutout", async ({ message, say }) => {
-  console.log('TESTING HEROKU');
+app.message(/shoutout/i, async ({ message }) => {
   // say() sends a message to the channel where the event was triggered
   try {
     const author = findOrCreatePerson(message.user);
@@ -42,8 +45,16 @@ app.message("shoutout", async ({ message, say }) => {
   } catch (error) {
     console.error(error);
   }
+});
+
+app.message("log messages", async ({ say }) => {
   const messages = await Message.find().exec();
   say(`\`\`\`${JSON.stringify(messages, null, 2)}\`\`\``);
+});
+
+app.message("log people", async ({ say }) => {
+  const people = await Person.find().exec();
+  say(`\`\`\`${JSON.stringify(people, null, 2)}\`\`\``);
 });
 
 // Start your app
