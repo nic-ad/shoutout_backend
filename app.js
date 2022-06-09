@@ -36,8 +36,7 @@ function findOrCreateRecipients(messageText) {
 }
 
 // Listens to incoming messages that contain "shoutout"
-app.message("shoutout", async ({ message, say }) => {
-  console.log('TESTING HEROKU');
+app.message(/shoutout/i, async ({ message }) => {
   // say() sends a message to the channel where the event was triggered
   try {
     const author = findOrCreatePerson(message.user);
