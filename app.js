@@ -45,8 +45,16 @@ app.message(/shoutout/i, async ({ message }) => {
   } catch (error) {
     console.error(error);
   }
+});
+
+app.message("log messages", async ({ say }) => {
   const messages = await Message.find().exec();
   say(`\`\`\`${JSON.stringify(messages, null, 2)}\`\`\``);
+});
+
+app.message("log people", async ({ say }) => {
+  const people = await Person.find().exec();
+  say(`\`\`\`${JSON.stringify(people, null, 2)}\`\`\``);
 });
 
 // Start your app
