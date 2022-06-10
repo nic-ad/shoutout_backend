@@ -1,9 +1,21 @@
 const { Schema, model } = require("mongoose");
 
 const personSchema = new Schema({
-  email: String,
-  slack_id: String,
-  slack_name: String,
+  employeeId: {
+    type: Number,
+    unique: true
+  },
+  email: {
+    type: String,
+    unique: true
+  },
+  slackId: {
+    type: String,
+    unique: true
+  },
+  team: String,
+  country: String,
+  name: String
 });
 
 const Person = model("Person", personSchema);
