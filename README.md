@@ -5,9 +5,22 @@ The backend code that gathers slack messages containing shoutout of depsters
 ## Setup
 
 1. Get secrets from Daniel Kim on Slack
-   (If Danny is unavailable, Mike Sampson also has the secrets)
+   (If Danny is unavailable, Jesse Streb has the secrets)
 1. Copy the contents of `.env.example` into a new file named `.env`, and fill it out with the secrets
 1. Install dependencies with `npm install`
-1. Add @Peakon-test on Slack to a channel with the #test- prefix (Danny can invite you to #test-channel-2)
-1. Start the server with `node app.js`
-1. Say "shoutout" in the test channel
+1. Add @Peakon-test on Slack to a channel with the #test- prefix (Danny can invite you to #peakon-test-channel)
+
+## Running the Slack bot
+
+1. Start the app with `node app.js`
+1. Say "shoutout @Peakon-test" in the test channel
+   - Case insensitive
+   - Must have at least one recipient
+1. Say "log people" in the test channel
+   - Case sensitive
+1. Say "log messages" in the test channel
+   - Case sensitive
+
+## Running the web API
+
+1. Start the server with node web.js
