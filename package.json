@@ -13,7 +13,10 @@
     "axios": "^0.27.2",
     "dotenv": "^16.0.1",
     "mongodb": "^4.6.0",
-    "mongoose": "^6.3.5"
+    "mongoose": "^6.3.5",
+    "swagger-ui-express": "^4.4.0",
+    "underscore": "^1.13.4",
+    "yamljs": "^0.3.0"
   },
   "devDependencies": {
     "eslint": "^8.17.0",

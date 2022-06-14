@@ -1,12 +1,16 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const { Message, Person } = require("./models");
+const swaggerUi = require('swagger-ui-express');
+const YAML = require('yamljs');
+const swaggerDocument = YAML.load('./swagger.yaml');
 require("dotenv").config();
 
 const port = process.env.PORT || "3001";
 const webApp = express();
 mongoose.connect(process.env.MONGO_URI);
 webApp.use(express.json()); // for parsing application/json
+webApp.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // TODO: Extract stuff to routes.js and controllers once things get too unwieldy
 webApp.get("/", (req, res) => {
