@@ -16,10 +16,10 @@ const app = new App({
  * @returns {Object | undefined} mongoose.Types.ObjectId
  */
 async function findPersonBySlackId(slackId) {
-  const info = await app.client.users.info({ user: slackId })
+  const info = await app.client.users.info({ user: slackId });
   const email = info?.user?.profile?.email;
-  const person = await Person.findOne({ email })
-  return person?._id
+  const person = await Person.findOne({ email });
+  return person?._id;
 }
 
 /**
@@ -27,16 +27,16 @@ async function findPersonBySlackId(slackId) {
  * @returns {string[]} Array of Slack user_id strings
  */
 function searchBlocksForUsers(blocks) {
-  const users = new Set()
+  const users = new Set();
   while (blocks.length) {
-    const block = blocks.shift()
+    const block = blocks.shift();
     if (block.type === "user") {
-      users.add(block.user_id)
+      users.add(block.user_id);
     } else if (block.elements) {
-      blocks.push(...block.elements)
+      blocks.push(...block.elements);
     }
   }
-  return Array.from(users)
+  return Array.from(users);
 }
 
 /**
@@ -44,29 +44,33 @@ function searchBlocksForUsers(blocks) {
  * @returns {Object[]} mongoose.Types.ObjectId[]
  */
 async function findRecipients(slackIds) {
-  const personMongoIds = []
-  for (let i=0; i<slackIds.length; i++) {
-    const mongoId = await findPersonBySlackId(slackIds[i])
+  const personMongoIds = [];
+  for (let i = 0; i < slackIds.length; i++) {
+    const mongoId = await findPersonBySlackId(slackIds[i]);
     if (mongoId) {
-      personMongoIds.push(mongoId)
+      personMongoIds.push(mongoId);
     }
   }
-  return personMongoIds
+  return personMongoIds;
 }
 
 // Adding this for testing purposes so that I don't need to keep sending slack messages
 async function handleMessage({ message }) {
   try {
     const author = await findPersonBySlackId(message.user);
-    const slackIds = searchBlocksForUsers(message.blocks)
+    const slackIds = searchBlocksForUsers(message.blocks);
     const recipients = await findRecipients(slackIds);
     if (recipients.length) {
-      Message.create({ author: author, recipients: recipients, text: message.text });
+      Message.create({
+        author: author,
+        recipients: recipients,
+        text: message.text,
+      });
     }
   } catch (error) {
     console.error(error);
   }
-} 
+}
 
 // Listens to incoming messages that contain "shoutout"
 app.message(/shoutout/i, handleMessage);
