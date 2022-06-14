@@ -9,10 +9,6 @@ const personSchema = new Schema({
     type: String,
     unique: true
   },
-  slackId: {
-    type: String,
-    unique: true
-  },
   team: String,
   country: String,
   name: String
@@ -21,9 +17,19 @@ const personSchema = new Schema({
 const Person = model("Person", personSchema);
 
 const messageSchema = new Schema({
-  author: personSchema,
-  recipients: [personSchema],
+  author: {
+    type: Schema.Types.ObjectId, 
+    ref: 'Person'
+  },
+  recipients: [{
+    type: Schema.Types.ObjectId, 
+    ref: 'Person'
+  }],
   text: String,
+  createDate: {
+    type: Date,
+    default: Date.now()
+  }
 });
 
 const Message = model("Message", messageSchema);

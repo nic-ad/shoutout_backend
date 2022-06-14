@@ -12,40 +12,64 @@ const app = new App({
 
 /**
  * FIXME: if you shoutout yourself, you get added to the database twice
- * @param {string} slack_id
- * @returns {Object}
+ * @param {string} slackId
+ * @returns {Object | undefined} mongoose.Types.ObjectId
  */
-async function findOrCreatePerson(slack_id) {
-  const person = await Person.findOne({ slack_id }).exec();
-  if (person) return person;
-
-  const info = await app.client.users.info({ user: slack_id });
-  const { real_name, email } = info.user.profile;
-  return await Person.create({ slack_name: real_name, email, slack_id });
+async function findPersonBySlackId(slackId) {
+  const info = await app.client.users.info({ user: slackId })
+  const email = info?.user?.profile?.email;
+  const person = await Person.findOne({ email })
+  return person?._id
 }
 
 /**
- * @param {string} messageText
- * @returns {Object[]}
+ * @param {Object[]} blocks
+ * @returns {string[]} Array of Slack user_id strings
  */
-function findOrCreateRecipients(messageText) {
-  const matches = messageText.matchAll(/<@([0-9A-Z]{11})>/g);
-  const slackIds = Array.from(matches, (m) => m[1]);
-  if (slackIds.length === 0) throw new Error("Shoutouts must have recipients");
-  return slackIds.map(findOrCreatePerson);
+function searchBlocksForUsers(blocks) {
+  const users = new Set()
+  while (blocks.length) {
+    const block = blocks.shift()
+    if (block.type === "user") {
+      users.add(block.user_id)
+    } else if (block.elements) {
+      blocks.push(...block.elements)
+    }
+  }
+  return Array.from(users)
 }
 
-// Listens to incoming messages that contain "shoutout"
-app.message(/shoutout/i, async ({ message }) => {
-  // say() sends a message to the channel where the event was triggered
+/**
+ * @param {string[]} slackIds
+ * @returns {Object[]} mongoose.Types.ObjectId[]
+ */
+async function findRecipients(slackIds) {
+  const personMongoIds = []
+  for (let i=0; i<slackIds.length; i++) {
+    const mongoId = await findPersonBySlackId(slackIds[i])
+    if (mongoId) {
+      personMongoIds.push(mongoId)
+    }
+  }
+  return personMongoIds
+}
+
+// Adding this for testing purposes so that I don't need to keep sending slack messages
+async function handleMessage({ message }) {
   try {
-    const author = findOrCreatePerson(message.user);
-    const recipients = findOrCreateRecipients(message.text);
-    Message.create({ author, recipients, text: message.text });
+    const author = await findPersonBySlackId(message.user);
+    const slackIds = searchBlocksForUsers(message.blocks)
+    const recipients = await findRecipients(slackIds);
+    if (recipients.length) {
+      Message.create({ author: author, recipients: recipients, text: message.text });
+    }
   } catch (error) {
     console.error(error);
   }
-});
+} 
+
+// Listens to incoming messages that contain "shoutout"
+app.message(/shoutout/i, handleMessage);
 
 app.message("log messages", async ({ say }) => {
   const messages = await Message.find().exec();
@@ -60,3 +84,25 @@ app.message("log people", async ({ say }) => {
 // Start your app
 app.start();
 mongoose.connect(process.env.MONGO_URI);
+
+// For development reasons.
+/*
+handleMessage({
+  user: "UGX5U6QHL",
+  blocks: [
+    {
+      type: "rich_text",
+      block_id: "Uqr3f",
+      elements: [
+        {
+          type: "rich_text_section",
+          elements: [
+            { type: "text", text: "shoutout " },
+            { type: "user", user_id: "U03HQDQ90A0" },
+          ],
+        },
+      ],
+    },
+  ],
+});
+*/
