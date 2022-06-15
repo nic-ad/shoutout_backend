@@ -11,15 +11,28 @@ const app = new App({
 });
 
 /**
- * FIXME: if you shoutout yourself, you get added to the database twice
  * @param {string} slackId
  * @returns {Object | undefined} mongoose.Types.ObjectId
  */
 async function findPersonBySlackId(slackId) {
   const info = await app.client.users.info({ user: slackId });
   const email = info?.user?.profile?.email;
-  const person = await Person.findOne({ email });
+  const update = {
+    image72: info?.user?.profile?.image_72,
+    image192: info?.user?.profile?.image_192,
+    image512: info?.user?.profile?.image_512,
+  };
+  const person = await Person.findOneAndUpdate({ email }, update);
   return person?._id;
+}
+
+/**
+ * @param {string} slackId
+ * @returns {string | undefined}
+ */
+async function fetchChannelNameBySlackId(slackId) {
+  const info = await app.client.conversations.info({ channel: slackId });
+  return info?.channel?.name;
 }
 
 /**
@@ -54,15 +67,16 @@ async function findRecipients(slackIds) {
   return personMongoIds;
 }
 
-// Adding this for testing purposes so that I don't need to keep sending slack messages
 async function handleMessage({ message }) {
   try {
     const author = await findPersonBySlackId(message.user);
     const slackIds = searchBlocksForUsers(message.blocks);
     const recipients = await findRecipients(slackIds);
+    const channelName = await fetchChannelNameBySlackId(message.channel);
     if (recipients.length) {
       Message.create({
         author: author,
+        channel: { name: channelName, slackId: message.channel },
         recipients: recipients,
         text: message.text,
       });
@@ -85,28 +99,30 @@ app.message("log people", async ({ say }) => {
   say(`\`\`\`${JSON.stringify(people, null, 2)}\`\`\``);
 });
 
-// Start your app
+// If multiple servers are running app.start, only one of them will work
 app.start();
 mongoose.connect(process.env.MONGO_URI);
 
-// For development reasons.
+// To test, comment app.start(); and uncomment this
 /*
 handleMessage({
-  user: "UGX5U6QHL",
-  blocks: [
-    {
-      type: "rich_text",
-      block_id: "Uqr3f",
-      elements: [
-        {
-          type: "rich_text_section",
-          elements: [
-            { type: "text", text: "shoutout " },
-            { type: "user", user_id: "U03HQDQ90A0" },
-          ],
-        },
-      ],
-    },
-  ],
+  message: {
+    channel: "C01DZ6T9JPK", // #shoutouts
+    user: "UGV3LSE58",
+    blocks: [
+      {
+        type: "rich_text",
+        elements: [
+          {
+            type: "rich_text_section",
+            elements: [
+              { type: "text", text: "shoutout " },
+              { type: "user", user_id: "U02KU2Q34AY" },
+            ],
+          },
+        ],
+      },
+    ],
+  },
 });
 */

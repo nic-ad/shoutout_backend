@@ -12,6 +12,9 @@ const personSchema = new Schema({
   team: String,
   country: String,
   name: String,
+  image72: String,
+  image192: String,
+  image512: String,
 });
 
 const Person = model("Person", personSchema);
@@ -32,6 +35,7 @@ const messageSchema = new Schema({
     type: Date,
     default: Date.now(),
   },
+  channel: new Schema({ slackId: String, name: String }),
 });
 
 const Message = model("Message", messageSchema);
