@@ -4,10 +4,9 @@
 name: Node.js CI
 
 on:
-  push:
-    branches: [$default-branch]
   pull_request:
-    branches: [$default-branch]
+    branches:
+      - main
 
 jobs:
   build:
@@ -15,10 +14,9 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-      - name: Use Node.js
-        uses: actions/setup-node@v3
+      - uses: actions/setup-node@v3
         with:
           cache: "npm"
       - run: npm ci
-      - run: npx prettier --check .
       - run: npx eslint .
+      - run: npx prettier --check .
