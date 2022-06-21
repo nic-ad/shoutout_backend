@@ -6,7 +6,7 @@ info:
 host: "TBD"
 basePath: "/api"
 paths:
-  /latest-shoutouts:
+  /shoutouts/latest:
     get:
       summary: "Returns the 10 most recent shoutouts"
       tags: 
@@ -26,18 +26,18 @@ paths:
           description: "Unexpected Error"
       security:
       - api_key: []
-  /shoutouts-by-timeframe:
+  /shoutouts/by-year:
     get:
-      summary: "Returns all shoutouts for the given month (or past 12 months if no valid month given)"
+      summary: "Returns all shoutouts for the given year (YYYY format) or past 12 months if no valid year given"
       tags: 
       - shoutouts
       produces:
       - "application/json"
       parameters:
-      - name: "month"
+      - name: "year"
         in: "query"
         required: false
-        type: "number"
+        type: "string"
       responses:
         "200":
           description: "Successful Operation"
@@ -73,7 +73,7 @@ paths:
         "200":
           description: "Successful Operation"
           schema:
-            $ref: "#/definitions/Profile"
+            $ref: "#/definitions/Person"
         "400":
           description: "Bad Request (Valid \"name\" or \"email\" Param Required)"
         "401":
@@ -82,7 +82,7 @@ paths:
           description: "Unexpected Error"
       security:
       - api_key: []
-  /profile/{id}:
+  /profile/{_id}:
     get:
       summary: "Returns information about a person including shoutouts given and received"
       tags: 
@@ -92,16 +92,14 @@ paths:
       parameters:
       - name: "id"
         in: "path"
-        description: "unique ID of a person"
+        description: "_id of a person"
         required: true
-        type: "integer"
+        type: "string"
       responses:
         "200":
           description: "Successful Operation"
           schema:
             $ref: "#/definitions/Profile"
-        "400":
-          description: "Bad Request (Valid \"id\" Param Required)"
         "401":
           description: "Unauthorized"
         "500":
@@ -117,6 +115,8 @@ definitions:
   Person:
     type: "object"
     properties:
+      _id:
+        type: "string"
       employeeId:
         type: "number"
       email:
@@ -130,6 +130,8 @@ definitions:
   Shoutout:
     type: "object"
     properties:
+      _id:
+        type: "string"
       author:
         $ref: "#/definitions/Person"
       recipients:
@@ -140,6 +142,12 @@ definitions:
         type: "string"
       createDate:
         type: "string"
+      month:
+        type: "number"
+      year:
+        type: "number"
+      inPastTwelveMonths:
+        type: "boolean"
   Profile:
     type: "object"
     properties:
