@@ -67,6 +67,23 @@ async function findRecipients(slackIds) {
   return personMongoIds;
 }
 
+/**
+ * @param {Object} error
+ */
+function handleError(error) {
+  console.error(error);
+  // Ask Danny Kim for an invite to shoutout-errors! If you need to change the
+  // channel that errors are sent to, simply change the channel ID below!
+  const channel = "C03KJCMQSP9";
+  app.client.chat.postMessage({
+    channel: channel,
+    text: "```" + error.stack + "```",
+  });
+}
+
+/**
+ * @param {Object} payload - https://slack.dev/bolt-js/reference#listener-function-arguments
+ */
 async function handleMessage({ message }) {
   try {
     const author = await findPersonBySlackId(message.user);
@@ -82,7 +99,7 @@ async function handleMessage({ message }) {
       });
     }
   } catch (error) {
-    console.error(error);
+    handleError(error);
   }
 }
 
@@ -90,14 +107,24 @@ async function handleMessage({ message }) {
 app.message(/shoutout/i, handleMessage);
 
 app.message("log messages", async ({ say }) => {
-  const messages = await Message.find().exec();
-  say(`\`\`\`${JSON.stringify(messages, null, 2)}\`\`\``);
+  try {
+    const messages = await Message.find().exec();
+    say("```" + JSON.stringify(messages) + "```");
+  } catch (error) {
+    handleError(error);
+  }
 });
 
 app.message("log people", async ({ say }) => {
-  const people = await Person.find().exec();
-  say(`\`\`\`${JSON.stringify(people, null, 2)}\`\`\``);
+  try {
+    const people = await Person.find().exec();
+    say("```" + JSON.stringify(people) + "```");
+  } catch (error) {
+    handleError(error);
+  }
 });
+
+app.error(handleError);
 
 // If multiple servers are running app.start, only one of them will work
 app.start();
