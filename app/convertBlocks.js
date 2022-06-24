@@ -24,7 +24,7 @@ async function convertBlocks({ blocks, client }) {
           uniqueUsers
         );
         outputElements.push({
-          name: recipient.profile.display_name,
+          text: recipient.profile.display_name,
           type: block.type,
         });
         break;
