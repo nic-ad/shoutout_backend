@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const { App } = require("@slack/bolt");
 const { Person, Message } = require("./models");
+const { convertBlocks } = require("./app/convertBlocks");
 require("dotenv").config();
 
 const app = new App({
@@ -11,16 +12,15 @@ const app = new App({
 });
 
 /**
- * @param {string} slackId
+ * @param {Object} slackUser https://api.slack.com/types/user
  * @returns {Object | undefined} mongoose.Types.ObjectId
  */
-async function findPersonBySlackId(slackId) {
-  const info = await app.client.users.info({ user: slackId });
-  const email = info?.user?.profile?.email;
+async function findPersonAndUpdateImage(slackUser) {
+  const email = slackUser?.profile?.email;
   const update = {
-    image72: info?.user?.profile?.image_72,
-    image192: info?.user?.profile?.image_192,
-    image512: info?.user?.profile?.image_512,
+    image72: slackUser?.profile?.image_72,
+    image192: slackUser?.profile?.image_192,
+    image512: slackUser?.profile?.image_512,
   };
   const person = await Person.findOneAndUpdate({ email }, update);
   return person?._id;
@@ -33,38 +33,6 @@ async function findPersonBySlackId(slackId) {
 async function fetchChannelNameBySlackId(slackId) {
   const info = await app.client.conversations.info({ channel: slackId });
   return info?.channel?.name;
-}
-
-/**
- * @param {Object[]} blocks
- * @returns {string[]} Array of Slack user_id strings
- */
-function searchBlocksForUsers(blocks) {
-  const users = new Set();
-  while (blocks.length) {
-    const block = blocks.shift();
-    if (block.type === "user") {
-      users.add(block.user_id);
-    } else if (block.elements) {
-      blocks.push(...block.elements);
-    }
-  }
-  return Array.from(users);
-}
-
-/**
- * @param {string[]} slackIds
- * @returns {Object[]} mongoose.Types.ObjectId[]
- */
-async function findRecipients(slackIds) {
-  const personMongoIds = [];
-  for (let i = 0; i < slackIds.length; i++) {
-    const mongoId = await findPersonBySlackId(slackIds[i]);
-    if (mongoId) {
-      personMongoIds.push(mongoId);
-    }
-  }
-  return personMongoIds;
 }
 
 /**
@@ -84,16 +52,25 @@ function handleError(error) {
 /**
  * @param {Object} payload - https://slack.dev/bolt-js/reference#listener-function-arguments
  */
-async function handleMessage({ message }) {
+async function handleMessage({ client, message }) {
   try {
-    const author = await findPersonBySlackId(message.user);
-    const slackIds = searchBlocksForUsers(message.blocks);
-    const recipients = await findRecipients(slackIds);
+    const authorInfo = await client.users.info({ user: message.user });
+    const author = await findPersonAndUpdateImage(authorInfo);
+
+    const { elements, users } = await convertBlocks({
+      blocks: message.blocks,
+      client,
+    });
+    const promises = users.map(findPersonAndUpdateImage);
+    const recipients = await Promise.all(promises);
+
     const channelName = await fetchChannelNameBySlackId(message.channel);
+
     if (recipients.length) {
       Message.create({
         author: author,
         channel: { name: channelName, slackId: message.channel },
+        elements: elements,
         recipients: recipients,
         text: message.text,
       });
