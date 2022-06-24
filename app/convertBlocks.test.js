@@ -24,7 +24,7 @@ test("convertBlocks", async () => {
 
   assert.equal(elements.length, 2);
   assert.deepEqual(elements[0], { type: "text", text: "shoutout " });
-  assert.equal(elements[1].name, "spengler");
+  assert.equal(elements[1].text, "spengler");
   assert.equal(elements[1].type, "user");
 
   assert.equal(users.length, 1);

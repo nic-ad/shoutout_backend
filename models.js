@@ -36,7 +36,7 @@ const messageSchema = new Schema({
     default: Date.now(),
   },
   channel: new Schema({ slackId: String, name: String }),
-  elements: [new Schema({ name: String, type: String })],
+  elements: [new Schema({ text: String, type: String })],
 });
 
 const Message = model("Message", messageSchema);
