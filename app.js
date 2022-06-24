@@ -1,7 +1,8 @@
 const mongoose = require("mongoose");
 const { App } = require("@slack/bolt");
 const { Person, Message } = require("./models");
-const { convertBlocks } = require("./app/convertBlocks");
+const { convertBlocks } = require("./utils/convertBlocks");
+const { handleError } = require("./utils/handleError");
 require("dotenv").config();
 
 const app = new App({
@@ -16,14 +17,18 @@ const app = new App({
  * @returns {Object | undefined} mongoose.Types.ObjectId
  */
 async function findPersonAndUpdateImage(slackUser) {
-  const email = slackUser?.profile?.email;
-  const update = {
-    image72: slackUser?.profile?.image_72,
-    image192: slackUser?.profile?.image_192,
-    image512: slackUser?.profile?.image_512,
-  };
-  const person = await Person.findOneAndUpdate({ email }, update);
-  return person?._id;
+  try {
+    const email = slackUser?.profile?.email;
+    const update = {
+      image72: slackUser?.profile?.image_72,
+      image192: slackUser?.profile?.image_192,
+      image512: slackUser?.profile?.image_512,
+    };
+    const person = await Person.findOneAndUpdate({ email }, update);
+    return person?._id;
+  } catch (error) {
+    handleError(error, app.client);
+  }
 }
 
 /**
@@ -31,22 +36,12 @@ async function findPersonAndUpdateImage(slackUser) {
  * @returns {string | undefined}
  */
 async function fetchChannelNameBySlackId(slackId) {
-  const info = await app.client.conversations.info({ channel: slackId });
-  return info?.channel?.name;
-}
-
-/**
- * @param {Object} error
- */
-function handleError(error) {
-  console.error(error);
-  // Ask Danny Kim for an invite to shoutout-errors! If you need to change the
-  // channel that errors are sent to, simply change the channel ID below!
-  const channel = "C03KJCMQSP9";
-  app.client.chat.postMessage({
-    channel: channel,
-    text: "```" + error.stack + "```",
-  });
+  try {
+    const info = await app.client.conversations.info({ channel: slackId });
+    return info?.channel?.name;
+  } catch (error) {
+    handleError(error, app.client);
+  }
 }
 
 /**
@@ -76,7 +71,7 @@ async function handleMessage({ client, message }) {
       });
     }
   } catch (error) {
-    handleError(error);
+    handleError(error, app.client);
   }
 }
 
@@ -88,7 +83,7 @@ app.message("log messages", async ({ say }) => {
     const messages = await Message.find().exec();
     say("```" + JSON.stringify(messages) + "```");
   } catch (error) {
-    handleError(error);
+    handleError(error, app.client);
   }
 });
 
@@ -97,11 +92,11 @@ app.message("log people", async ({ say }) => {
     const people = await Person.find().exec();
     say("```" + JSON.stringify(people) + "```");
   } catch (error) {
-    handleError(error);
+    handleError(error, app.client);
   }
 });
 
-app.error(handleError);
+app.error((error) => handleError(error, app.client));
 
 // If multiple servers are running app.start, only one of them will work
 app.start();
