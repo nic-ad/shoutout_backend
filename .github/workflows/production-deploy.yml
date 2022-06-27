@@ -20,9 +20,8 @@ jobs:
           npm install
       - name: Run linter and tests
         run: |
-          npm ci
-          npx eslint .
-          npx prettier --check .
+          npm eslint .
+          npm prettier --check .
       - uses: akhileshns/heroku-deploy@v3.12.12
         with:
           heroku_api_key: ${{secrets.HEROKU_API_KEY}}
