@@ -1,4 +1,5 @@
 name: Deploy to production
+
 on:
   push:
     branches:
@@ -9,18 +10,21 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-node@v2
+      - uses: actions/setup-node@v3
         with:
-          node-version: '14'
+          cache: "npm"
+          node-version: "14"
 
       - name: Install dependencies
         run: |
-          npm install 
+          npm install
       - name: Run linter and tests
         run: |
-          npm test
-      - uses: akhileshns/heroku-deploy@v3.12.12 
+          npm ci
+          npx eslint .
+          npx prettier --check .
+      - uses: akhileshns/heroku-deploy@v3.12.12
         with:
           heroku_api_key: ${{secrets.HEROKU_API_KEY}}
-          heroku_app_name: "shoutoutapp" 
+          heroku_app_name: "shoutoutapp"
           heroku_email: "devops@rocketinsights.com"
