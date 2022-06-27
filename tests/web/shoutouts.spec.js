@@ -5,7 +5,7 @@ const expect = chai.expect;
 const should = chai.should();
 const { Message } = require("../../models");
 const { latestShoutoutsLimit} = require("../../utils/constants");
-const { singleRecipientShoutout, multiRecipientShoutout, getShoutoutTestTimestamp } = require("./mocks");
+const { singleRecipientShoutout, getShoutoutTestTimestamp } = require("./mocks");
 
 describe("latest shoutouts", function(){
   const shoutoutTimestamp = getShoutoutTestTimestamp();
