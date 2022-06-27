@@ -37,3 +37,5 @@ webApp.get("/messages", async (req, res) => {
 webApp.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
 });
+
+module.exports = webApp;

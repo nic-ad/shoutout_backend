@@ -31,9 +31,9 @@ router.get("/search", async function (request, response) {
       response.status(400).send(body);
     }
 
-    people = await Person.find({ $or: queryConditions });
+    people = await Person.find({ $or: queryConditions }).limit(100);
     response.send(people);
-  } catch (error) {
+  } catch(error){
     handleApiError(error, response);
   }
 });
@@ -59,25 +59,25 @@ router.get("/:id", async function (request, response) {
             $filter: {
               input: "$recipients",
               as: "recipient",
-              cond: { $eq: ["$$recipient._id", id] },
+              cond: {$eq: ["$$recipient._id", id]},
             },
           },
         },
       },
       //if after above processing the shoutout has no recipients, we of course know this person wasn't a recipient so remove from results
       {
-        $match: { recipients: { $ne: [] } },
+        $match: {recipients: {$ne: []}},
       },
     ]);
 
     const person = (await Person.findById(id)) ?? {};
-
+    
     response.send({
       userInfo: person,
       shoutoutsGiven,
       shoutoutsReceived,
     });
-  } catch (error) {
+  } catch(error){
     handleApiError(error, response);
   }
 });
