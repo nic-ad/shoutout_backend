@@ -18,13 +18,17 @@ const app = new App({
  */
 async function findPersonAndUpdateImage(slackUser) {
   try {
-    const email = slackUser?.profile?.email;
+    const queryConditions = [{ name: slackUser?.real_name }];
+    if (slackUser?.profile?.email) {
+      queryConditions.push({ email: slackUser?.profile?.email });
+    }
+    const conditions = { $or: queryConditions };
     const update = {
       image72: slackUser?.profile?.image_72,
       image192: slackUser?.profile?.image_192,
       image512: slackUser?.profile?.image_512,
     };
-    const person = await Person.findOneAndUpdate({ email }, update);
+    const person = await Person.findOneAndUpdate(conditions, update);
     return person?._id;
   } catch (error) {
     handleError(error, app.client);
@@ -50,14 +54,15 @@ async function fetchChannelNameBySlackId(slackId) {
 async function handleMessage({ client, message }) {
   try {
     const authorInfo = await client.users.info({ user: message.user });
-    const author = await findPersonAndUpdateImage(authorInfo);
+    const author = await findPersonAndUpdateImage(authorInfo.user);
 
     const { elements, users } = await convertBlocks({
       blocks: message.blocks,
       client,
     });
     const promises = users.map(findPersonAndUpdateImage);
-    const recipients = await Promise.all(promises);
+    let recipients = await Promise.all(promises);
+    recipients = recipients.filter(Boolean);
 
     const channelName = await fetchChannelNameBySlackId(message.channel);
 
