@@ -4,6 +4,8 @@
   "description": "",
   "main": "app.js",
   "scripts": {
+    "lint": "eslint .",
+    "prettier": "prettier --check .",
     "test": "node --test"
   },
   "author": "",
