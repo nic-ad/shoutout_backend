@@ -48,7 +48,7 @@ router.get("/:id", async function (request, response) {
     return;
   }
 
-  try{
+  try {
     const shoutoutsGiven = await Message.aggregate([
       {
         $match: { author: id },
@@ -79,7 +79,7 @@ router.get("/:id", async function (request, response) {
 
     const person = await Person.findById(id);
 
-    if(!person){
+    if (!person) {
       handleApiError({ message: "Profile not found" }, response, 404);
       return;
     }

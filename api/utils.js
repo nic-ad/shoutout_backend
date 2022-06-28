@@ -34,7 +34,7 @@ const mapShoutoutData = [
 
 function handleApiError(error, response, statusCode) {
   console.error(error);
-  const body = { error: (error.message || "Unexpected Error")};
+  const body = { error: error.message || "Unexpected Error" };
   response.status(statusCode || 500).send(body);
 }
 

@@ -144,8 +144,8 @@ async function expectShoutoutReceived(shoutoutTimestamp, recipientId) {
   const result = response.body;
 
   //should find a single shoutout because only one has the timestamp of this test run
-  const testShoutoutsReceived = result.shoutoutsReceived.filter(
-    (shoutout) => shoutout.text.includes(shoutoutTimestamp)
+  const testShoutoutsReceived = result.shoutoutsReceived.filter((shoutout) =>
+    shoutout.text.includes(shoutoutTimestamp)
   );
 
   expect(response.status).to.equal(200);
@@ -168,8 +168,8 @@ describe("single-recipient shoutout on user profiles", function () {
       `/profile/${singleRecipientShoutout.authorId}`
     );
     const result = response.body;
-    const testShoutoutsGiven = result.shoutoutsGiven.filter(
-      (shoutout) => shoutout.text.includes(shoutoutTimestamp)
+    const testShoutoutsGiven = result.shoutoutsGiven.filter((shoutout) =>
+      shoutout.text.includes(shoutoutTimestamp)
     );
 
     expect(response.status).to.equal(200);
