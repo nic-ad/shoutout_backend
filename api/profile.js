@@ -39,9 +39,16 @@ router.get("/search", async function (request, response) {
 });
 
 router.get("/:id", async function (request, response) {
-  try {
-    const id = mongoose.Types.ObjectId(request.params.id);
+  let id;
 
+  try {
+    id = mongoose.Types.ObjectId(request.params.id);
+  } catch (error) {
+    handleApiError(error, response, 400);
+    return;
+  }
+
+  try{
     const shoutoutsGiven = await Message.aggregate([
       {
         $match: { author: id },
@@ -70,7 +77,12 @@ router.get("/:id", async function (request, response) {
       },
     ]);
 
-    const person = (await Person.findById(id)) ?? {};
+    const person = await Person.findById(id);
+
+    if(!person){
+      handleApiError({ message: "Profile not found" }, response, 404);
+      return;
+    }
 
     response.send({
       userInfo: person,

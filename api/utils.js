@@ -32,10 +32,10 @@ const mapShoutoutData = [
   },
 ];
 
-function handleApiError(error, response) {
+function handleApiError(error, response, statusCode) {
   console.error(error);
-  const body = { error: error.message ? error.toString() : "Unexpected Error" };
-  response.status(500).send(body);
+  const body = { error: (error.message || "Unexpected Error")};
+  response.status(statusCode || 500).send(body);
 }
 
 module.exports = { mapShoutoutData, handleApiError };

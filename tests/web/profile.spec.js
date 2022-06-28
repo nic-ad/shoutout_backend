@@ -34,7 +34,7 @@ describe("profile search by name/email", function () {
     );
     const results = response.body;
     const resultWithoutQueryInEmail = results.find(
-      (profile) => profile.email.indexOf(searchQuery.toLowerCase()) < 0
+      (profile) => !profile.email.includes(searchQuery.toLowerCase())
     );
 
     expect(response.status).to.equal(200);
@@ -123,20 +123,19 @@ describe("profile search by id", function () {
     expect(result.userInfo.name).to.equal("Panda DWH Test Bear");
   });
 
-  it("should return no results given id that is in valid format but that doesn't belong to anyone", async function () {
+  it("should 404 given id that is in valid format but that doesn't belong to anyone", async function () {
     const searchId = "999999999999999999999999";
     const response = await request(app).get(`/profile/${searchId}`);
     const result = response.body;
 
-    expect(response.status).to.equal(200);
-    should.not.exist(result.userInfo.name);
+    expect(response.status).to.equal(404);
   });
 
-  it("should return 500 given id in invalid format", async function () {
+  it("should return 400 given id in invalid format", async function () {
     const searchId = "9";
     const response = await request(app).get(`/profile/${searchId}`);
 
-    expect(response.status).to.equal(500);
+    expect(response.status).to.equal(400);
   });
 });
 
@@ -146,7 +145,7 @@ async function expectShoutoutReceived(shoutoutTimestamp, recipientId) {
 
   //should find a single shoutout because only one has the timestamp of this test run
   const testShoutoutsReceived = result.shoutoutsReceived.filter(
-    (shoutout) => shoutout.text.indexOf(shoutoutTimestamp) > -1
+    (shoutout) => shoutout.text.includes(shoutoutTimestamp)
   );
 
   expect(response.status).to.equal(200);
@@ -170,7 +169,7 @@ describe("single-recipient shoutout on user profiles", function () {
     );
     const result = response.body;
     const testShoutoutsGiven = result.shoutoutsGiven.filter(
-      (shoutout) => shoutout.text.indexOf(shoutoutTimestamp) > -1
+      (shoutout) => shoutout.text.includes(shoutoutTimestamp)
     );
 
     expect(response.status).to.equal(200);
