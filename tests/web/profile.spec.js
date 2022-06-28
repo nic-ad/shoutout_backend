@@ -19,7 +19,7 @@ describe("profile search by name/email", function () {
     const results = response.body;
     const resultWithoutQueryInName = results.find(
       (profile) =>
-        profile.name.toLowerCase().indexOf(searchQuery.toLowerCase()) < 0
+        !profile.name.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
     expect(response.status).to.equal(200);
