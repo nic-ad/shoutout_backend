@@ -31,7 +31,7 @@ router.get("/search", async function (request, response) {
       response.status(400).send(body);
     }
 
-    people = await Person.find({ $or: queryConditions });
+    people = await Person.find({ $or: queryConditions }).limit(100);
     response.send(people);
   } catch (error) {
     handleApiError(error, response);

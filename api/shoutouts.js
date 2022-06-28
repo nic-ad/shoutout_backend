@@ -1,6 +1,7 @@
 const express = require("express");
 const { Message } = require("../models");
 const { mapShoutoutData, handleApiError } = require("./utils");
+const { latestShoutoutsLimit } = require("../utils/constants");
 
 const router = express.Router();
 
@@ -12,7 +13,7 @@ router.get("/latest", async function (request, response) {
         $sort: { _id: -1 },
       },
       {
-        $limit: 10,
+        $limit: latestShoutoutsLimit,
       },
     ]);
 
