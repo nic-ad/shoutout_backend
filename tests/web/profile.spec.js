@@ -126,7 +126,6 @@ describe("profile search by id", function () {
   it("should 404 given id that is in valid format but that doesn't belong to anyone", async function () {
     const searchId = "999999999999999999999999";
     const response = await request(app).get(`/profile/${searchId}`);
-    const result = response.body;
 
     expect(response.status).to.equal(404);
   });
