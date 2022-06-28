@@ -80,26 +80,22 @@ async function handleMessage({ client, message }) {
   }
 }
 
-// Listens to incoming messages that contain "shoutout"
-app.message(/shoutout/i, handleMessage);
+if (process.env.SHOUTOUT_PATTERN) {
+  const shoutoutExpression = new RegExp(process.env.SHOUTOUT_PATTERN, "i");
+  app.message(shoutoutExpression, handleMessage);
+}
 
-app.message("log messages", async ({ say }) => {
-  try {
-    const messages = await Message.find().exec();
-    say("```" + JSON.stringify(messages) + "```");
-  } catch (error) {
-    handleError(error, app.client);
-  }
-});
-
-app.message("log people", async ({ say }) => {
-  try {
-    const people = await Person.find().exec();
-    say("```" + JSON.stringify(people) + "```");
-  } catch (error) {
-    handleError(error, app.client);
-  }
-});
+if (process.env.LOG_PATTERN) {
+  const logExpression = new RegExp(`^${process.env.LOG_PATTERN}$`, "i");
+  app.message(logExpression, async ({ say }) => {
+    try {
+      const messages = await Message.find().exec();
+      say("```" + JSON.stringify(messages) + "```");
+    } catch (error) {
+      handleError(error, app.client);
+    }
+  });
+}
 
 app.error((error) => handleError(error, app.client));
 

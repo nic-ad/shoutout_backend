@@ -23,6 +23,12 @@ The backend code that gathers Slack messages containing shoutout of Depsters
 1. Say "log messages" in the test channel
    - Case sensitive
 
+### Local development workflow
+
+When starting your local app, a websocket connection is established between your app and the Slack bot. If multiple connections are established due to multiple developers are starting their local apps, [https://api.slack.com/apis/connections/socket-implement#connections](there is no guarantee) which local app will receive the events from the Slack bot.
+
+Because of this limitation, [Slack recommends](https://github.com/slackapi/bolt-python/issues/548#issuecomment-994110673) creating a separate copy of the app for each developer working on the project. In your `.env` file, you will find variations of the `LOG_PATTERN` and `TEST_PATTERN` keys that will make sure your test shoutout messages go to the intended local server.
+
 ## Running the web API
 
 1. Start the server with `node web`.  To start it in watch mode (listens for changes), run `npm install nodemon -g --force
