@@ -41,8 +41,8 @@ describe("latest shoutouts", function () {
   } of them`, async function () {
     const response = await request(app).get("/shoutouts/latest");
     const results = response.body;
-    const oldestShoutout = results.find(
-      (result) => result.text.indexOf("oldest shoutout") > -1
+    const oldestShoutout = results.find((result) =>
+      result.text.includes("oldest shoutout")
     );
 
     expect(response.status).to.equal(200);
@@ -79,9 +79,8 @@ describe("shoutouts by year", function () {
   ];
 
   function getTestShoutouts(results) {
-    return results.filter(
-      (result) =>
-        result.text.indexOf(`by-year shoutout ${shoutoutTimestamp}`) > -1
+    return results.filter((result) =>
+      result.text.includes(`by-year shoutout ${shoutoutTimestamp}`)
     );
   }
 
