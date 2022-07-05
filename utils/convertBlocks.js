@@ -7,16 +7,32 @@ async function fetchRecipient(slackClient, slackId, cache = {}) {
   return user;
 }
 
-async function convertBlocks({ blocks, client }) {
+async function convertBlocks({ blocks, client, uniqueUsers = {} }) {
   const outputElements = [];
-  const uniqueUsers = {};
   while (blocks.length) {
     const block = blocks.shift();
-    if (block.elements) {
-      blocks.push(...block.elements);
-      continue;
-    }
     switch (block.type) {
+      case "rich_text": {
+        blocks.unshift(...block.elements);
+        break;
+      }
+      case "rich_text_list":
+      case "rich_text_section": {
+        const { elements } = await convertBlocks({
+          blocks: block.elements,
+          client,
+          uniqueUsers,
+        });
+        const outputElement = {
+          elements,
+          type: block.type,
+        };
+        if (block.style) {
+          outputElement.subtype = block.style;
+        }
+        outputElements.push(outputElement);
+        break;
+      }
       case "user": {
         const recipient = await fetchRecipient(
           client,

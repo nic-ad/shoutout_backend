@@ -19,6 +19,14 @@ const personSchema = new Schema({
 
 const Person = model("Person", personSchema);
 
+const elementSchema = new Schema({
+  subtype: String,
+  text: String,
+  type: String,
+});
+
+elementSchema.add({ elements: [elementSchema] });
+
 const messageSchema = new Schema({
   author: {
     type: Schema.Types.ObjectId,
@@ -36,7 +44,7 @@ const messageSchema = new Schema({
     default: Date.now(),
   },
   channel: new Schema({ slackId: String, name: String }),
-  elements: [new Schema({ text: String, type: String })],
+  elements: [elementSchema],
 });
 
 const Message = model("Message", messageSchema);
