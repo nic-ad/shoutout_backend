@@ -13,7 +13,7 @@ const {
 describe("latest shoutouts", function () {
   const shoutoutTimestamp = getShoutoutTestTimestamp();
 
-  before("insert test shoutouts", async function () {
+  before("inserts test shoutouts", async function () {
     await Message.create({
       ...singleRecipientShoutout,
       text: `oldest shoutout ${shoutoutTimestamp}`,
@@ -51,6 +51,7 @@ describe("latest shoutouts", function () {
 });
 
 describe("shoutouts by year", function () {
+  let mockShoutoutsPastTwelveMonths = [];
   const shoutoutTimestamp = getShoutoutTestTimestamp();
   const now = new Date();
 
@@ -59,24 +60,6 @@ describe("shoutouts by year", function () {
 
   const twelveMonthsAgo = new Date();
   twelveMonthsAgo.setMonth(now.getMonth() - 12);
-
-  const mockByYearShoutout = {
-    ...singleRecipientShoutout,
-    text: `by-year shoutout ${shoutoutTimestamp}`,
-  };
-
-  const mockShoutoutsPastTwelveMonths = [
-    {
-      //now
-      ...mockByYearShoutout,
-      createDate: now,
-    },
-    {
-      //within 12 months
-      ...mockByYearShoutout,
-      createDate: withinTwelveMonths,
-    },
-  ];
 
   function getTestShoutouts(results) {
     return results.filter((result) =>
@@ -91,7 +74,25 @@ describe("shoutouts by year", function () {
     );
   }
 
-  before("insert mock shoutouts for various times", async function () {
+  before("inserts mock shoutouts for various times", async function () {
+    const mockByYearShoutout = {
+      ...singleRecipientShoutout,
+      text: `by-year shoutout ${shoutoutTimestamp}`,
+    };
+
+    mockShoutoutsPastTwelveMonths = [
+      {
+        //now
+        ...mockByYearShoutout,
+        createDate: now,
+      },
+      {
+        //within 12 months
+        ...mockByYearShoutout,
+        createDate: withinTwelveMonths,
+      },
+    ];
+
     await Message.create(mockShoutoutsPastTwelveMonths[0]);
     await Message.create(mockShoutoutsPastTwelveMonths[1]);
 

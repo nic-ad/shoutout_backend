@@ -6,7 +6,7 @@
   "scripts": {
     "lint": "eslint .",
     "prettier": "prettier --check .",
-    "test": "mocha ./tests/**/*.js --exit"
+    "test": "mocha"
   },
   "author": "",
   "license": "ISC",

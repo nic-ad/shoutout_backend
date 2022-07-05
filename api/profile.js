@@ -2,6 +2,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const { Person, Message } = require("../models");
 const { mapShoutoutData, handleApiError } = require("./utils");
+const { manyProfilesLimit } = require("../utils/constants");
 
 const router = express.Router();
 
@@ -31,7 +32,9 @@ router.get("/search", async function (request, response) {
       response.status(400).send(body);
     }
 
-    people = await Person.find({ $or: queryConditions }).limit(100);
+    people = await Person.find({ $or: queryConditions }).limit(
+      manyProfilesLimit
+    );
     response.send(people);
   } catch (error) {
     handleApiError(error, response);

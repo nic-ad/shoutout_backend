@@ -3,11 +3,13 @@ const app = require("../../web");
 const chai = require("chai");
 const expect = chai.expect;
 const should = chai.should();
-const { Message } = require("../../models");
+const { Message, Person } = require("../../models");
+const { manyProfilesLimit } = require("../../utils/constants");
 const {
   singleRecipientShoutout,
   multiRecipientShoutout,
   getShoutoutTestTimestamp,
+  person2,
 } = require("./mocks");
 
 describe("profile search by name/email", function () {
@@ -43,7 +45,7 @@ describe("profile search by name/email", function () {
   });
 
   it("should return correct match for the given full name search", async function () {
-    const searchQuery = "Panda Boomi Test Bear";
+    const searchQuery = person2.name;
     const response = await request(app).get(
       `/profile/search?name=${searchQuery}`
     );
@@ -55,7 +57,7 @@ describe("profile search by name/email", function () {
   });
 
   it("should return correct match for the given full email search", async function () {
-    const searchQuery = "boomi.integration@deptagency.com";
+    const searchQuery = person2.email;
     const response = await request(app).get(
       `/profile/search?email=${searchQuery}`
     );
@@ -77,7 +79,7 @@ describe("profile search by name/email", function () {
   });
 
   it("should have same number of results from name + email search as when each searched separately", async function () {
-    const searchQuery = "john";
+    const searchQuery = "test";
 
     const togetherResults = await request(app).get(
       `/profile/search?name=${searchQuery}&email=${searchQuery}`
@@ -98,29 +100,62 @@ describe("profile search by name/email", function () {
     expect(togetherResults.body.length).to.equal(distinctResults.length);
   });
 
-  it("should limit large response to 100 results", async function () {
-    const response = await request(app).get("/profile/search?name=a");
-    const results = response.body;
-
-    expect(response.status).to.equal(200);
-    expect(results.length).to.equal(100);
-  });
-
   it("should return 500 given invalid search", async function () {
     const response = await request(app).get("/profile/search?name=?");
     expect(response.status).to.equal(500);
   });
 });
 
+describe("profile search by common name (to return many results)", function () {
+  const name = "Mock Shoutout Repeated Person";
+
+  const mockPerson = {
+    country: "US",
+    name,
+    team: null,
+  };
+
+  before(
+    "checks if db already has enough mocks of this person and insert if not",
+    async function () {
+      let mockManyProfiles = [];
+
+      const count = await Person.countDocuments({ name: mockPerson.name });
+
+      if (count < manyProfilesLimit) {
+        //insert 1 more than the limit so we can test that only the limit is returned
+        const numberOfMocksToInsert = manyProfilesLimit + 1;
+
+        for (let i = 0; i < numberOfMocksToInsert; i++) {
+          //employeeId and email must be unique
+          mockManyProfiles[i] = {
+            ...mockPerson,
+            employeeId: Date.now() + i,
+            email: `mock.repeated.${i}@deptagency.com`,
+          };
+        }
+
+        await Person.insertMany(mockManyProfiles);
+      }
+    }
+  );
+
+  it(`should limit large response to ${manyProfilesLimit} results`, async function () {
+    const response = await request(app).get(`/profile/search?name=${name}`);
+    const results = response.body;
+
+    expect(response.status).to.equal(200);
+    expect(results.length).to.equal(manyProfilesLimit);
+  });
+});
+
 describe("profile search by id", function () {
   it("should return correct result given valid id", async function () {
-    //const searchId = "62a5dbc1b0a35dbb2dae40fa";prod
-    const searchId = "62a8dc14455b30483c2c72e1"; //non-prod
-    const response = await request(app).get(`/profile/${searchId}`);
+    const response = await request(app).get(`/profile/${person2._id}`);
     const result = response.body;
 
     expect(response.status).to.equal(200);
-    expect(result.userInfo.name).to.equal("Panda DWH Test Bear");
+    expect(result.userInfo.name).to.equal(person2.name);
   });
 
   it("should 404 given id that is in valid format but that doesn't belong to anyone", async function () {

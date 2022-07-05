@@ -1,25 +1,38 @@
-const mongoose = require("mongoose");
+let person1 = {
+  email: "ali.halim@deptagency.com",
+  country: "US",
+  employeeId: 7115,
+  name: "Ali Halim",
+  team: "DPUS",
+};
 
-const personId1 = "62a8b18fac66b6ab6077fadb";
-const personId2 = "62a8dc13455b30483c2c6b54";
-const personId3 = "62a8dc13455b30483c2c686c";
+let person2 = {
+  email: "boomi.integration@deptagency.com",
+  country: "NA",
+  employeeId: 3484,
+  name: "Panda Boomi Test Bear",
+  team: null,
+};
+
+let person3 = {
+  email: "dwh-monitoring@deptagency.com",
+  country: "NA",
+  employeeId: 3483,
+  name: "Panda DWH Test Bear",
+  team: null,
+};
+
 const channel = { name: "peakon-test-channel", slackId: "C03HR04D338" };
 
 const singleRecipientShoutout = {
-  authorId: personId1, //not part of official model
-  author: new mongoose.Types.ObjectId(personId1),
   channel,
   elements: [
     { type: "text", text: "shoutout " },
     { text: "Danny", type: "user" },
   ],
-  recipients: [new mongoose.Types.ObjectId(personId3)],
-  recipientIds: [personId3], //not part of official model
 };
 
 const multiRecipientShoutout = {
-  authorId: personId2, //not part of official model
-  author: new mongoose.Types.ObjectId(personId2),
   channel,
   elements: [
     { text: "Ali Halim", type: "user" },
@@ -27,11 +40,6 @@ const multiRecipientShoutout = {
     { text: "Danny", type: "user" },
     { type: "text", text: " shoutout" },
   ],
-  recipients: [
-    new mongoose.Types.ObjectId(personId1),
-    new mongoose.Types.ObjectId(personId3),
-  ],
-  recipientIds: [personId1, personId3], //not part of official model
 };
 
 //******
@@ -44,4 +52,7 @@ module.exports = {
   singleRecipientShoutout,
   multiRecipientShoutout,
   getShoutoutTestTimestamp,
+  person1,
+  person2,
+  person3,
 };
