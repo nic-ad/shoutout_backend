@@ -17,11 +17,12 @@ async function setupPerson(person) {
     );
     person._id = response._doc._id.toString(); //_id is an object if you don't use toString() for some reason
   } catch (error) {
-    console.log(error);
+    console.error(error);
   }
 }
 
 before(async function () {
+  mongoose.connect("mongodb://localhost:27017/test");
   await setupPerson(person1);
   await setupPerson(person2);
   await setupPerson(person3);
