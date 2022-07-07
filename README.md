@@ -8,7 +8,7 @@ The backend code that gathers Slack messages containing shoutout of Depsters
    (If Danny is unavailable, Jesse Streb has the secrets)
 1. Copy the contents of `.env.example` into a new file named `.env`, and fill it out with the secrets
 1. Install and run [MongoDB](https://www.mongodb.com/docs/manual/tutorial/install-mongodb-on-os-x/)
-1. Run `docker-compose up` to get local postgres DB up and running (first step towards replacing MongoDB)
+1. [Install Docker](https://docs.docker.com/get-docker/), make sure it is running, and run `docker-compose up` to get local postgres DB up and running (first step towards replacing MongoDB)
 1. Install dependencies with `npm install`
 1. Add @Peakon-test on Slack to a channel with the #test- prefix (Danny can invite you to #peakon-test-channel)
 1. Run `node bin/syncBamboo.js` to populate your database
