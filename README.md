@@ -1,4 +1,4 @@
-# shoutout\_backend
+# shoutout_backend
 
 The backend code that gathers Slack messages containing shoutout of Depsters
 
@@ -8,6 +8,7 @@ The backend code that gathers Slack messages containing shoutout of Depsters
    (If Danny is unavailable, Jesse Streb has the secrets)
 1. Copy the contents of `.env.example` into a new file named `.env`, and fill it out with the secrets
 1. Install and run [MongoDB](https://www.mongodb.com/docs/manual/tutorial/install-mongodb-on-os-x/)
+1. Run `docker-compose up` to get local postgres DB up and running (first step towards replacing MongoDB)
 1. Install dependencies with `npm install`
 1. Add @Peakon-test on Slack to a channel with the #test- prefix (Danny can invite you to #peakon-test-channel)
 1. Run `node bin/syncBamboo.js` to populate your database
@@ -31,6 +32,5 @@ Because of this limitation, [Slack recommends](https://github.com/slackapi/bolt-
 
 ## Running the web API
 
-1. Start the server with `node web`.  To start it in watch mode (listens for changes), run `npm install nodemon -g --force
-` then `nodemon web`.
+1. Start the server with `node web`. To start it in watch mode (listens for changes), run `npm install nodemon -g --force ` then `nodemon web`.
 2. To see the swagger documentation, hit http://localhost:3001/api-docs in your favorite browser.
