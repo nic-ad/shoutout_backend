@@ -33,4 +33,4 @@ Because of this limitation, [Slack recommends](https://github.com/slackapi/bolt-
 ## Running the web API
 
 1. Start the server with `node web`. To start it in watch mode (listens for changes), run `npm install nodemon -g --force ` then `nodemon web`.
-2. To see the swagger documentation, hit http://localhost:3001/api-docs in your favorite browser.
+2. To see the swagger documentation, hit http://localhost:3000/api in your favorite browser.
