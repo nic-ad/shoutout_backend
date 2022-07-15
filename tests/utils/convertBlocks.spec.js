@@ -1,6 +1,5 @@
 const { client } = require("./mocks");
 const { convertBlocks } = require("../../utils/convertBlocks");
-const { expect } = require("chai");
 
 describe("convertBlocks", () => {
   it("should format text, users, and lists", async () => {
@@ -38,7 +37,7 @@ describe("convertBlocks", () => {
 
     const { elements, users } = await convertBlocks({ blocks, client });
 
-    expect(elements[0]).to.deep.equal({
+    expect(elements[0]).toEqual({
       type: "rich_text_section",
       elements: [
         { type: "text", text: "shoutout " },
@@ -47,7 +46,7 @@ describe("convertBlocks", () => {
       ],
     });
 
-    expect(elements[1]).to.deep.equal({
+    expect(elements[1]).toEqual({
       subtype: "bullet",
       type: "rich_text_list",
       elements: [
@@ -64,11 +63,9 @@ describe("convertBlocks", () => {
       ],
     });
 
-    expect(elements.length).to.equal(2);
+    expect(elements.length).toBe(2);
 
-    expect(users.length).to.equal(1);
-    expect(users[0].profile.email).to.equal(
-      "spengler@ghostbusters.example.com"
-    );
+    expect(users.length).toBe(1);
+    expect(users[0].profile.email).toBe("spengler@ghostbusters.example.com");
   });
 });

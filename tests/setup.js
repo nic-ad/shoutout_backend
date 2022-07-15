@@ -21,8 +21,9 @@ async function setupPerson(person) {
   }
 }
 
-before(async function () {
-  mongoose.connect("mongodb://localhost:27017/test");
+const setupData = async (dbName) => {
+  const url = `mongodb://localhost/${dbName}`;
+  await mongoose.connect(url, { useNewUrlParser: true })
   await setupPerson(person1);
   await setupPerson(person2);
   await setupPerson(person3);
@@ -39,4 +40,26 @@ before(async function () {
     new mongoose.Types.ObjectId(person3._id),
   ];
   multiRecipientShoutout.recipientIds = [person1._id, person3._id];
-});
+}
+
+module.exports = { setupData };
+
+// before(async function () {
+//   mongoose.connect("mongodb://localhost:27017/test");
+//   await setupPerson(person1);
+//   await setupPerson(person2);
+//   await setupPerson(person3);
+
+//   singleRecipientShoutout.authorId = person1._id;
+//   singleRecipientShoutout.author = new mongoose.Types.ObjectId(person1._id);
+//   singleRecipientShoutout.recipients = new mongoose.Types.ObjectId(person3._id);
+//   singleRecipientShoutout.recipientIds = [person3._id];
+
+//   multiRecipientShoutout.authorId = person2._id;
+//   multiRecipientShoutout.author = new mongoose.Types.ObjectId(person2._id);
+//   multiRecipientShoutout.recipients = [
+//     new mongoose.Types.ObjectId(person1._id),
+//     new mongoose.Types.ObjectId(person3._id),
+//   ];
+//   multiRecipientShoutout.recipientIds = [person1._id, person3._id];
+// });
