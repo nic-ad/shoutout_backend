@@ -13,24 +13,21 @@ The backend code that gathers Slack messages containing shoutout of Depsters
 1. Add @Peakon-test on Slack to a channel with the #test- prefix (Danny can invite you to #peakon-test-channel)
 1. Run `node bin/syncBamboo.js` to populate your database
 
-## Running the Slack bot
+## Running the App
 
-1. Start the app with `node app.js`
-1. Say "shoutout @Peakon-test" in the test channel
+1. Start the app with `npm run start`
+2. To watch for changes in your files, start the app with `npm run start:dev`
+3. Say "shoutout @Peakon-test" in the test channel
    - Case insensitive
    - Must have at least one recipient
-1. Say "log people" in the test channel
+4. Say "log people" in the test channel
    - Case sensitive
-1. Say "log messages" in the test channel
+5. Say "log messages" in the test channel
    - Case sensitive
+6. To see the swagger documentation, hit http://localhost:3000/api in your favorite browser.
 
 ### Local development workflow
 
 When starting your local app, a websocket connection is established between your app and the Slack bot. If multiple connections are established due to multiple developers are starting their local apps, [https://api.slack.com/apis/connections/socket-implement#connections](there is no guarantee) which local app will receive the events from the Slack bot.
 
 Because of this limitation, [Slack recommends](https://github.com/slackapi/bolt-python/issues/548#issuecomment-994110673) creating a separate copy of the app for each developer working on the project. In your `.env` file, you will find variations of the `LOG_PATTERN` and `TEST_PATTERN` keys that will make sure your test shoutout messages go to the intended local server.
-
-## Running the web API
-
-1. Start the server with `node web`. To start it in watch mode (listens for changes), run `npm install nodemon -g --force ` then `nodemon web`.
-2. To see the swagger documentation, hit http://localhost:3000/api in your favorite browser.
