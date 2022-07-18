@@ -1,0 +1,11 @@
+import { DataSource } from 'typeorm';
+import { Message } from './message.entity';
+import { MESSAGE_REPOSITORY, DATA_SOURCE } from '../../constants';
+
+export const messageProviders = [
+  {
+    provide: MESSAGE_REPOSITORY,
+    useFactory: (dataSource: DataSource) => dataSource.getRepository(Message),
+    inject: [DATA_SOURCE],
+  },
+];
