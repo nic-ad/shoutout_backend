@@ -36,7 +36,6 @@
     "@slack/bolt": "^3.11.1",
     "axios": "^0.27.2",
     "dotenv": "^16.0.1",
-    "mongodb": "^4.8.0",
     "mongoose": "^6.3.5",
     "pg": "^8.7.3",
     "reflect-metadata": "^0.1.13",
