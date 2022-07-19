@@ -27,6 +27,7 @@
     "@nestjs/common": "^9.0.1",
     "@nestjs/core": "^9.0.1",
     "@nestjs/platform-express": "^9.0.1",
+    "@nestjs/swagger": "^6.0.3",
     "@slack/bolt": "^3.11.1",
     "axios": "^0.27.2",
     "dotenv": "^16.0.1",
@@ -35,7 +36,6 @@
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
     "rxjs": "^7.5.5",
-    "swagger-ui-express": "^4.4.0",
     "underscore": "^1.13.4",
     "yamljs": "^0.3.0"
   },
