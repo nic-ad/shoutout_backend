@@ -25,7 +25,7 @@ export class Message {
   @Column()
   authorId: string;
 
-  @Column('simple-array')
+  @Column('simple-array', { array: true })
   recipients: string[];
 
   @OneToOne(() => Channel)
