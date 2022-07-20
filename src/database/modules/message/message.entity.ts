@@ -14,7 +14,7 @@ import { Elements } from '../elements/elements.entity';
 @Entity()
 export class Message {
   @PrimaryGeneratedColumn('uuid')
-  id: number;
+  id: string;
 
   @Column()
   text: string;
