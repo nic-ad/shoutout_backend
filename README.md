@@ -4,8 +4,7 @@ The backend code that gathers Slack messages containing shoutout of Depsters
 
 ## Setup
 
-1. Get secrets from Danny Kim on Slack
-   (If Danny is unavailable, Jesse Streb has the secrets)
+1. Get secrets from Nat Ring or Jesse Streb in Slack.
 1. Copy the contents of `.env.example` into a new file named `.env`, and fill it out with the secrets
 1. [Install Docker](https://docs.docker.com/get-docker/), make sure it is running, and run `docker-compose up` to get local postgres DB up and running
 1. Install dependencies with `npm install`
