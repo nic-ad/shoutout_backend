@@ -11,6 +11,7 @@ The backend code that gathers Slack messages containing shoutout of Depsters
 1. Install dependencies with `npm install`
 1. Add @Peakon-test on Slack to a channel with the #test- prefix (Danny can invite you to #peakon-test-channel)
 1. Database will populate automatically once you start the app.
+1. Run `node bin/syncBamboo.js` to populate your database (Do we need this still?)
 
 ## Running the App
 
@@ -33,6 +34,6 @@ Because of this limitation, [Slack recommends](https://github.com/slackapi/bolt-
 
 ## Database Migrations 
 1. Make a change to one of the entities 
-2. Run `npm run migration:generate src/database/migrations/NAME_OF_MIGRATION`. (You must include the file path otherwise the migration will get populated in the root directory.)
-3. You will see the file generate in the migration folder. Apply to database by runnning `npm run migration:up` and the changes will be reflected in local DB 
-4. To revert changes run `npm run migration:revert`
+1. Run `npm run migration:generate src/database/migrations/NAME_OF_MIGRATION`. (You must include the file path otherwise the migration will get populated in the root directory.)
+1. You will see the file generate in the migration folder. Apply to database by runnning `npm run migration:up` and the changes will be reflected in local DB 
+1. To revert changes run `npm run migration:revert`
