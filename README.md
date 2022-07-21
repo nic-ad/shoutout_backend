@@ -11,7 +11,7 @@ The backend code that gathers Slack messages containing shoutout of Depsters
 1. Install dependencies with `npm install`
 1. Add @Peakon-test on Slack to a channel with the #test- prefix (Danny can invite you to #peakon-test-channel)
 1. Database will populate automatically once you start the app.
-1. Run `node bin/syncBamboo.js` to populate your database (Do we need this still?)
+1. Run `node bin/syncBamboo.js` to populate your database TODO: [ISSUE 42](https://github.com/deptagency/shoutout_backend/issues/42)
 
 ## Running the App
 
