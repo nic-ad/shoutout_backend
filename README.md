@@ -7,22 +7,24 @@ The backend code that gathers Slack messages containing shoutout of Depsters
 1. Get secrets from Danny Kim on Slack
    (If Danny is unavailable, Jesse Streb has the secrets)
 1. Copy the contents of `.env.example` into a new file named `.env`, and fill it out with the secrets
-1. Install and run [MongoDB](https://www.mongodb.com/docs/manual/tutorial/install-mongodb-on-os-x/)
-1. [Install Docker](https://docs.docker.com/get-docker/), make sure it is running, and run `docker-compose up` to get local postgres DB up and running (first step towards replacing MongoDB)
+1. [Install Docker](https://docs.docker.com/get-docker/), make sure it is running, and run `docker-compose up` to get local postgres DB up and running
 1. Install dependencies with `npm install`
 1. Add @Peakon-test on Slack to a channel with the #test- prefix (Danny can invite you to #peakon-test-channel)
-1. Run `node bin/syncBamboo.js` to populate your database
+1. Database will populate automatically once you start the app.
+1. Run `node bin/syncBamboo.js` to populate your database TODO: [ISSUE 42](https://github.com/deptagency/shoutout_backend/issues/42)
 
-## Running the Slack bot
+## Running the App
 
-1. Start the app with `node app.js`
-1. Say "shoutout @Peakon-test" in the test channel
+1. Start the app with `npm run start`
+2. To watch for changes in your files, start the app with `npm run start:dev`
+3. Say "shoutout @Peakon-test" in the test channel
    - Case insensitive
    - Must have at least one recipient
-1. Say "log people" in the test channel
+4. Say "log people" in the test channel
    - Case sensitive
-1. Say "log messages" in the test channel
+5. Say "log messages" in the test channel
    - Case sensitive
+6. To see the swagger documentation, hit http://localhost:3000/api in your favorite browser.
 
 ### Local development workflow
 
@@ -30,7 +32,8 @@ When starting your local app, a websocket connection is established between your
 
 Because of this limitation, [Slack recommends](https://github.com/slackapi/bolt-python/issues/548#issuecomment-994110673) creating a separate copy of the app for each developer working on the project. In your `.env` file, you will find variations of the `LOG_PATTERN` and `TEST_PATTERN` keys that will make sure your test shoutout messages go to the intended local server.
 
-## Running the web API
-
-1. Start the server with `node web`. To start it in watch mode (listens for changes), run `npm install nodemon -g --force ` then `nodemon web`.
-2. To see the swagger documentation, hit http://localhost:3001/api-docs in your favorite browser.
+## Database Migrations 
+1. Make a change to one of the entities 
+1. Run `npm run migration:generate src/database/migrations/NAME_OF_MIGRATION`. (You must include the file path otherwise the migration will get populated in the root directory.)
+1. You will see the file generate in the migration folder. Apply to database by runnning `npm run migration:up` and the changes will be reflected in local DB 
+1. To revert changes run `npm run migration:revert`
