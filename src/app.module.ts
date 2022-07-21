@@ -8,6 +8,7 @@ import { PersonModule } from './database/modules/person/person.module';
 import { ChannelModule } from './database/modules/channel/channel.module';
 import { ElementsModule } from './database/modules/elements/elements.module';
 import { MessageModule } from './database/modules/message/message.module';
+import { SlackService } from './slack/slack.service';
 
 @Module({
   imports: [
@@ -20,6 +21,6 @@ import { MessageModule } from './database/modules/message/message.module';
     MessageModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, SlackService],
 })
 export class AppModule {}
