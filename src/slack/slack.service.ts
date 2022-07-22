@@ -1,7 +1,11 @@
 import { App, ExpressReceiver } from '@slack/bolt';
 import { AppService } from '../app.service';
 import { Injectable } from '@nestjs/common';
+import { Application } from 'express';
+import { convertBlocks } from '../../utils/convertBlocks';
 import { handleError } from '../../utils/handleError';
+import { MessageService } from '../database/modules/message/message.service';
+import { Message } from 'src/database/modules/message/message.entity';
 
 @Injectable()
 export class SlackService {
@@ -11,20 +15,23 @@ export class SlackService {
   constructor(private appService: AppService) {
     this.receiver = new ExpressReceiver({
       signingSecret: process.env.SLACK_SIGNING_SECRET,
+      endpoints: '/' // Defaults to /slack/events. We already scoped it in main.ts to /slack/events.
     });
 
     this.boltApp = new App({
       appToken: process.env.SLACK_APP_TOKEN,
       token: process.env.SLACK_BOT_TOKEN,
-      signingSecret: process.env.SLACK_SIGNING_SECRET,
-      socketMode: true,
+      // For local development, comment out 'receiver' line and include socketMode line
+      receiver: this.receiver,
+      // socketMode: true,
     });
 
     const shoutoutExpression = new RegExp(process.env.SHOUTOUT_PATTERN, 'i');
     const logExpression = new RegExp(`^${process.env.LOG_PATTERN}$`, 'i');
     this.boltApp.message(shoutoutExpression, this.handleMessage);
     this.boltApp.message(logExpression, this.handleLogMessage);
-    this.boltApp.start();
+    // For local development, uncomment this.boltApp.start()
+    // this.boltApp.start()
 
     // Explanation:
     // 'socketMode' is particularly useful for local development. we'll turn it off in staging
@@ -106,7 +113,8 @@ export class SlackService {
       // const channelName = await this.fetchChannelNameBySlackId(message.channel);
 
       // if (recipients.length) {
-      //   Message.create({
+      //   MessageService.
+      //   .create({
       //     author: author,
       //     channel: { name: channelName, slackId: message.channel },
       //     elements: elements,
@@ -119,7 +127,7 @@ export class SlackService {
     }
   }
 
-  public use(): any {
+  public use(): Application {
     return this.receiver.app;
   }
 }

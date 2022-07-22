@@ -6,6 +6,9 @@ import { SlackService } from './slack/slack.service';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
+  const slack = app.get(SlackService);
+  app.use('/slack/events', slack.use());
+
   const config = new DocumentBuilder()
     .setTitle('DEPT® Shoutouts')
     .setDescription('This API facilitates the ability to track who gives and receives shoutouts at DEPT®.')
