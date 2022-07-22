@@ -1,4 +1,5 @@
 import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Message } from '../message/message.entity';
 
 @Entity()
 export class Person {
@@ -28,4 +29,8 @@ export class Person {
 
   @Column()
   image512: string;
+
+  //API response fields
+  shoutoutsGiven: Message[];
+  shoutoutsReceived: Message[];
 }
