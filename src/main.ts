@@ -6,9 +6,6 @@ import { SlackService } from './slack/slack.service';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  const slack = app.get(SlackService);
-  app.use('/slack/events', slack.use());
-
   const config = new DocumentBuilder()
     .setTitle('DEPT® Shoutouts')
     .setDescription('This API facilitates the ability to track who gives and receives shoutouts at DEPT®.')
@@ -21,8 +18,8 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
 
-  const slackApp = app.get(SlackService);
-  app.use('/', slackApp.use());
+  const slack = app.get(SlackService);
+  app.use('/slack/events', slack.use());
 
   await app.listen(3000);
 }
