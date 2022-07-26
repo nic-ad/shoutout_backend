@@ -7,7 +7,9 @@ async function bootstrap() {
 
   const config = new DocumentBuilder()
     .setTitle('DEPT® Shoutouts')
-    .setDescription('This API facilitates the ability to track who gives and receives shoutouts at DEPT®.')
+    .setDescription(
+      'This API facilitates the ability to track who gives and receives shoutouts at DEPT®.',
+    )
     .setVersion('1.0')
     .addTag('shoutouts')
     .addTag('profile')
