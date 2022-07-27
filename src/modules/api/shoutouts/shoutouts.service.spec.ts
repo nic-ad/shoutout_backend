@@ -1,15 +1,18 @@
-import { ShoutoutsModule } from './shoutouts.module';
-import * as request from 'supertest';
-import { initTests } from '../test/utils';
+import { Test, TestingModule } from '@nestjs/testing';
+import { ShoutoutsService } from './shoutouts.service';
 
 describe('ShoutoutsService', () => {
-  let mocks: any;
+  let service: ShoutoutsService;
 
-  beforeAll(async () => (mocks = await initTests(ShoutoutsModule)));
+  beforeEach(async () => {
+    const module: TestingModule = await Test.createTestingModule({
+      providers: [ShoutoutsService],
+    }).compile();
 
-  describe('latest shoutouts', function () {});
+    service = module.get<ShoutoutsService>(ShoutoutsService);
+  });
 
-  afterAll(async () => {
-    await mocks.app.close();
+  it('should be defined', () => {
+    expect(service).toBeDefined();
   });
 });

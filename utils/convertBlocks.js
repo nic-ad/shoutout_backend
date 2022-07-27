@@ -1,4 +1,4 @@
-const { handleError } = require('../utils/handleError');
+const { handleError } = require("../utils/handleError");
 
 async function fetchRecipient(slackClient, slackId, cache = {}) {
   try {
@@ -19,12 +19,12 @@ async function convertBlocks({ blocks, client, uniqueUsers = {} }) {
     while (blocks.length) {
       const block = blocks.shift();
       switch (block.type) {
-        case 'rich_text': {
+        case "rich_text": {
           blocks.unshift(...block.elements);
           break;
         }
-        case 'rich_text_list':
-        case 'rich_text_section': {
+        case "rich_text_list":
+        case "rich_text_section": {
           const { elements } = await convertBlocks({
             blocks: block.elements,
             client,
@@ -40,11 +40,11 @@ async function convertBlocks({ blocks, client, uniqueUsers = {} }) {
           outputElements.push(outputElement);
           break;
         }
-        case 'user': {
+        case "user": {
           const recipient = await fetchRecipient(
             client,
             block.user_id,
-            uniqueUsers,
+            uniqueUsers
           );
           outputElements.push({
             text: recipient.profile.display_name || recipient.real_name,
