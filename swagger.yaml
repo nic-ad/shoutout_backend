@@ -1,163 +1,163 @@
-swagger: '2.0'
+swagger: "2.0"
 info:
-  description: 'This API facilitates the ability to track who gives and receives shoutouts at DEPT®.'
-  version: '1.0.0'
-  title: 'DEPT® Shoutouts'
-host: 'TBD'
-basePath: '/api'
+  description: "This API facilitates the ability to track who gives and receives shoutouts at DEPT®."
+  version: "1.0.0"
+  title: "DEPT® Shoutouts"
+host: "TBD"
+basePath: "/api"
 paths:
   /shoutouts/latest:
     get:
-      summary: 'Returns the 10 most recent shoutouts'
+      summary: "Returns the 10 most recent shoutouts"
       tags:
         - shoutouts
       produces:
-        - 'application/json'
+        - "application/json"
       responses:
-        '200':
-          description: 'Successful Operation'
+        "200":
+          description: "Successful Operation"
           schema:
-            type: 'array'
+            type: "array"
             items:
-              $ref: '#/definitions/Shoutout'
-        '401':
-          description: 'Unauthorized'
-        '500':
-          description: 'Unexpected Error'
+              $ref: "#/definitions/Shoutout"
+        "401":
+          description: "Unauthorized"
+        "500":
+          description: "Unexpected Error"
       security:
         - api_key: []
   /shoutouts/by-year:
     get:
-      summary: 'Returns all shoutouts for the given year (YYYY format) or past 12 months if no valid year given'
+      summary: "Returns all shoutouts for the given year (YYYY format) or past 12 months if no valid year given"
       tags:
         - shoutouts
       produces:
-        - 'application/json'
+        - "application/json"
       parameters:
-        - name: 'year'
-          in: 'query'
+        - name: "year"
+          in: "query"
           required: false
-          type: 'string'
+          type: "string"
       responses:
-        '200':
-          description: 'Successful Operation'
+        "200":
+          description: "Successful Operation"
           schema:
-            type: 'array'
+            type: "array"
             items:
-              $ref: '#/definitions/Shoutout'
-        '401':
-          description: 'Unauthorized'
-        '500':
-          description: 'Unexpected Error'
+              $ref: "#/definitions/Shoutout"
+        "401":
+          description: "Unauthorized"
+        "500":
+          description: "Unexpected Error"
       security:
         - api_key: []
   /profile/search:
     get:
-      summary: 'Searches for people given name or email and returns their user info'
+      summary: "Searches for people given name or email and returns their user info"
       tags:
         - profile
       produces:
-        - 'application/json'
+        - "application/json"
       parameters:
-        - name: 'name'
-          in: 'query'
-          description: 'partial or full name of a person'
+        - name: "name"
+          in: "query"
+          description: "partial or full name of a person"
           required: false
-          type: 'string'
-        - name: 'email'
-          in: 'query'
-          description: 'partial or full email address of a person'
+          type: "string"
+        - name: "email"
+          in: "query"
+          description: "partial or full email address of a person"
           required: false
-          type: 'string'
+          type: "string"
       responses:
-        '200':
-          description: 'Successful Operation'
+        "200":
+          description: "Successful Operation"
           schema:
-            $ref: '#/definitions/Person'
-        '400':
+            $ref: "#/definitions/Person"
+        "400":
           description: 'Bad Request (Valid "name" or "email" Param Required)'
-        '401':
-          description: 'Unauthorized'
-        '500':
-          description: 'Unexpected Error'
+        "401":
+          description: "Unauthorized"
+        "500":
+          description: "Unexpected Error"
       security:
         - api_key: []
   /profile/{_id}:
     get:
-      summary: 'Returns information about a person including shoutouts given and received'
+      summary: "Returns information about a person including shoutouts given and received"
       tags:
         - profile
       produces:
-        - 'application/json'
+        - "application/json"
       parameters:
-        - name: 'id'
-          in: 'path'
-          description: '_id of a person'
+        - name: "id"
+          in: "path"
+          description: "_id of a person"
           required: true
-          type: 'string'
+          type: "string"
       responses:
-        '200':
-          description: 'Successful Operation'
+        "200":
+          description: "Successful Operation"
           schema:
-            $ref: '#/definitions/Profile'
-        '401':
-          description: 'Unauthorized'
-        '500':
-          description: 'Unexpected Error'
+            $ref: "#/definitions/Profile"
+        "401":
+          description: "Unauthorized"
+        "500":
+          description: "Unexpected Error"
       security:
         - api_key: []
 securityDefinitions:
   api_key:
-    type: 'apiKey'
-    name: 'api_key'
-    in: 'header'
+    type: "apiKey"
+    name: "api_key"
+    in: "header"
 definitions:
   Person:
-    type: 'object'
+    type: "object"
     properties:
       _id:
-        type: 'string'
+        type: "string"
       employeeId:
-        type: 'number'
+        type: "number"
       email:
-        type: 'string'
+        type: "string"
       team:
-        type: 'string'
+        type: "string"
       country:
-        type: 'string'
+        type: "string"
       name:
-        type: 'string'
+        type: "string"
   Shoutout:
-    type: 'object'
+    type: "object"
     properties:
       _id:
-        type: 'string'
+        type: "string"
       author:
-        $ref: '#/definitions/Person'
+        $ref: "#/definitions/Person"
       recipients:
-        type: 'array'
+        type: "array"
         items:
-          $ref: '#/definitions/Person'
+          $ref: "#/definitions/Person"
       text:
-        type: 'string'
+        type: "string"
       createDate:
-        type: 'string'
+        type: "string"
       month:
-        type: 'number'
+        type: "number"
       year:
-        type: 'number'
+        type: "number"
       inPastTwelveMonths:
-        type: 'boolean'
+        type: "boolean"
   Profile:
-    type: 'object'
+    type: "object"
     properties:
       userInfo:
-        $ref: '#/definitions/Person'
+        $ref: "#/definitions/Person"
       shoutoutsGiven:
-        type: 'array'
+        type: "array"
         items:
-          $ref: '#/definitions/Shoutout'
+          $ref: "#/definitions/Shoutout"
       shoutoutsRecevied:
-        type: 'array'
+        type: "array"
         items:
-          $ref: '#/definitions/Shoutout'
+          $ref: "#/definitions/Shoutout"

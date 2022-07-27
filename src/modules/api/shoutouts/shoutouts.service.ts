@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { Message } from 'src/modules/database/message/message.entity';
-import { LATEST_SHOUTOUTS_LIMIT } from '../constants';
 import { HelperService } from '../helper.service';
 
 @Injectable()
@@ -11,7 +10,7 @@ export class ShoutoutsService {
     const shoutouts = await this.helperService
       .getShoutoutsWithAuthor()
       .orderBy('shoutout.createDate', 'DESC')
-      .limit(LATEST_SHOUTOUTS_LIMIT)
+      .limit(10)
       .getMany();
 
     await this.helperService.mapRecipients(shoutouts);

@@ -1,12 +1,12 @@
-const express = require('express');
-const mongoose = require('mongoose');
-const { Person, Message } = require('../models');
-const { mapShoutoutData, handleApiError } = require('./utils');
-const { manyProfilesLimit } = require('../utils/constants');
+const express = require("express");
+const mongoose = require("mongoose");
+const { Person, Message } = require("../models");
+const { mapShoutoutData, handleApiError } = require("./utils");
+const { manyProfilesLimit } = require("../utils/constants");
 
 const router = express.Router();
 
-router.get('/search', async function (request, response) {
+router.get("/search", async function (request, response) {
   try {
     const emailSearch = request.query.email;
     const nameSearch = request.query.name;
@@ -21,7 +21,7 @@ router.get('/search', async function (request, response) {
 
     if (nameSearch) {
       queryConditions.push({
-        name: { $regex: `${nameSearch.toLowerCase()}`, $options: 'i' },
+        name: { $regex: `${nameSearch.toLowerCase()}`, $options: "i" },
       });
     }
 
@@ -33,7 +33,7 @@ router.get('/search', async function (request, response) {
     }
 
     people = await Person.find({ $or: queryConditions }).limit(
-      manyProfilesLimit,
+      manyProfilesLimit
     );
     response.send(people);
   } catch (error) {
@@ -41,7 +41,7 @@ router.get('/search', async function (request, response) {
   }
 });
 
-router.get('/:id', async function (request, response) {
+router.get("/:id", async function (request, response) {
   let id;
 
   try {
@@ -67,9 +67,9 @@ router.get('/:id', async function (request, response) {
         $addFields: {
           recipients: {
             $filter: {
-              input: '$recipients',
-              as: 'recipient',
-              cond: { $eq: ['$$recipient._id', id] },
+              input: "$recipients",
+              as: "recipient",
+              cond: { $eq: ["$$recipient._id", id] },
             },
           },
         },
@@ -83,7 +83,7 @@ router.get('/:id', async function (request, response) {
     const person = await Person.findById(id);
 
     if (!person) {
-      handleApiError({ message: 'Profile not found' }, response, 404);
+      handleApiError({ message: "Profile not found" }, response, 404);
       return;
     }
 
