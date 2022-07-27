@@ -1,11 +1,11 @@
-const express = require("express");
-const { Message } = require("../models");
-const { mapShoutoutData, handleApiError } = require("./utils");
-const { latestShoutoutsLimit } = require("../utils/constants");
+const express = require('express');
+const { Message } = require('../models');
+const { mapShoutoutData, handleApiError } = require('./utils');
+const { latestShoutoutsLimit } = require('../utils/constants');
 
 const router = express.Router();
 
-router.get("/latest", async function (request, response) {
+router.get('/latest', async function (request, response) {
   try {
     const shoutouts = await Message.aggregate([
       ...mapShoutoutData,
@@ -23,7 +23,7 @@ router.get("/latest", async function (request, response) {
   }
 });
 
-router.get("/by-year", async function (request, response) {
+router.get('/by-year', async function (request, response) {
   try {
     const requestedYear = Number(request.query.year);
     let shoutouts;
@@ -48,7 +48,7 @@ router.get("/by-year", async function (request, response) {
         ...mapShoutoutData,
         {
           $addFields: {
-            inPastTwelveMonths: { $gte: ["$createDate", twelveMonthsAgo] },
+            inPastTwelveMonths: { $gte: ['$createDate', twelveMonthsAgo] },
           },
         },
         {
