@@ -1,29 +1,29 @@
-const request = require("supertest");
-const app = require("../../web");
-const { Message, Person } = require("../../models");
-const { manyProfilesLimit } = require("../../utils/constants");
+const request = require('supertest');
+const app = require('../../web');
+const { Message, Person } = require('../../models');
+const { manyProfilesLimit } = require('../../utils/constants');
 const {
   singleRecipientShoutout,
   multiRecipientShoutout,
   getShoutoutTestTimestamp,
   person2,
-} = require("./mocks");
-const setupData = require("../setup");
+} = require('./mocks');
+const setupData = require('../setup');
 
 beforeAll(() => {
   return setupData('test-profile');
 });
 
-describe("profile search by name/email", function () {
-  it("should find only profiles whose name contains the search query", async function () {
-    const searchQuery = "TesT";
+describe('profile search by name/email', function () {
+  it('should find only profiles whose name contains the search query', async function () {
+    const searchQuery = 'TesT';
     const response = await request(app).get(
-      `/profile/search?name=${searchQuery}`
+      `/profile/search?name=${searchQuery}`,
     );
     const results = response.body;
     const resultWithoutQueryInName = results.find(
       (profile) =>
-        !profile.name.toLowerCase().includes(searchQuery.toLowerCase())
+        !profile.name.toLowerCase().includes(searchQuery.toLowerCase()),
     );
 
     expect(response.status).toBe(200);
@@ -31,14 +31,14 @@ describe("profile search by name/email", function () {
     expect(resultWithoutQueryInName).toBeFalsy();
   });
 
-  it("should find only profiles whose email contains the search query", async function () {
-    const searchQuery = "booMi";
+  it('should find only profiles whose email contains the search query', async function () {
+    const searchQuery = 'booMi';
     const response = await request(app).get(
-      `/profile/search?email=${searchQuery}`
+      `/profile/search?email=${searchQuery}`,
     );
     const results = response.body;
     const resultWithoutQueryInEmail = results.find(
-      (profile) => !profile.email.includes(searchQuery.toLowerCase())
+      (profile) => !profile.email.includes(searchQuery.toLowerCase()),
     );
 
     expect(response.status).toBe(200);
@@ -46,10 +46,10 @@ describe("profile search by name/email", function () {
     expect(resultWithoutQueryInEmail).toBeFalsy();
   });
 
-  it("should return correct match for the given full name search", async function () {
+  it('should return correct match for the given full name search', async function () {
     const searchQuery = person2.name;
     const response = await request(app).get(
-      `/profile/search?name=${searchQuery}`
+      `/profile/search?name=${searchQuery}`,
     );
     const results = response.body;
 
@@ -58,10 +58,10 @@ describe("profile search by name/email", function () {
     expect(results[0].name).toBe(searchQuery);
   });
 
-  it("should return correct match for the given full email search", async function () {
+  it('should return correct match for the given full email search', async function () {
     const searchQuery = person2.email;
     const response = await request(app).get(
-      `/profile/search?email=${searchQuery}`
+      `/profile/search?email=${searchQuery}`,
     );
     const results = response.body;
 
@@ -70,9 +70,9 @@ describe("profile search by name/email", function () {
     expect(results[0].email).toBe(searchQuery);
   });
 
-  it("should return no results given garbage search query", async function () {
+  it('should return no results given garbage search query', async function () {
     const response = await request(app).get(
-      "/profile/search?name=alakjdsnlasnljkanlksnadlnaksnda"
+      '/profile/search?name=alakjdsnlasnljkanlksnadlnaksnda',
     );
     const results = response.body;
 
@@ -80,18 +80,18 @@ describe("profile search by name/email", function () {
     expect(results.length).toBe(0);
   });
 
-  it("should have same number of results from name + email search as when each searched separately", async function () {
-    const searchQuery = "test";
+  it('should have same number of results from name + email search as when each searched separately', async function () {
+    const searchQuery = 'test';
 
     const togetherResults = await request(app).get(
-      `/profile/search?name=${searchQuery}&email=${searchQuery}`
+      `/profile/search?name=${searchQuery}&email=${searchQuery}`,
     );
 
     const nameResults = await request(app).get(
-      `/profile/search?name=${searchQuery}`
+      `/profile/search?name=${searchQuery}`,
     );
     const emailResults = await request(app).get(
-      `/profile/search?email=${searchQuery}`
+      `/profile/search?email=${searchQuery}`,
     );
 
     const namePlusEmailResults = [...nameResults.body, ...emailResults.body];
@@ -102,17 +102,17 @@ describe("profile search by name/email", function () {
     expect(togetherResults.body.length).toBe(distinctResults.length);
   });
 
-  it("should return 500 given invalid search", async function () {
-    const response = await request(app).get("/profile/search?name=?");
+  it('should return 500 given invalid search', async function () {
+    const response = await request(app).get('/profile/search?name=?');
     expect(response.status).toBe(500);
   });
 });
 
-describe("profile search by common name (to return many results)", function () {
-  const name = "Mock Shoutout Repeated Person";
+describe('profile search by common name (to return many results)', function () {
+  const name = 'Mock Shoutout Repeated Person';
 
   const mockPerson = {
-    country: "US",
+    country: 'US',
     name,
     team: null,
   };
@@ -138,7 +138,7 @@ describe("profile search by common name (to return many results)", function () {
 
         await Person.insertMany(mockManyProfiles);
       }
-    }
+    };
   });
 
   it(`should limit large response to ${manyProfilesLimit} results`, async function () {
@@ -150,8 +150,8 @@ describe("profile search by common name (to return many results)", function () {
   });
 });
 
-describe("profile search by id", function () {
-  it("should return correct result given valid id", async function () {
+describe('profile search by id', function () {
+  it('should return correct result given valid id', async function () {
     const response = await request(app).get(`/profile/${person2._id}`);
     const result = response.body;
 
@@ -160,14 +160,14 @@ describe("profile search by id", function () {
   });
 
   it("should 404 given id that is in valid format but that doesn't belong to anyone", async function () {
-    const searchId = "999999999999999999999999";
+    const searchId = '999999999999999999999999';
     const response = await request(app).get(`/profile/${searchId}`);
 
     expect(response.status).toBe(404);
   });
 
-  it("should return 400 given id in invalid format", async function () {
-    const searchId = "9";
+  it('should return 400 given id in invalid format', async function () {
+    const searchId = '9';
     const response = await request(app).get(`/profile/${searchId}`);
 
     expect(response.status).toBe(400);
@@ -180,7 +180,7 @@ async function expectShoutoutReceived(shoutoutTimestamp, recipientId) {
 
   //should find a single shoutout because only one has the timestamp of this test run
   const testShoutoutsReceived = result.shoutoutsReceived.filter((shoutout) =>
-    shoutout.text.includes(shoutoutTimestamp)
+    shoutout.text.includes(shoutoutTimestamp),
   );
 
   expect(response.status).toBe(200);
@@ -188,7 +188,7 @@ async function expectShoutoutReceived(shoutoutTimestamp, recipientId) {
   expect(testShoutoutsReceived[0].recipients[0]._id).toBe(recipientId);
 }
 
-describe("single-recipient shoutout on user profiles", function () {
+describe('single-recipient shoutout on user profiles', function () {
   const shoutoutTimestamp = getShoutoutTestTimestamp();
 
   beforeAll(() => {
@@ -197,30 +197,32 @@ describe("single-recipient shoutout on user profiles", function () {
         ...singleRecipientShoutout,
         text: `single shoutout ${shoutoutTimestamp}`,
       });
-    }
+    };
   });
 
-  it("author profile should have shoutout given with self as author", async function () {
+  it('author profile should have shoutout given with self as author', async function () {
     const response = await request(app).get(
-      `/profile/${singleRecipientShoutout.authorId}`
+      `/profile/${singleRecipientShoutout.authorId}`,
     );
     const result = response.body;
     const testShoutoutsGiven = result.shoutoutsGiven.filter((shoutout) =>
-      shoutout.text.includes(shoutoutTimestamp)
+      shoutout.text.includes(shoutoutTimestamp),
     );
 
     expect(response.status).toBe(200);
     expect(testShoutoutsGiven.length).toBe(1);
-    expect(testShoutoutsGiven[0].author._id).toBe(singleRecipientShoutout.authorId);
+    expect(testShoutoutsGiven[0].author._id).toBe(
+      singleRecipientShoutout.authorId,
+    );
   });
 
-  it("recipient profile should have shoutout received with self as recipient", async function () {
+  it('recipient profile should have shoutout received with self as recipient', async function () {
     const recipientId = singleRecipientShoutout.recipientIds[0];
     await expectShoutoutReceived(shoutoutTimestamp, recipientId);
   });
 });
 
-describe("multi-recipient shoutout on user profiles", function () {
+describe('multi-recipient shoutout on user profiles', function () {
   const shoutoutTimestamp = getShoutoutTestTimestamp();
 
   beforeAll(() => {
@@ -229,10 +231,10 @@ describe("multi-recipient shoutout on user profiles", function () {
         ...multiRecipientShoutout,
         text: `multi shoutout ${shoutoutTimestamp}`,
       });
-    }
+    };
   });
 
-  it("recipient profiles should each have shoutout received with self as recipient", async function () {
+  it('recipient profiles should each have shoutout received with self as recipient', async function () {
     const recipientId1 = multiRecipientShoutout.recipientIds[0];
     const recipientId2 = multiRecipientShoutout.recipientIds[1];
 

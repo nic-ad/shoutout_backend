@@ -9,18 +9,24 @@ export class HelperService {
   constructor(
     @Inject(PERSON_REPOSITORY) private personRepository: Repository<Person>,
     @Inject(MESSAGE_REPOSITORY) private messageRepository: Repository<Message>,
-){}
+  ) {}
 
   /**
    * Maps fields from Person entity for each shoutout's author based on id
-   * @param personId specific author to join shoutouts on (if none, each shoutout just joins to its author) 
+   * @param personId specific author to join shoutouts on (if none, each shoutout just joins to its author)
    */
   getShoutoutsWithAuthor(personId?: string): SelectQueryBuilder<Message> {
-    const id = personId ? '\'' + personId + '\'' : 'person.id';
+    const id = personId ? "'" + personId + "'" : 'person.id';
 
     return this.messageRepository
       .createQueryBuilder('shoutout')
-      .innerJoinAndMapOne('shoutout.author', Person, 'person', `shoutout."authorId"::uuid = ${id}`);
+      .innerJoinAndMapOne(
+        'shoutout.author',
+        Person,
+        'person',
+        `shoutout."authorId"::uuid = person.id`,
+      )
+      .where('person.id::uuid = :id', { id });
   }
 
   /**
@@ -28,10 +34,16 @@ export class HelperService {
    * @param shoutouts list of shoutouts, each with array of recipient ids
    */
   async mapRecipients(shoutouts) {
-    for(const message of shoutouts){
-      message.recipients = await Promise.all(message.recipients.map(async (recipientId): Promise<Person> => {
-        return this.personRepository.createQueryBuilder('person').select().where('person.id = :recipientId', { recipientId }).getOne();
-      }));
+    for (const message of shoutouts) {
+      message.recipients = await Promise.all(
+        message.recipients.map(async (recipientId): Promise<Person> => {
+          return this.personRepository
+            .createQueryBuilder('person')
+            .select()
+            .where('person.id = :recipientId', { recipientId })
+            .getOne();
+        }),
+      );
     }
   }
 }
