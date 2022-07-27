@@ -1,7 +1,10 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { MESSAGE_REPOSITORY, PERSON_REPOSITORY } from 'src/database/constants';
-import { Message } from 'src/database/modules/message/message.entity';
-import { Person } from 'src/database/modules/person/person.entity';
+import {
+  MESSAGE_REPOSITORY,
+  PERSON_REPOSITORY,
+} from 'src/modules/database/constants';
+import { Message } from 'src/modules/database/message/message.entity';
+import { Person } from 'src/modules/database/person/person.entity';
 import { Repository, SelectQueryBuilder } from 'typeorm';
 
 @Injectable()
@@ -24,9 +27,8 @@ export class HelperService {
         'shoutout.author',
         Person,
         'person',
-        `shoutout."authorId"::uuid = person.id`,
-      )
-      .where('person.id::uuid = :id', { id });
+        `shoutout."authorId"::uuid = ${id}`,
+      );
   }
 
   /**

@@ -1,6 +1,6 @@
 import { DataSource } from 'typeorm';
 import { Channel } from './channel.entity';
-import { CHANNEL_REPOSITORY, DATA_SOURCE } from '../../constants';
+import { CHANNEL_REPOSITORY, DATA_SOURCE } from '../constants';
 
 export const channelProviders = [
   {

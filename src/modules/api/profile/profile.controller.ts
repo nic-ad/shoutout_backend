@@ -8,8 +8,11 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { Person } from 'src/database/modules/person/person.entity';
-import { PROFILE_ID_NOT_FOUND, PROFILE_SEARCH_BAD_REQUEST } from '../constants';
+import { Person } from 'src/modules/database/person/person.entity';
+import {
+  PROFILE_ID_NOT_FOUND,
+  PROFILE_SEARCH_BAD_REQUEST,
+} from 'src/modules/api/constants';
 import { ProfileService } from './profile.service';
 
 @ApiTags('profile')

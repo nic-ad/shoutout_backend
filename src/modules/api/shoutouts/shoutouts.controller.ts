@@ -7,7 +7,7 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { Message } from 'src/database/modules/message/message.entity';
+import { Message } from 'src/modules/database/message/message.entity';
 import { ShoutoutsService } from './shoutouts.service';
 
 @ApiTags('shoutouts')

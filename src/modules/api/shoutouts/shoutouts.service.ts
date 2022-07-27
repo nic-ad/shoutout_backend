@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Message } from 'src/database/modules/message/message.entity';
+import { Message } from 'src/modules/database/message/message.entity';
 import { LATEST_SHOUTOUTS_LIMIT } from '../constants';
 import { HelperService } from '../helper.service';
 

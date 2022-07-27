@@ -5,8 +5,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { MESSAGE_REPOSITORY, PERSON_REPOSITORY } from 'src/database/constants';
-import { Message } from 'src/database/modules/message/message.entity';
-import { Person } from 'src/database/modules/person/person.entity';
+import { Message } from 'src/modules/database/message/message.entity';
 import { Raw, Repository } from 'typeorm';
 import {
   MANY_PROFILES_LIMIT,
