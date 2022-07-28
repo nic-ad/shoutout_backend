@@ -1,6 +1,6 @@
 import { DataSource } from 'typeorm';
 import { Elements } from './elements.entity';
-import { ELEMENTS_REPOSITORY, DATA_SOURCE } from '../../constants';
+import { ELEMENTS_REPOSITORY, DATA_SOURCE } from '../constants';
 
 export const elementsProviders = [
   {

@@ -1,33 +1,30 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, Column, PrimaryColumn } from 'typeorm';
 import { Message } from '../message/message.entity';
 
 @Entity()
 export class Person {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
-
-  @Column({ unique: true })
+  @PrimaryColumn()
   employeeId: string;
 
-  @Column({ unique: true })
+  @PrimaryColumn()
   email: string;
 
-  @Column()
+  @Column({ nullable: true })
   team: string;
 
-  @Column()
+  @Column({ nullable: true })
   country: string;
 
-  @Column()
+  @Column({ nullable: true })
   name: string;
 
-  @Column()
+  @Column({ nullable: true })
   image72: string;
 
-  @Column()
+  @Column({ nullable: true })
   image192: string;
 
-  @Column()
+  @Column({ nullable: true })
   image512: string;
 
   //API response fields

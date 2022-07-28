@@ -1,2 +1,2 @@
 README.md
-src/database/migrations/**
+src/modules/database/migrations/**

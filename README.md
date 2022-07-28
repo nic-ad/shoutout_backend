@@ -10,8 +10,10 @@ The backend code that gathers Slack messages containing shoutout of Depsters
 1. [Install Docker](https://docs.docker.com/get-docker/), make sure it is running, and run `docker-compose up` to get local postgres DB up and running
 1. Install dependencies with `npm install`
 1. Add @Peakon-test on Slack to a channel with the #test- prefix (Danny can invite you to #peakon-test-channel)
-1. Database will populate automatically once you start the app.
-1. Run `node bin/syncBamboo.js` to populate your database TODO: [ISSUE 42](https://github.com/deptagency/shoutout_backend/issues/42)
+1. First time setup - change .env variable `SYNCHRONIZE` from false to true the first time you start the application for the inital DB schema. After inital setup use migrations to update and set back to false.
+1. run `npm start` start the app.
+1. To Seed/Update users in your local database by running `npm run seed:users`
+1. (For legacy app) Run `node bin/syncBamboo.js` to populate users
 
 ## Running the App
 
@@ -34,6 +36,6 @@ Because of this limitation, [Slack recommends](https://github.com/slackapi/bolt-
 
 ## Database Migrations 
 1. Make a change to one of the entities 
-1. Run `npm run migration:generate src/database/migrations/NAME_OF_MIGRATION`. (You must include the file path otherwise the migration will get populated in the root directory.)
+1. Run `npm run migration:generate src/modules/database/migrations/NAME_OF_MIGRATION`. (You must include the file path otherwise the migration will get populated in the root directory.)
 1. You will see the file generate in the migration folder. Apply to database by runnning `npm run migration:up` and the changes will be reflected in local DB 
 1. To revert changes run `npm run migration:revert`

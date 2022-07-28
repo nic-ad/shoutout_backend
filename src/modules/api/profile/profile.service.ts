@@ -1,7 +1,15 @@
-import { BadRequestException, Inject, Injectable, NotFoundException } from '@nestjs/common';
-import { MESSAGE_REPOSITORY, PERSON_REPOSITORY } from 'src/database/constants';
-import { Message } from 'src/database/modules/message/message.entity';
-import { Person } from 'src/database/modules/person/person.entity';
+import {
+  BadRequestException,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
+import {
+  MESSAGE_REPOSITORY,
+  PERSON_REPOSITORY,
+} from 'src/modules/database/constants';
+import { Message } from 'src/modules/database/message/message.entity';
+import { Person } from 'src/modules/database/person/person.entity';
 import { Repository } from 'typeorm';
 import { PROFILE_ID_NOT_FOUND, PROFILE_SEARCH_BAD_REQUEST } from '../constants';
 import { HelperService } from '../helper.service';
@@ -12,18 +20,20 @@ export class ProfileService {
     @Inject(PERSON_REPOSITORY) private personRepository: Repository<Person>,
     @Inject(MESSAGE_REPOSITORY) private messageRepository: Repository<Message>,
     private helperService: HelperService,
-  ){}
+  ) {}
 
   async profilesBySearch(searchQueries: any): Promise<Person[]> {
     const nameSearch = searchQueries.name;
     const emailSearch = searchQueries.email;
-    let profiles:Person[] = [];
+    let profiles: Person[] = [];
 
     const getProfiles = async (searchField: string, searchQuery: string) => {
       return await this.personRepository
         .createQueryBuilder('person')
         .select()
-        .where(`LOWER(person.${searchField}) LIKE :${searchField}`, { [searchField]: `%${searchQuery.toLowerCase()}%` })
+        .where(`LOWER(person.${searchField}) LIKE :${searchField}`, {
+          [searchField]: `%${searchQuery.toLowerCase()}%`,
+        })
         .getMany();
     };
 
@@ -38,7 +48,7 @@ export class ProfileService {
     return profiles;
   }
 
-  async profileById(id: string):Promise<Person> {
+  async profileById(id: string): Promise<Person> {
     const profile = await this.personRepository
       .createQueryBuilder('person')
       .select()
@@ -49,7 +59,9 @@ export class ProfileService {
       throw new NotFoundException(PROFILE_ID_NOT_FOUND);
     }
 
-    const shoutoutsGiven = await this.helperService.getShoutoutsWithAuthor(id).getMany();
+    const shoutoutsGiven = await this.helperService
+      .getShoutoutsWithAuthor(id)
+      .getMany();
     await this.helperService.mapRecipients(shoutoutsGiven);
 
     const shoutoutsReceived = await this.messageRepository
@@ -63,7 +75,7 @@ export class ProfileService {
     return {
       ...profile,
       shoutoutsGiven,
-      shoutoutsReceived
+      shoutoutsReceived,
     };
   }
 }
