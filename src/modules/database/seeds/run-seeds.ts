@@ -15,7 +15,7 @@ const BAMBOO_API_KEY = process.env.BAMBOO_API_KEY;
 // Bamboo is returning a location in the format of two letter country code - State / City.
 // For example US - Maine. We are jus going to grab the two or three letter country code for now.
 function getCountryFromString(location) {
-  if (!location || location.indexOf(' - ') === -1) {
+  if (!location || !location.includes(' - ')) {
     return 'NA';
   }
 
@@ -26,7 +26,7 @@ const getUser = async () => {
   dataSourceInstance
     .initialize()
     .then(() => {
-      console.log('initialized');
+      console.log('run-seeds: dataSource initialized');
     })
     .catch((err) => {
       console.error('errror', err);
@@ -71,7 +71,7 @@ const getUser = async () => {
     await UserRepository.save(update);
 
     console.log('Finished updating users.');
-    process.exit(1);
+    process.exit();
   } catch (error) {
     console.error(error);
     process.exit(1);
