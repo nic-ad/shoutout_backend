@@ -3,38 +3,38 @@ const mapShoutoutData = [
   {
     //$lookup each author in message by its _id to get actual corresponding person object from 'people' collection
     $lookup: {
-      from: 'people',
-      localField: 'author',
-      foreignField: '_id',
-      as: 'author',
+      from: "people",
+      localField: "author",
+      foreignField: "_id",
+      as: "author",
     },
   },
   {
     //convert single-element array generated from 'as' in $lookup to object
     $unwind: {
-      path: '$author',
+      path: "$author",
     },
   },
   {
     //$lookup each recipient in message by its _id to get actual corresponding person object form 'people' collection
     $lookup: {
-      from: 'people',
-      localField: 'recipients',
-      foreignField: '_id',
-      as: 'recipients',
+      from: "people",
+      localField: "recipients",
+      foreignField: "_id",
+      as: "recipients",
     },
   },
   {
     $addFields: {
-      month: { $month: '$createDate' },
-      year: { $year: '$createDate' },
+      month: { $month: "$createDate" },
+      year: { $year: "$createDate" },
     },
   },
 ];
 
 function handleApiError(error, response, statusCode) {
   console.error(error);
-  const body = { error: error.message || 'Unexpected Error' };
+  const body = { error: error.message || "Unexpected Error" };
   response.status(statusCode || 500).send(body);
 }
 

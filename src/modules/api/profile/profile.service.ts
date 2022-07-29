@@ -4,15 +4,14 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { MESSAGE_REPOSITORY, PERSON_REPOSITORY } from 'src/modules/database/constants';
+import {
+  MESSAGE_REPOSITORY,
+  PERSON_REPOSITORY,
+} from 'src/modules/database/constants';
 import { Message } from 'src/modules/database/message/message.entity';
 import { Person } from 'src/modules/database/person/person.entity';
-import { Raw, Repository } from 'typeorm';
-import {
-  MANY_PROFILES_LIMIT,
-  PROFILE_ID_NOT_FOUND,
-  PROFILE_SEARCH_BAD_REQUEST,
-} from '../constants';
+import { Repository } from 'typeorm';
+import { PROFILE_ID_NOT_FOUND, PROFILE_SEARCH_BAD_REQUEST } from '../constants';
 import { HelperService } from '../helper.service';
 
 @Injectable()
@@ -26,32 +25,27 @@ export class ProfileService {
   async profilesBySearch(searchQueries: any): Promise<Person[]> {
     const nameSearch = searchQueries.name;
     const emailSearch = searchQueries.email;
-    let queryConditions = [];
+    let profiles: Person[] = [];
+
+    const getProfiles = async (searchField: string, searchQuery: string) => {
+      return await this.personRepository
+        .createQueryBuilder('person')
+        .select()
+        .where(`LOWER(person.${searchField}) LIKE :${searchField}`, {
+          [searchField]: `%${searchQuery.toLowerCase()}%`,
+        })
+        .getMany();
+    };
 
     if (nameSearch) {
-      queryConditions.push({
-        name: Raw(
-          (name) => `LOWER(${name}) LIKE '%${nameSearch.toLowerCase()}%'`,
-        ),
-      });
-    }
-
-    if (emailSearch) {
-      queryConditions.push({
-        email: Raw(
-          (email) => `LOWER(${email}) LIKE '%${emailSearch.toLowerCase()}%'`,
-        ),
-      });
-    }
-
-    if (!queryConditions.length) {
+      profiles = await getProfiles('name', nameSearch);
+    } else if (emailSearch) {
+      profiles = await getProfiles('email', emailSearch);
+    } else {
       throw new BadRequestException(PROFILE_SEARCH_BAD_REQUEST);
     }
 
-    return await this.personRepository.find({
-      where: queryConditions,
-      take: MANY_PROFILES_LIMIT,
-    });
+    return profiles;
   }
 
   async profileById(id: string): Promise<Person> {

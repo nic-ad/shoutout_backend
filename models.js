@@ -1,4 +1,4 @@
-const { Schema, model } = require('mongoose');
+const { Schema, model } = require("mongoose");
 
 const personSchema = new Schema({
   employeeId: {
@@ -17,7 +17,7 @@ const personSchema = new Schema({
   image512: String,
 });
 
-const Person = model('Person', personSchema);
+const Person = model("Person", personSchema);
 
 const elementSchema = new Schema({
   subtype: String,
@@ -30,12 +30,12 @@ elementSchema.add({ elements: [elementSchema] });
 const messageSchema = new Schema({
   author: {
     type: Schema.Types.ObjectId,
-    ref: 'Person',
+    ref: "Person",
   },
   recipients: [
     {
       type: Schema.Types.ObjectId,
-      ref: 'Person',
+      ref: "Person",
     },
   ],
   text: String,
@@ -47,6 +47,6 @@ const messageSchema = new Schema({
   elements: [elementSchema],
 });
 
-const Message = model('Message', messageSchema);
+const Message = model("Message", messageSchema);
 
 module.exports = { Person, Message };

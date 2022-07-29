@@ -1,9 +1,9 @@
-const mongoose = require('mongoose');
-const { App } = require('@slack/bolt');
-const { Person, Message } = require('./models');
-const { convertBlocks } = require('./utils/convertBlocks');
-const { handleError } = require('./utils/handleError');
-require('dotenv').config();
+const mongoose = require("mongoose");
+const { App } = require("@slack/bolt");
+const { Person, Message } = require("./models");
+const { convertBlocks } = require("./utils/convertBlocks");
+const { handleError } = require("./utils/handleError");
+require("dotenv").config();
 
 const app = new App({
   appToken: process.env.SLACK_APP_TOKEN,
@@ -81,16 +81,16 @@ async function handleMessage({ client, message }) {
 }
 
 if (process.env.SHOUTOUT_PATTERN) {
-  const shoutoutExpression = new RegExp(process.env.SHOUTOUT_PATTERN, 'i');
+  const shoutoutExpression = new RegExp(process.env.SHOUTOUT_PATTERN, "i");
   app.message(shoutoutExpression, handleMessage);
 }
 
 if (process.env.LOG_PATTERN) {
-  const logExpression = new RegExp(`^${process.env.LOG_PATTERN}$`, 'i');
+  const logExpression = new RegExp(`^${process.env.LOG_PATTERN}$`, "i");
   app.message(logExpression, async ({ say }) => {
     try {
       const messages = await Message.find().exec();
-      say('```' + JSON.stringify(messages) + '```');
+      say("```" + JSON.stringify(messages) + "```");
     } catch (error) {
       handleError(error, app.client);
     }

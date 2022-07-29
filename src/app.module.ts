@@ -12,6 +12,8 @@ import { ShoutoutsModule } from './modules/api/shoutouts/shoutouts.module';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
+    ProfileModule,
+    ShoutoutsModule,
     PersonModule,
     ChannelModule,
     ElementsModule,
