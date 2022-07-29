@@ -19,7 +19,7 @@ export class HelperService {
    * @param personId specific author to join shoutouts on (if none, each shoutout just joins to its author)
    */
   getShoutoutsWithAuthor(personId?: string): SelectQueryBuilder<Message> {
-    const id = personId ? "'" + personId + "'" : 'person.id';
+    const id = personId ? "'" + personId + "'" : 'person.employeeId';
 
     return this.messageRepository
       .createQueryBuilder('shoutout')
@@ -27,7 +27,7 @@ export class HelperService {
         'shoutout.author',
         Person,
         'person',
-        `shoutout."authorId"::uuid = ${id}`,
+        `shoutout."authorId" = ${id}`,
       );
   }
 
@@ -41,8 +41,7 @@ export class HelperService {
         message.recipients.map(async (recipientId): Promise<Person> => {
           return this.personRepository
             .createQueryBuilder('person')
-            .select()
-            .where('person.id = :recipientId', { recipientId })
+            .where('person.employeeId = :recipientId', { recipientId })
             .getOne();
         }),
       );

@@ -1,15 +1,15 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { personProviders } from 'src/database/modules/person/person.providers';
-import { DatabaseModule } from 'src/database/database.module';
+import { personProviders } from 'src/modules/database/person/person.providers';
+import { DatabaseModule } from 'src/modules/database/database.module';
 import { MockService } from '../test/mock.service';
 import { INestApplication } from '@nestjs/common';
-import { ApiMocks, MockProfiles } from './types';
+import { ApiMocks } from './types';
 import { MANY_PROFILES_LIMIT } from '../constants';
-import { Person } from 'src/database/modules/person/person.entity';
-import { Message } from 'src/database/modules/message/message.entity';
-import { messageProviders } from 'src/database/modules/message/message.providers';
+import { Person } from 'src/modules/database/person/person.entity';
+import { Message } from 'src/modules/database/message/message.entity';
+import { messageProviders } from 'src/modules/database/message/message.providers';
 import { v4 as uuidv4 } from 'uuid';
-import { channelProviders } from 'src/database/modules/channel/channel.providers';
+import { channelProviders } from 'src/modules/database/channel/channel.providers';
 
 let mockService: MockService;
 
@@ -38,10 +38,10 @@ export async function mockCommonProfileNeedsInsert(): Promise<boolean> {
   return count < MANY_PROFILES_LIMIT;
 }
 
-export function insertCommonProfile(
-  commonPersonProfiles: MockProfiles,
+export function insertCommonProfiles(
+  commonPersonProfiles: Person[],
 ): Promise<Person[]> {
-  return mockService.insertCommonProfile(commonPersonProfiles);
+  return mockService.insertCommonProfiles(commonPersonProfiles);
 }
 
 //******
@@ -53,13 +53,16 @@ export function getShoutoutTestUuid() {
 }
 
 export function insertSingleRecipientShoutout(
-  shoutoutUuid: number,
+  shoutout: any
 ): Promise<Message> {
-  return mockService.insertSingleRecipientShoutout(shoutoutUuid);
+  return mockService.insertSingleRecipientShoutout({
+    text: `${shoutout.text || 'mock single shoutout'} ${shoutout.uuid}`,
+    createDate: shoutout.createDate,
+  });
 }
 
 export function insertMultiRecipientShoutout(
   shoutoutUuid: number,
 ): Promise<Message> {
-  return mockService.insertMultiRecipientShoutout(shoutoutUuid);
+  return mockService.insertMultiRecipientShoutout(`mock multi shoutout ${shoutoutUuid}`);
 }

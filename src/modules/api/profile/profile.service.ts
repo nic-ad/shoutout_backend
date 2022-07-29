@@ -4,8 +4,9 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { MESSAGE_REPOSITORY, PERSON_REPOSITORY } from 'src/database/constants';
+import { MESSAGE_REPOSITORY, PERSON_REPOSITORY } from 'src/modules/database/constants';
 import { Message } from 'src/modules/database/message/message.entity';
+import { Person } from 'src/modules/database/person/person.entity';
 import { Raw, Repository } from 'typeorm';
 import {
   MANY_PROFILES_LIMIT,
@@ -56,15 +57,10 @@ export class ProfileService {
   async profileById(id: string): Promise<Person> {
     let profile;
 
-    try {
-      profile = await this.personRepository
-        .createQueryBuilder('person')
-        .select()
-        .where('person.id = :id', { id })
-        .getOne();
-    } catch (error) {
-      throw new NotFoundException(PROFILE_ID_NOT_FOUND);
-    }
+    profile = await this.personRepository
+      .createQueryBuilder('person')
+      .where('person.employeeId = :id', { id })
+      .getOne();
 
     if (!profile) {
       throw new NotFoundException(PROFILE_ID_NOT_FOUND);
@@ -73,11 +69,11 @@ export class ProfileService {
     const shoutoutsGiven = await this.helperService
       .getShoutoutsWithAuthor(id)
       .getMany();
+
     await this.helperService.mapRecipients(shoutoutsGiven);
 
-    const shoutoutsReceived = await this.messageRepository
-      .createQueryBuilder('shoutout')
-      .select()
+    const shoutoutsReceived = await this.helperService
+      .getShoutoutsWithAuthor()
       .where(':id = ANY(shoutout.recipients)', { id })
       .getMany();
 

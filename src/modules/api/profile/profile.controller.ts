@@ -6,7 +6,6 @@ import {
   ApiOperation,
   ApiQuery,
   ApiTags,
-  ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { Person } from 'src/modules/database/person/person.entity';
 import {

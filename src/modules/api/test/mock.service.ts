@@ -3,13 +3,13 @@ import {
   CHANNEL_REPOSITORY,
   MESSAGE_REPOSITORY,
   PERSON_REPOSITORY,
-} from 'src/database/constants';
-import { Message } from 'src/database/modules/message/message.entity';
-import { Person } from 'src/database/modules/person/person.entity';
+} from 'src/modules/database/constants';
+import { Message } from 'src/modules/database/message/message.entity';
+import { Person } from 'src/modules/database/person/person.entity';
 import { Repository } from 'typeorm';
 import { MOCK_COMMON_PERSON_NAME } from '../constants';
-import { ApiMocks, MockMessage, MockProfiles, MockProfile } from './types';
-import { Channel } from 'src/database/modules/channel/channel.entity';
+import { ApiMocks, MockMessage } from './types';
+import { Channel } from 'src/modules/database/channel/channel.entity';
 
 @Injectable()
 export class MockService {
@@ -31,11 +31,9 @@ export class MockService {
     elements: [],
   };
 
-  //omit ids as they is uuid generated on table insert
-
-  private person1: MockProfile;
-  private person2: MockProfile;
-  private person3: MockProfile;
+  private person1: Person;
+  private person2: Person;
+  private person3: Person;
 
   private singleRecipientShoutout: MockMessage = { ...this.baseShoutout };
   private multiRecipientShoutout: MockMessage = { ...this.baseShoutout };
@@ -85,11 +83,11 @@ export class MockService {
     const mockPerson2 = await this.mockPerson(this.person2);
     const mockPerson3 = await this.mockPerson(this.person3);
 
-    this.singleRecipientShoutout.authorId = mockPerson1.id;
-    this.singleRecipientShoutout.recipients = [mockPerson2.id];
+    this.singleRecipientShoutout.authorId = mockPerson1.employeeId;
+    this.singleRecipientShoutout.recipients = [mockPerson2.employeeId];
 
-    this.multiRecipientShoutout.authorId = mockPerson3.id;
-    this.multiRecipientShoutout.recipients = [mockPerson1.id, mockPerson2.id];
+    this.multiRecipientShoutout.authorId = mockPerson3.employeeId;
+    this.multiRecipientShoutout.recipients = [mockPerson1.employeeId, mockPerson2.employeeId];
 
     return {
       mockPerson1,
@@ -107,35 +105,51 @@ export class MockService {
     });
   }
 
-  async insertCommonProfile(
-    commonPersonProfiles: MockProfiles,
+  async insertCommonProfiles(
+    commonPersonProfiles: Person[],
   ): Promise<Person[]> {
     return this.personRepository.save(commonPersonProfiles);
   }
 
-  async insertSingleRecipientShoutout(shoutoutUuid: number): Promise<Message> {
+  private async insertShoutout(shoutout: any): Promise<Message> {
     const channel = await this.channelRepository.save({
       name: '',
       slackId: '',
     });
 
+    const params =  [
+      shoutout.text,
+      shoutout.createDate || new Date(),
+      shoutout.authorId,
+      channel.id,
+      shoutout.recipients[0],
+    ];
+
+    if(shoutout.multiRecipient){
+      params.push(shoutout.recipients[1]);
+    }
+
     return await this.messageRepository.query(
       `INSERT INTO message (text, "createDate", "authorId", "channelId", recipients) 
-        VALUES ($1, CURRENT_TIMESTAMP, $2, $3, 
-        ARRAY [$4]::text[])`,
-      [
-        `single shoutout ${shoutoutUuid}`,
-        this.singleRecipientShoutout.authorId,
-        channel.id,
-        ...this.singleRecipientShoutout.recipients,
-      ],
+        VALUES ($1, $2, $3, $4, ARRAY[$5${shoutout.multiRecipient ? ',$6' : ''}])`,
+        params,
     );
   }
 
-  async insertMultiRecipientShoutout(shoutoutUuid: number): Promise<Message> {
-    return await this.messageRepository.save({
-      ...this.multiRecipientShoutout,
-      text: `multi shoutout ${shoutoutUuid}`,
+  async insertSingleRecipientShoutout(shoutout: any): Promise<Message> {
+    return this.insertShoutout({
+      ...shoutout,
+      authorId: this.singleRecipientShoutout.authorId,
+      recipients: this.singleRecipientShoutout.recipients,
+    });
+  }
+
+  async insertMultiRecipientShoutout(shoutoutText: string): Promise<Message> {
+    return this.insertShoutout({
+      text: shoutoutText,
+      authorId: this.multiRecipientShoutout.authorId,
+      recipients: this.multiRecipientShoutout.recipients,
+      multiRecipient: true,
     });
   }
 }

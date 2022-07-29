@@ -3,13 +3,13 @@ import * as request from 'supertest';
 import {
   initTests,
   mockCommonProfileNeedsInsert,
-  insertCommonProfile,
+  insertCommonProfiles,
   insertSingleRecipientShoutout,
   getShoutoutTestUuid,
+  insertMultiRecipientShoutout,
 } from '../test/utils';
 import { MANY_PROFILES_LIMIT, MOCK_COMMON_PERSON_NAME } from '../constants';
-import { MockProfiles } from '../test/types';
-import { NIL as NIL_UUID } from 'uuid';
+import { Person } from 'src/modules/database/person/person.entity';
 
 describe('ProfileService', () => {
   let mocks: any;
@@ -21,7 +21,7 @@ describe('ProfileService', () => {
   });
 
   describe('profile search by name/email', function () {
-    it('should find only profiles whose name contains the search query', async () => {
+    it('should find only profiles with name containing the search query', async () => {
       const searchQuery = 'TesT';
       const response = await request(testServer).get(
         `/profile/search?name=${searchQuery}`,
@@ -37,7 +37,7 @@ describe('ProfileService', () => {
       expect(resultWithoutQueryInName).toBeFalsy();
     });
 
-    it('should find only profiles whose email contains the search query', async () => {
+    it('should find only profiles with email containing the search query', async () => {
       const searchQuery = 'one';
       const response = await request(testServer).get(
         `/profile/search?email=${searchQuery}`,
@@ -87,7 +87,8 @@ describe('ProfileService', () => {
       expect(results.length).toBe(0);
     });
 
-    it('should have same number of results from name + email search as when each searched separately (testing for no duplicates)', async function () {
+    it('should have same number of results from name + email search as when each searched '
+      + 'separately (this tests for no duplicate results)', async function () {
       const searchQuery = 'test';
 
       const togetherResults = await request(testServer).get(
@@ -102,16 +103,16 @@ describe('ProfileService', () => {
 
       const namePlusEmailResults = [...nameResults.body, ...emailResults.body];
       const distinctResults = [
-        ...new Set(namePlusEmailResults.map((result) => result.id)),
+        ...new Set(namePlusEmailResults.map((result) => result.employeeId)),
       ];
 
       expect(togetherResults.body.length).toBe(distinctResults.length);
     });
   });
 
-  describe('profile search by common name (to return many results)', function () {
+  describe('profile search by common name (that returns many results)', function () {
     beforeAll(async () => {
-      let commonPersonProfiles: MockProfiles = [];
+      let commonPersonProfiles: Person[] = [];
 
       if (await mockCommonProfileNeedsInsert()) {
         //insert 1 more than the limit so we can test that only the limit is returned
@@ -127,7 +128,7 @@ describe('ProfileService', () => {
           };
         }
 
-        await insertCommonProfile(commonPersonProfiles);
+        await insertCommonProfiles(commonPersonProfiles);
       }
     });
 
@@ -146,7 +147,7 @@ describe('ProfileService', () => {
     it('should return correct result given valid id', async function () {
       const mockPerson = mocks.data.mockPerson1;
       const response = await request(testServer).get(
-        `/profile/${mockPerson.id}`,
+        `/profile/${mockPerson.employeeId}`,
       );
       const result = response.body;
 
@@ -154,13 +155,8 @@ describe('ProfileService', () => {
       expect(result.name).toBe(mockPerson.name);
     });
 
-    it("should 404 given id that is in valid format but that doesn't belong to anyone", async function () {
-      const response = await request(testServer).get(`/profile/${NIL_UUID}`);
-      expect(response.status).toBe(404);
-    });
-
-    it('should return 404 given id in invalid format', async function () {
-      const response = await request(testServer).get('/profile/9');
+    it("should 404 given id that doesn't belong to anyone", async function () {
+      const response = await request(testServer).get('/profile/XXXXXTESTXXXXX');
       expect(response.status).toBe(404);
     });
   });
@@ -169,34 +165,36 @@ describe('ProfileService', () => {
     const response = await request(testServer).get(`/profile/${recipientId}`);
     const result = response.body;
 
-    //should find 1 shoutout because only one has the timestamp of this test run
+    //retrieve the 1 shoutout that has the uuid of this test run
     const testShoutoutsReceived = result.shoutoutsReceived.filter((shoutout) =>
       shoutout.text.includes(shoutoutUuid.toString()),
     );
 
+    const recipientIds = testShoutoutsReceived[0].recipients.map(recipient => recipient.employeeId);
+
     expect(response.status).toBe(200);
     expect(testShoutoutsReceived.length).toBe(1);
-    expect(testShoutoutsReceived[0].recipients[0].id).toBe(recipientId);
+    expect(recipientIds).toContain(recipientId);
   }
 
   describe('single-recipient shoutout on user profiles', function () {
     const shoutoutUuid = getShoutoutTestUuid();
 
-    beforeAll(async () => await insertSingleRecipientShoutout(shoutoutUuid));
+    beforeAll(async () => await insertSingleRecipientShoutout({ uuid: shoutoutUuid }));
 
     it('author profile should have shoutout given with self as author', async function () {
       const response = await request(testServer).get(
         `/profile/${mocks.data.singleRecipientShoutout.authorId}`,
       );
       const result = response.body;
-      console.log(result); //////////////////////
+      
       const testShoutoutsGiven = result.shoutoutsGiven.filter((shoutout) =>
         shoutout.text.includes(shoutoutUuid.toString()),
       );
 
       expect(response.status).toBe(200);
       expect(testShoutoutsGiven.length).toBe(1);
-      expect(testShoutoutsGiven[0].author.id).toBe(
+      expect(testShoutoutsGiven[0].author.employeeId).toBe(
         mocks.data.singleRecipientShoutout.authorId,
       );
     });
@@ -204,6 +202,20 @@ describe('ProfileService', () => {
     it('recipient profile should have shoutout received with self as recipient', async function () {
       const recipientId = mocks.data.singleRecipientShoutout.recipients[0];
       await expectShoutoutReceived(shoutoutUuid, recipientId);
+    });
+  });
+
+  describe('multi-recipient shoutout on user profiles', function () {
+    const shoutoutUuid = getShoutoutTestUuid();
+
+    beforeAll(async () => await insertMultiRecipientShoutout(shoutoutUuid));
+
+    it('recipient profiles should each have shoutout received with self as recipient', async function () {
+      const recipient1Id = mocks.data.multiRecipientShoutout.recipients[0];
+      const recipient2Id = mocks.data.multiRecipientShoutout.recipients[1];
+
+      await expectShoutoutReceived(shoutoutUuid, recipient1Id);
+      await expectShoutoutReceived(shoutoutUuid, recipient2Id);
     });
   });
 

@@ -6,8 +6,7 @@
   "scripts": {
     "lint": "eslint .",
     "prettier": "prettier --check .",
-    "test": "mocha",
-    "test-jest": "jest --detectOpenHandles",
+    "test": "jest --detectOpenHandles",
     "prebuild": "rimraf dist",
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
