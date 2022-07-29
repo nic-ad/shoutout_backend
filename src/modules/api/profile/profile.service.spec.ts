@@ -12,7 +12,7 @@ import { MANY_PROFILES_LIMIT, MOCK_COMMON_PERSON_NAME } from '../constants';
 import { Person } from 'src/modules/database/person/person.entity';
 
 describe('ProfileService', () => {
-   let mocks: any;
+  let mocks: any;
   let testServer: any;
 
   beforeAll(async () => {

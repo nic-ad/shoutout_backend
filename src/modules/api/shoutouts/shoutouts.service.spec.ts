@@ -175,4 +175,8 @@ describe('ShoutoutsService', () => {
       );
     });
   });
+
+  afterAll(async () => {
+    await mocks.app.close();
+  });
 });
