@@ -1,15 +1,14 @@
 import { Injectable } from '@nestjs/common';
-import { Message } from 'src/database/modules/message/message.entity';
+import { Message } from 'src/modules/database/message/message.entity';
 import { HelperService } from '../helper.service';
 
 @Injectable()
 export class ShoutoutsService {
-  constructor(
-    private helperService: HelperService,
-  ){}
+  constructor(private helperService: HelperService) {}
 
   async latestShoutouts(): Promise<Message[]> {
-    const shoutouts = await this.helperService.getShoutoutsWithAuthor()
+    const shoutouts = await this.helperService
+      .getShoutoutsWithAuthor()
       .orderBy('shoutout.createDate', 'DESC')
       .limit(10)
       .getMany();
@@ -19,20 +18,24 @@ export class ShoutoutsService {
     return shoutouts;
   }
 
-  async shoutoutsByYear(year: string): Promise<Message[]>{
+  async shoutoutsByYear(year: string): Promise<Message[]> {
     const requestedYear = Number(year);
     let shoutouts;
 
     if (requestedYear) {
-      shoutouts = await this.helperService.getShoutoutsWithAuthor()
-        .where('EXTRACT(YEAR from shoutout.createDate) = :requestedYear', { requestedYear })
+      shoutouts = await this.helperService
+        .getShoutoutsWithAuthor()
+        .where('EXTRACT(YEAR from shoutout.createDate) = :requestedYear', {
+          requestedYear,
+        })
         .getMany();
     } else {
       const now = new Date();
       const twelveMonthsAgo = new Date();
       twelveMonthsAgo.setMonth(now.getMonth() - 12);
 
-      shoutouts = await this.helperService.getShoutoutsWithAuthor()
+      shoutouts = await this.helperService
+        .getShoutoutsWithAuthor()
         .where('shoutout.createDate >= :twelveMonthsAgo', { twelveMonthsAgo })
         .getMany();
     }
