@@ -1,21 +1,20 @@
 import { App, ExpressReceiver } from '@slack/bolt';
-import { AppService } from '../app.service';
 import { Injectable } from '@nestjs/common';
 import { Application } from 'express';
 import { convertBlocks } from '../../utils/convertBlocks';
 import { handleError } from '../../utils/handleError';
-import { MessageService } from '../database/modules/message/message.service';
-import { Message } from 'src/database/modules/message/message.entity';
+import { MessageService } from '../modules/database/message/message.service';
+import { PersonService } from '../modules/database/person/person.service';
 
 @Injectable()
 export class SlackService {
   private boltApp: App;
   private readonly receiver: ExpressReceiver;
 
-  constructor(private appService: AppService) {
+  constructor(private messageService: MessageService, private personService: PersonService) {
     this.receiver = new ExpressReceiver({
       signingSecret: process.env.SLACK_SIGNING_SECRET,
-      endpoints: '/' // Defaults to /slack/events. We already scoped it in main.ts to /slack/events.
+      endpoints: '/', // Defaults to /slack/events. We already scoped it in main.ts to /slack/events.
     });
 
     this.boltApp = new App({
@@ -28,8 +27,9 @@ export class SlackService {
 
     const shoutoutExpression = new RegExp(process.env.SHOUTOUT_PATTERN, 'i');
     const logExpression = new RegExp(`^${process.env.LOG_PATTERN}$`, 'i');
-    this.boltApp.message(shoutoutExpression, this.handleMessage);
-    this.boltApp.message(logExpression, this.handleLogMessage);
+    this.boltApp.message(shoutoutExpression, this.handleMessage.bind(this));
+    this.boltApp.message(logExpression, this.handleLogMessage.bind(this));
+
     // For local development, uncomment this.boltApp.start()
     // this.boltApp.start()
 
@@ -52,7 +52,7 @@ export class SlackService {
     // work after turning socketMode off, but it's worth noting here. All of the above feels hacky
   }
 
-  public async fetchChannelNameBySlackId(slackId) {
+  async fetchChannelNameBySlackId(slackId) {
     try {
       const info = await this.boltApp.client.conversations.info({
         channel: slackId,
@@ -63,29 +63,7 @@ export class SlackService {
     }
   }
 
-  public async findPersonAndUpdateImage(slackUser) {
-    try {
-      console.log(slackUser);
-      // const queryConditions = [{ name: slackUser?.real_name }];
-      // if (slackUser?.profile?.email) {
-      //   queryConditions.push({
-      //     email: slackUser?.profile?.email,
-      //   });
-      // }
-      // const conditions = { $or: queryConditions };
-      // const update = {
-      //   image72: slackUser?.profile?.image_72,
-      //   image192: slackUser?.profile?.image_192,
-      //   image512: slackUser?.profile?.image_512,
-      // };
-      // const person = await Person.findOneAndUpdate(conditions, update);
-      // return person?._id;
-    } catch (error) {
-      handleError(error, this.boltApp.client);
-    }
-  }
-
-  public async handleLogMessage({ say }) {
+  async handleLogMessage({ say }) {
     try {
       console.log(say);
       // const messages = await Message.find().exec();
@@ -95,39 +73,42 @@ export class SlackService {
     }
   }
 
-  public async handleMessage({ client, message }) {
+  async handleMessage({ client, message }) {
     try {
-      console.log(client);
-      console.log(message);
-      // const authorInfo = await client.users.info({ user: message.user });
-      // const author = await this.findPersonAndUpdateImage(authorInfo.user);
+      const authorInfo = await client.users.info({ user: message.user });
+      const author = await this.personService.findPersonAndUpdateImage(authorInfo.user);
 
-      // const { elements, users } = await convertBlocks({
-      //   blocks: message.blocks,
-      //   client,
-      // });
-      // const promises = users.map(this.findPersonAndUpdateImage);
-      // let recipients = await Promise.all(promises);
-      // recipients = recipients.filter(Boolean);
+      const { elements, users } = await convertBlocks({
+        blocks: message.blocks,
+        client,
+      });
+      const promises = users.map((user) => this.personService.findPersonAndUpdateImage(user));
+      let recipients = await Promise.all(promises);
+      recipients = recipients.filter(Boolean);
 
-      // const channelName = await this.fetchChannelNameBySlackId(message.channel);
-
-      // if (recipients.length) {
-      //   MessageService.
-      //   .create({
-      //     author: author,
-      //     channel: { name: channelName, slackId: message.channel },
-      //     elements: elements,
-      //     recipients: recipients,
-      //     text: message.text,
-      //   });
-      // }
+      const channelName = await this.fetchChannelNameBySlackId(message.channel);
+      console.log('***');
+      console.log(recipients);
+      console.log(channelName);
+      if (recipients.length) {
+        await this.messageService.create({
+          authorId: author.employeeId,
+          // This won't work: 
+          // https://stackoverflow.com/questions/67849597/how-to-write-nested-dtos-in-nestjs
+          channel: { id: message.channel, name: channelName, slackId: message.channel },
+          elements: elements,
+          recipients: recipients,
+          text: message.text,
+        });
+      }
     } catch (error) {
+      console.log('Error in slack.service: handleMessage');
+      console.log(error);
       handleError(error, this.boltApp.client);
     }
   }
 
-  public use(): Application {
+  use(): Application {
     return this.receiver.app;
   }
 }

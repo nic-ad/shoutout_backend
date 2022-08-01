@@ -9,18 +9,32 @@ import { MessageModule } from './modules/database/message/message.module';
 import { ProfileModule } from './modules/api/profile/profile.module';
 import { ShoutoutsModule } from './modules/api/shoutouts/shoutouts.module';
 import { SlackService } from './slack/slack.service';
+import { messageProviders } from './modules/database/message/message.providers';
+import { DatabaseModule } from './modules/database/database.module';
+import { MessageService } from './modules/database/message/message.service';
+import { PersonService } from './modules/database/person/person.service';
+import { personProviders } from 'src/modules/database/person/person.providers';
+import { SlackModule } from './slack/slack.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
-    PersonModule,
     ChannelModule,
+    DatabaseModule,
     ElementsModule,
     MessageModule,
     ProfileModule,
     ShoutoutsModule,
+    SlackModule,
   ],
   controllers: [AppController],
-  providers: [AppService, SlackService],
+  providers: [
+    AppService,
+    MessageService,
+    ...messageProviders,
+    PersonService,
+    ...personProviders,
+    SlackService,
+  ],
 })
 export class AppModule {}
