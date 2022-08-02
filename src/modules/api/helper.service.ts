@@ -1,8 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import {
-  MESSAGE_REPOSITORY,
-  PERSON_REPOSITORY,
-} from 'src/modules/database/constants';
+import { MESSAGE_REPOSITORY, PERSON_REPOSITORY } from 'src/modules/database/constants';
 import { Message } from 'src/modules/database/message/message.entity';
 import { Person } from 'src/modules/database/person/person.entity';
 import { Repository, SelectQueryBuilder } from 'typeorm';
@@ -16,19 +13,14 @@ export class HelperService {
 
   /**
    * Maps fields from Person entity for each shoutout's author based on id
-   * @param personId specific author to join shoutouts on (if none, each shoutout just joins to its author)
+   * @param personId specific author to join shoutouts on (if not passed in, each shoutout just joins to its author)
    */
   getShoutoutsWithAuthor(personId?: string): SelectQueryBuilder<Message> {
-    const id = personId ? "'" + personId + "'" : 'person.id';
+    const id = personId ? "'" + personId + "'" : 'person."employeeId"';
 
     return this.messageRepository
       .createQueryBuilder('shoutout')
-      .innerJoinAndMapOne(
-        'shoutout.author',
-        Person,
-        'person',
-        `shoutout."authorId"::uuid = ${id}`,
-      );
+      .innerJoinAndMapOne('shoutout.author', Person, 'person', `shoutout."authorId" = ${id}`);
   }
 
   /**
@@ -41,8 +33,7 @@ export class HelperService {
         message.recipients.map(async (recipientId): Promise<Person> => {
           return this.personRepository
             .createQueryBuilder('person')
-            .select()
-            .where('person.id = :recipientId', { recipientId })
+            .where('person.employeeId = :recipientId', { recipientId })
             .getOne();
         }),
       );

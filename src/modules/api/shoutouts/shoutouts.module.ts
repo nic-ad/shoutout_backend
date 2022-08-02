@@ -9,11 +9,6 @@ import { ShoutoutsService } from './shoutouts.service';
 @Module({
   imports: [DatabaseModule],
   controllers: [ShoutoutsController],
-  providers: [
-    ...messageProviders,
-    ...personProviders,
-    HelperService,
-    ShoutoutsService,
-  ],
+  providers: [...messageProviders, ...personProviders, HelperService, ShoutoutsService],
 })
 export class ShoutoutsModule {}
