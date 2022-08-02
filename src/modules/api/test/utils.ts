@@ -37,10 +37,10 @@ export function insertCommonProfiles(commonPersonProfiles: Person[]): Promise<Pe
   return mockService.insertCommonProfiles(commonPersonProfiles);
 }
 
-//******
-//returns fresh identifier used in the shoutout text for tests so that no matter the users involved in the shoutouts or what is in the
-//database at the time of test runs, we have a unique key to look for so that we can filter on / care about only those shoutouts for test assertions
-//******
+/**
+ * Returns a fresh identifier used in the shoutout text for tests so that no matter the users involved in the shoutouts or what is in the
+ * database at the time of test runs, we have a unique key to look for so that we can filter on / care about only those shoutouts for test assertions
+ */
 export function getShoutoutTestUuid() {
   return uuidv4();
 }
