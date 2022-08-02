@@ -1,9 +1,4 @@
-import {
-  BadRequestException,
-  Inject,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { BadRequestException, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { MESSAGE_REPOSITORY, PERSON_REPOSITORY } from 'src/modules/database/constants';
 import { Message } from 'src/modules/database/message/message.entity';
 import { Person } from 'src/modules/database/person/person.entity';
@@ -26,54 +21,43 @@ export class ProfileService {
   async profilesBySearch(searchQueries: any): Promise<Person[]> {
     const nameSearch = searchQueries.name;
     const emailSearch = searchQueries.email;
-    let queryConditions = [];
 
-    if (nameSearch) {
-      queryConditions.push({
-        name: Raw(
-          (name) => `LOWER(${name}) LIKE '%${nameSearch.toLowerCase()}%'`,
-        ),
-      });
-    }
-
-    if (emailSearch) {
-      queryConditions.push({
-        email: Raw(
-          (email) => `LOWER(${email}) LIKE '%${emailSearch.toLowerCase()}%'`,
-        ),
-      });
-    }
-
-    if (!queryConditions.length) {
+    if (!nameSearch && !emailSearch) {
       throw new BadRequestException(PROFILE_SEARCH_BAD_REQUEST);
     }
 
-    return await this.personRepository.find({
-      where: queryConditions,
-      take: MANY_PROFILES_LIMIT,
-    });
+    const query = this.personRepository.createQueryBuilder('person').select();
+
+    if (nameSearch) {
+      query.where('LOWER(person.name) LIKE :name', { name: `%${nameSearch.toLowerCase()}%` });
+    }
+
+    if (emailSearch) {
+      query.orWhere('LOWER(person.email) LIKE :email', { email: `%${emailSearch.toLowerCase()}%` });
+    }
+
+    return await query.limit(MANY_PROFILES_LIMIT).getMany();
   }
 
   async profileById(id: string): Promise<Person> {
     let profile;
 
-    profile = await this.personRepository
-      .createQueryBuilder('person')
-      .where('person.employeeId = :id', { id })
-      .getOne();
+    profile = await this.personRepository.findOne({ where: { employeeId: id } });
 
     if (!profile) {
       throw new NotFoundException(PROFILE_ID_NOT_FOUND);
     }
 
     const shoutoutsGiven = await this.helperService
-      .getShoutoutsWithAuthor(id)
+      .getShoutoutsWithAuthor()
+      .where('shoutout."authorId" = :id', { id })
       .getMany();
 
     await this.helperService.mapRecipients(shoutoutsGiven);
 
-    const shoutoutsReceived = await this.helperService
-      .getShoutoutsWithAuthor()
+    const shoutoutsReceived = await this.messageRepository
+      .createQueryBuilder('shoutout')
+      .select()
       .where(':id = ANY(shoutout.recipients)', { id })
       .getMany();
 

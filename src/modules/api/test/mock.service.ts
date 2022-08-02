@@ -1,15 +1,17 @@
 import { Inject, Injectable } from '@nestjs/common';
 import {
   CHANNEL_REPOSITORY,
+  DATA_SOURCE,
   MESSAGE_REPOSITORY,
   PERSON_REPOSITORY,
 } from 'src/modules/database/constants';
 import { Message } from 'src/modules/database/message/message.entity';
 import { Person } from 'src/modules/database/person/person.entity';
 import { Repository } from 'typeorm';
-import { MOCK_COMMON_PERSON_NAME } from '../constants';
+import { MOCK_COMMON_PERSON_NAME, MOCK_SHOUTOUT_TEXT } from './constants';
 import { ApiMocks, MockMessage } from './types';
 import { Channel } from 'src/modules/database/channel/channel.entity';
+import { DataSource } from 'typeorm';
 
 @Injectable()
 export class MockService {
@@ -42,6 +44,7 @@ export class MockService {
     @Inject(PERSON_REPOSITORY) private personRepository: Repository<Person>,
     @Inject(MESSAGE_REPOSITORY) private messageRepository: Repository<Message>,
     @Inject(CHANNEL_REPOSITORY) private channelRepository: Repository<Channel>,
+    @Inject(DATA_SOURCE) private dataSource: DataSource,
   ) {
     this.person1 = {
       ...this.basePerson,
@@ -105,9 +108,7 @@ export class MockService {
     });
   }
 
-  async insertCommonProfiles(
-    commonPersonProfiles: Person[],
-  ): Promise<Person[]> {
+  async insertCommonProfiles(commonPersonProfiles: Person[]): Promise<Person[]> {
     return this.personRepository.save(commonPersonProfiles);
   }
 
@@ -117,22 +118,22 @@ export class MockService {
       slackId: '',
     });
 
-    const params =  [
-      shoutout.text,
+    const params = [
+      `${MOCK_SHOUTOUT_TEXT} ${shoutout.text}`,
       shoutout.createDate || new Date(),
       shoutout.authorId,
       channel.id,
       shoutout.recipients[0],
     ];
 
-    if(shoutout.multiRecipient){
+    if (shoutout.multiRecipient) {
       params.push(shoutout.recipients[1]);
     }
 
     return await this.messageRepository.query(
       `INSERT INTO message (text, "createDate", "authorId", "channelId", recipients) 
         VALUES ($1, $2, $3, $4, ARRAY[$5${shoutout.multiRecipient ? ',$6' : ''}])`,
-        params,
+      params,
     );
   }
 
@@ -151,5 +152,19 @@ export class MockService {
       recipients: this.multiRecipientShoutout.recipients,
       multiRecipient: true,
     });
+  }
+
+  async closeDatabase(): Promise<void> {
+    await this.messageRepository
+      .createQueryBuilder()
+      .delete()
+      .from(Message)
+      .where('text LIKE :mockText', { mockText: `${MOCK_SHOUTOUT_TEXT}%`})
+      .execute();
+
+    //person repo not cleared here because only a set number of people are mocked, whereas mock messages (shoutouts) accumulate and bog down the table after a while
+
+    return this.dataSource.destroy();
+
   }
 }

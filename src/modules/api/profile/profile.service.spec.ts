@@ -7,23 +7,25 @@ import {
   insertSingleRecipientShoutout,
   getShoutoutTestUuid,
   insertMultiRecipientShoutout,
+  closeDatabase,
 } from '../test/utils';
-import { MANY_PROFILES_LIMIT, MOCK_COMMON_PERSON_NAME } from '../constants';
+import { MANY_PROFILES_LIMIT } from '../constants';
+import { MOCK_COMMON_PERSON_NAME } from '../test/constants';
 import { Person } from 'src/modules/database/person/person.entity';
 
 describe('ProfileService', () => {
   let mocks: any;
-  let testServer: any;
+  let mockApp: any;
 
   beforeAll(async () => {
     mocks = await initTests(ProfileModule);
-    testServer = mocks.app.getHttpServer();
+    mockApp = mocks.app.getHttpServer();
   });
 
   describe('profile search by name/email', function () {
     it('should find only profiles with name containing the search query', async () => {
-      const searchQuery = 'TesT';
-      const response = await request(testServer).get(
+      const searchQuery = 'shoutOUT TesT';
+      const response = await request(mockApp).get(
         `/profile/search?name=${searchQuery}`,
       );
       const results = response.body;
@@ -33,13 +35,13 @@ describe('ProfileService', () => {
       );
 
       expect(response.status).toBe(200);
-      expect(results.length).toBeGreaterThan(0);
+      expect(results.length).toBe(2);
       expect(resultWithoutQueryInName).toBeFalsy();
     });
 
     it('should find only profiles with email containing the search query', async () => {
-      const searchQuery = 'one';
-      const response = await request(testServer).get(
+      const searchQuery = 'test.one';
+      const response = await request(mockApp).get(
         `/profile/search?email=${searchQuery}`,
       );
       const results = response.body;
@@ -49,13 +51,13 @@ describe('ProfileService', () => {
       );
 
       expect(response.status).toBe(200);
-      expect(results.length).toBeGreaterThan(0);
+      expect(results.length).toBe(1);
       expect(resultWithoutQueryInEmail).toBeFalsy();
     });
 
     it('should return correct match for the given full name search', async function () {
       const searchQuery = mocks.data.mockPerson2.name;
-      const response = await request(testServer).get(
+      const response = await request(mockApp).get(
         `/profile/search?name=${searchQuery}`,
       );
       const results = response.body;
@@ -67,7 +69,7 @@ describe('ProfileService', () => {
 
     it('should return correct match for the given full email search', async function () {
       const searchQuery = mocks.data.mockPerson3.email;
-      const response = await request(testServer).get(
+      const response = await request(mockApp).get(
         `/profile/search?email=${searchQuery}`,
       );
       const results = response.body;
@@ -78,7 +80,7 @@ describe('ProfileService', () => {
     });
 
     it('should return no results given garbage search query', async function () {
-      const response = await request(testServer).get(
+      const response = await request(mockApp).get(
         '/profile/search?name=jkasdjkabsisdhkabkjn',
       );
       const results = response.body;
@@ -87,17 +89,17 @@ describe('ProfileService', () => {
       expect(results.length).toBe(0);
     });
 
-    it('should have same number of results from name + email search as when each searched '
-      + 'separately (this tests for no duplicate results)', async function () {
-      const searchQuery = 'test';
+    it(`should have same number of results from name + email search as when each searched
+      separately (this tests for no duplicate results)`, async function () {
+      const searchQuery = 'shoutout test';
 
-      const togetherResults = await request(testServer).get(
+      const togetherResults = await request(mockApp).get(
         `/profile/search?name=${searchQuery}&email=${searchQuery}`,
       );
-      const nameResults = await request(testServer).get(
+      const nameResults = await request(mockApp).get(
         `/profile/search?name=${searchQuery}`,
       );
-      const emailResults = await request(testServer).get(
+      const emailResults = await request(mockApp).get(
         `/profile/search?email=${searchQuery}`,
       );
 
@@ -133,7 +135,7 @@ describe('ProfileService', () => {
     });
 
     it(`should limit large response to ${MANY_PROFILES_LIMIT} results`, async function () {
-      const response = await request(testServer).get(
+      const response = await request(mockApp).get(
         `/profile/search?name=${MOCK_COMMON_PERSON_NAME}`,
       );
       const results = response.body;
@@ -146,7 +148,7 @@ describe('ProfileService', () => {
   describe('profile search by id', function () {
     it('should return correct result given valid id', async function () {
       const mockPerson = mocks.data.mockPerson1;
-      const response = await request(testServer).get(
+      const response = await request(mockApp).get(
         `/profile/${mockPerson.employeeId}`,
       );
       const result = response.body;
@@ -156,13 +158,13 @@ describe('ProfileService', () => {
     });
 
     it("should 404 given id that doesn't belong to anyone", async function () {
-      const response = await request(testServer).get('/profile/XXXXXTESTXXXXX');
+      const response = await request(mockApp).get('/profile/XXXXXTESTXXXXX');
       expect(response.status).toBe(404);
     });
   });
 
   async function expectShoutoutReceived(shoutoutUuid, recipientId) {
-    const response = await request(testServer).get(`/profile/${recipientId}`);
+    const response = await request(mockApp).get(`/profile/${recipientId}`);
     const result = response.body;
 
     //retrieve the 1 shoutout that has the uuid of this test run
@@ -183,7 +185,7 @@ describe('ProfileService', () => {
     beforeAll(async () => await insertSingleRecipientShoutout({ uuid: shoutoutUuid }));
 
     it('author profile should have shoutout given with self as author', async function () {
-      const response = await request(testServer).get(
+      const response = await request(mockApp).get(
         `/profile/${mocks.data.singleRecipientShoutout.authorId}`,
       );
       const result = response.body;
@@ -220,6 +222,7 @@ describe('ProfileService', () => {
   });
 
   afterAll(async () => {
+    await closeDatabase();
     await mocks.app.close();
   });
 });

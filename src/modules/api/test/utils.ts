@@ -16,12 +16,7 @@ let mockService: MockService;
 export async function initTests(moduleBeingTested): Promise<any> {
   const mockModule: TestingModule = await Test.createTestingModule({
     imports: [DatabaseModule, moduleBeingTested],
-    providers: [
-      ...personProviders,
-      ...messageProviders,
-      ...channelProviders,
-      MockService,
-    ],
+    providers: [...personProviders, ...messageProviders, ...channelProviders, MockService],
   }).compile();
 
   mockService = mockModule.get<MockService>(MockService);
@@ -38,9 +33,7 @@ export async function mockCommonProfileNeedsInsert(): Promise<boolean> {
   return count < MANY_PROFILES_LIMIT;
 }
 
-export function insertCommonProfiles(
-  commonPersonProfiles: Person[],
-): Promise<Person[]> {
+export function insertCommonProfiles(commonPersonProfiles: Person[]): Promise<Person[]> {
   return mockService.insertCommonProfiles(commonPersonProfiles);
 }
 
@@ -52,17 +45,17 @@ export function getShoutoutTestUuid() {
   return uuidv4();
 }
 
-export function insertSingleRecipientShoutout(
-  shoutout: any
-): Promise<Message> {
+export function insertSingleRecipientShoutout(shoutout: any): Promise<Message> {
   return mockService.insertSingleRecipientShoutout({
-    text: `${shoutout.text || 'mock single shoutout'} ${shoutout.uuid}`,
+    text: `${shoutout.text || 'single shoutout'} ${shoutout.uuid}`,
     createDate: shoutout.createDate,
   });
 }
 
-export function insertMultiRecipientShoutout(
-  shoutoutUuid: number,
-): Promise<Message> {
-  return mockService.insertMultiRecipientShoutout(`mock multi shoutout ${shoutoutUuid}`);
+export function insertMultiRecipientShoutout(shoutoutUuid: number): Promise<Message> {
+  return mockService.insertMultiRecipientShoutout(`multi shoutout ${shoutoutUuid}`);
+}
+
+export function closeDatabase(): Promise<void> {
+  return mockService.closeDatabase();
 }

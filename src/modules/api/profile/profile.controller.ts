@@ -8,10 +8,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { Person } from 'src/modules/database/person/person.entity';
-import {
-  PROFILE_ID_NOT_FOUND,
-  PROFILE_SEARCH_BAD_REQUEST,
-} from 'src/modules/api/constants';
+import { PROFILE_ID_NOT_FOUND, PROFILE_SEARCH_BAD_REQUEST } from 'src/modules/api/constants';
 import { ProfileService } from './profile.service';
 
 @ApiTags('profile')
@@ -21,8 +18,7 @@ export class ProfileController {
 
   @Get('search')
   @ApiOperation({
-    summary:
-      'Searches for people given name and/or email and returns their profile info',
+    summary: 'Searches for people given name and/or email and returns their profile info',
   })
   @ApiQuery({
     name: 'email',
@@ -48,8 +44,7 @@ export class ProfileController {
 
   @Get(':id')
   @ApiOperation({
-    summary:
-      'Returns profile info for given id including shoutouts given and received',
+    summary: 'Returns profile info for given id including shoutouts given and received',
   })
   //@ApiUnauthorizedResponse({ description: 'Unauthorized'} )
   @ApiNotFoundResponse({ description: PROFILE_ID_NOT_FOUND })
