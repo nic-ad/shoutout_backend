@@ -6,5 +6,6 @@ import { ChannelService } from './channel.service';
 @Module({
   imports: [DatabaseModule],
   providers: [...channelProviders, ChannelService],
+  exports: [ChannelService],
 })
 export class ChannelModule {}

@@ -1,5 +1,5 @@
 import { App, ExpressReceiver } from '@slack/bolt';
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { Application } from 'express';
 import { convertBlocks } from '../../utils/convertBlocks';
 import { handleError } from '../../utils/handleError';
@@ -12,11 +12,14 @@ export class SlackService {
   private boltApp: App;
   private readonly receiver: ExpressReceiver;
 
-  constructor(
-    private channelService: ChannelService,
-    private messageService: MessageService,
-    private personService: PersonService,
-  ) {
+  @Inject(ChannelService)
+  private readonly channelService: ChannelService;
+  @Inject(MessageService)
+  private readonly messageService: MessageService;
+  @Inject(PersonService)
+  private readonly personService: PersonService;
+
+  constructor() {
     this.receiver = new ExpressReceiver({
       signingSecret: process.env.SLACK_SIGNING_SECRET,
       endpoints: '/', // Defaults to /slack/events. We already scoped it in main.ts to /slack/events.
