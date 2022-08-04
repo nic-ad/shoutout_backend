@@ -16,8 +16,6 @@ export class PersonService {
 
   async findPersonAndUpdateImage(slackUser): Promise<Person> {
     try {
-      console.log('findPersonAndUpdateImage');
-      console.log(slackUser);
       const queryConditions: {
         name?: string;
         email?: string;
@@ -30,8 +28,6 @@ export class PersonService {
       }
 
       const person = await this.personRepository.findOneBy(queryConditions);
-      console.log('personService');
-      console.log(person);
       person.image72 = slackUser?.profile?.image_72;
       person.image192 = slackUser?.profile?.image_192;
       person.image512 = slackUser?.profile?.image_512;

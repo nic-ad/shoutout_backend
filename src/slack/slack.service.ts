@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { Application } from 'express';
 import { convertBlocks } from '../../utils/convertBlocks';
 import { handleError } from '../../utils/handleError';
+import { ChannelService } from '../modules/database/channel/channel.service';
 import { MessageService } from '../modules/database/message/message.service';
 import { PersonService } from '../modules/database/person/person.service';
 
@@ -11,7 +12,11 @@ export class SlackService {
   private boltApp: App;
   private readonly receiver: ExpressReceiver;
 
-  constructor(private messageService: MessageService, private personService: PersonService) {
+  constructor(
+    private channelService: ChannelService,
+    private messageService: MessageService,
+    private personService: PersonService,
+  ) {
     this.receiver = new ExpressReceiver({
       signingSecret: process.env.SLACK_SIGNING_SECRET,
       endpoints: '/', // Defaults to /slack/events. We already scoped it in main.ts to /slack/events.
@@ -82,20 +87,22 @@ export class SlackService {
         blocks: message.blocks,
         client,
       });
+
       const promises = users.map((user) => this.personService.findPersonAndUpdateImage(user));
       let recipients = await Promise.all(promises);
-      recipients = recipients.filter(Boolean);
+      recipients = recipients.filter(Boolean).map((recipient) => recipient.employeeId);
+      // const recipientIds = recipients.map((recipient) => recipient.employeeId);
 
       const channelName = await this.fetchChannelNameBySlackId(message.channel);
-      console.log('***');
-      console.log(recipients);
-      console.log(channelName);
+      const newChannel = await this.channelService.create({
+        name: channelName,
+        slackId: message.channel,
+      });
+
       if (recipients.length) {
         await this.messageService.create({
           authorId: author.employeeId,
-          // This won't work: 
-          // https://stackoverflow.com/questions/67849597/how-to-write-nested-dtos-in-nestjs
-          channel: { id: message.channel, name: channelName, slackId: message.channel },
+          channel: newChannel,
           elements: elements,
           recipients: recipients,
           text: message.text,
