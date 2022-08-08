@@ -7,6 +7,7 @@ import {
   JoinColumn,
   JoinTable,
   ManyToMany,
+  ManyToOne,
 } from 'typeorm';
 import { Channel } from '../channel/channel.entity';
 import { Elements } from '../elements/elements.entity';
@@ -32,7 +33,7 @@ export class Message {
   @JoinColumn()
   channel: Channel;
 
-  @ManyToMany(() => Message)
+  @ManyToMany(() => Elements, (element) => element.messages, { cascade: true })
   @JoinTable()
   elements: Elements[];
 }

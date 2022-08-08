@@ -6,6 +6,8 @@ import { handleError } from '../../utils/handleError';
 import { ChannelService } from '../modules/database/channel/channel.service';
 import { MessageService } from '../modules/database/message/message.service';
 import { PersonService } from '../modules/database/person/person.service';
+import { Elements } from 'src/modules/database/elements/elements.entity';
+import { ElementsService } from 'src/modules/database/elements/elements.service';
 
 @Injectable()
 export class SlackService {
@@ -18,6 +20,8 @@ export class SlackService {
   private readonly messageService: MessageService;
   @Inject(PersonService)
   private readonly personService: PersonService;
+  @Inject(ElementsService)
+  private readonly elementsService: ElementsService;
 
   constructor() {
     this.receiver = new ExpressReceiver({
@@ -94,10 +98,28 @@ export class SlackService {
       });
 
       if (recipients.length) {
+        const messageElements: Elements[] = [];
+
+        for (const element of elements) {
+          for (const elementItem of element.elements) {
+            let elementEntity = new Elements();
+            elementEntity.text = elementItem.text;
+            elementEntity.type = elementItem.type;
+
+            if (elementEntity.type === 'user') {
+              const person = await this.personService.findPerson(elementItem.slackUser);
+              elementEntity.employeeId = person.employeeId;
+            }
+
+            elementEntity = await this.elementsService.create(elementEntity);
+            messageElements.push(elementEntity);
+          }
+        }
+
         await this.messageService.create({
           authorId: author.employeeId,
           channel: newChannel,
-          elements: elements,
+          elements: messageElements,
           recipients: recipients,
           text: message.text,
         });

@@ -1,4 +1,5 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToMany } from 'typeorm';
+import { Message } from '../message/message.entity';
 
 @Entity()
 export class Elements {
@@ -12,5 +13,8 @@ export class Elements {
   type: string;
 
   @Column({ nullable: true })
-  slackUserId: string;
+  employeeId: string;
+
+  @ManyToMany(() => Message, (message) => message.elements)
+  messages: Message[];
 }
