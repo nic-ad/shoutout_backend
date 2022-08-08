@@ -6,6 +6,8 @@ import { handleError } from '../../utils/handleError';
 import { ChannelService } from '../modules/database/channel/channel.service';
 import { MessageService } from '../modules/database/message/message.service';
 import { PersonService } from '../modules/database/person/person.service';
+import { Elements } from 'src/modules/database/elements/elements.entity';
+import { ElementsService } from 'src/modules/database/elements/elements.service';
 
 @Injectable()
 export class SlackService {
@@ -18,6 +20,8 @@ export class SlackService {
   private readonly messageService: MessageService;
   @Inject(PersonService)
   private readonly personService: PersonService;
+  @Inject(ElementsService)
+  private readonly elementsService: ElementsService;
 
   constructor() {
     this.receiver = new ExpressReceiver({
@@ -88,7 +92,7 @@ export class SlackService {
       // const recipientIds = recipients.map((recipient) => recipient.employeeId);
 
       const channelName = await this.fetchChannelNameBySlackId(message.channel);
-      const newChannel = await this.channelService.create({
+      const channel = await this.channelService.getChannel({
         name: channelName,
         slackId: message.channel,
       });
@@ -96,9 +100,9 @@ export class SlackService {
       if (recipients.length) {
         await this.messageService.create({
           authorId: author.employeeId,
-          channel: newChannel,
+          channel,
           elements: elements,
-          recipients: recipients,
+          recipients,
           text: message.text,
         });
       }
