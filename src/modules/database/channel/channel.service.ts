@@ -14,7 +14,7 @@ export class ChannelService {
   async getChannel(channelData: CreateChannelDto): Promise<Channel> {
     const channel = await this.channelRepository.findOne({ where: { ...channelData } });
 
-    if(channel){
+    if (channel) {
       return Promise.resolve(channel);
     }
 
