@@ -102,7 +102,7 @@ export class SlackService {
 
         for (const element of elements) {
           for (const elementItem of element.elements) {
-            let elementEntity = new Elements();
+            const elementEntity = new Elements();
             elementEntity.text = elementItem.text;
             elementEntity.type = elementItem.type;
 
@@ -111,7 +111,6 @@ export class SlackService {
               elementEntity.employeeId = person.employeeId;
             }
 
-            elementEntity = await this.elementsService.create(elementEntity);
             messageElements.push(elementEntity);
           }
         }
