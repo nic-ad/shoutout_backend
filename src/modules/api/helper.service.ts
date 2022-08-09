@@ -33,10 +33,7 @@ export class HelperService {
     for (const message of shoutouts) {
       message.recipients = await Promise.all(
         message.recipients.map(async (recipientId): Promise<Person> => {
-          return this.personRepository
-            .createQueryBuilder('person')
-            .where('person.employeeId = :recipientId', { recipientId })
-            .getOne();
+          return this.personRepository.findOne({ where: { employeeId: recipientId }});
         }),
       );
     }
