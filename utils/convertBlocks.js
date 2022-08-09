@@ -49,6 +49,7 @@ async function convertBlocks({ blocks, client, uniqueUsers = {} }) {
           outputElements.push({
             text: recipient.profile.display_name || recipient.real_name,
             type: block.type,
+            slackUser: recipient,
           });
           break;
         }

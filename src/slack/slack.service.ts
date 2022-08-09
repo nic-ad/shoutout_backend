@@ -88,17 +88,34 @@ export class SlackService {
       // const recipientIds = recipients.map((recipient) => recipient.employeeId);
 
       const channelName = await this.fetchChannelNameBySlackId(message.channel);
-      const channel = await this.channelService.getChannel({
+      const newChannel = await this.channelService.create({
         name: channelName,
         slackId: message.channel,
       });
 
       if (recipients.length) {
+        const messageElements: Elements[] = [];
+
+        for (const element of elements) {
+          for (const elementItem of element.elements) {
+            const elementEntity = new Elements();
+            elementEntity.text = elementItem.text;
+            elementEntity.type = elementItem.type;
+
+            if (elementEntity.type === 'user') {
+              const person = await this.personService.findPerson(elementItem.slackUser);
+              elementEntity.employeeId = person.employeeId;
+            }
+
+            messageElements.push(elementEntity);
+          }
+        }
+
         await this.messageService.create({
           authorId: author.employeeId,
-          channel,
-          elements: elements,
-          recipients,
+          channel: newChannel,
+          elements: messageElements,
+          recipients: recipients,
           text: message.text,
         });
       }
