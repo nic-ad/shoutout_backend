@@ -48,16 +48,20 @@ export class ProfileService {
       throw new NotFoundException(PROFILE_ID_NOT_FOUND);
     }
 
-    const shoutoutsGiven = await this.helperService
-      .getShoutoutsWithAuthor()
-      .where('shoutout."authorId" = :id', { id })
-      .getMany();
-
+    const shoutouts = await this.helperService.getShoutouts();
+    const shoutoutsGiven = await shoutouts.where('shoutout."authorId" = :id', { id }).getMany();
     await this.helperService.mapRecipients(shoutoutsGiven);
 
     const shoutoutsReceived = await this.messageRepository
       .createQueryBuilder('shoutout')
       .select()
+      .innerJoinAndMapOne(
+        'shoutout.author',
+        Person,
+        'person',
+        'shoutout."authorId" = person."employeeId"',
+      )
+      .innerJoinAndSelect('shoutout.elements', 'elements')
       .where(':id = ANY(shoutout.recipients)', { id })
       .getMany();
 
