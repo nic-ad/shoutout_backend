@@ -8,8 +8,7 @@ export class ShoutoutsService {
   constructor(private helperService: HelperService) {}
 
   async latestShoutouts(): Promise<Message[]> {
-    const shoutouts = await this.helperService
-      .getShoutoutsWithAuthor()
+    const shoutouts = await this.helperService.getShoutouts()
       .orderBy('shoutout.createDate', 'DESC')
       .limit(LATEST_SHOUTOUTS_LIMIT)
       .getMany();
@@ -24,8 +23,7 @@ export class ShoutoutsService {
     let shoutouts;
 
     if (requestedYear) {
-      shoutouts = await this.helperService
-        .getShoutoutsWithAuthor()
+      shoutouts = await this.helperService.getShoutouts()
         .where('EXTRACT(YEAR from shoutout.createDate) = :requestedYear', {
           requestedYear,
         })
@@ -35,8 +33,7 @@ export class ShoutoutsService {
       const twelveMonthsAgo = new Date();
       twelveMonthsAgo.setMonth(now.getMonth() - 12);
 
-      shoutouts = await this.helperService
-        .getShoutoutsWithAuthor()
+      shoutouts = await this.helperService.getShoutouts()
         .where('shoutout.createDate >= :twelveMonthsAgo', { twelveMonthsAgo })
         .getMany();
     }

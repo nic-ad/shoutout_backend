@@ -12,15 +12,17 @@ export class HelperService {
   ) {}
 
   /**
-   * Maps fields from Person entity for each shoutout's author based on id
+   * Maps fields from Person entity for each shoutout's author based on id, as well as retrieves each shoutout's
+   * elements (items that comprise the actual shououtout e.g. its text and any slack users that were @'d)
    * @param personId specific author to join shoutouts on (if not passed in, each shoutout just joins to its author)
    */
-  getShoutoutsWithAuthor(personId?: string): SelectQueryBuilder<Message> {
+  getShoutouts(personId?: string): SelectQueryBuilder<Message> {
     const id = personId ? "'" + personId + "'" : 'person."employeeId"';
 
     return this.messageRepository
       .createQueryBuilder('shoutout')
-      .innerJoinAndMapOne('shoutout.author', Person, 'person', `shoutout."authorId" = ${id}`);
+      .innerJoinAndMapOne('shoutout.author', Person, 'person', `shoutout."authorId" = ${id}`)
+      .innerJoinAndSelect('shoutout.elements', 'elements');
   }
 
   /**
@@ -31,10 +33,7 @@ export class HelperService {
     for (const message of shoutouts) {
       message.recipients = await Promise.all(
         message.recipients.map(async (recipientId): Promise<Person> => {
-          return this.personRepository
-            .createQueryBuilder('person')
-            .where('person.employeeId = :recipientId', { recipientId })
-            .getOne();
+          return this.personRepository.findOne({ where: { employeeId: recipientId }});
         }),
       );
     }
