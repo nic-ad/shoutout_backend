@@ -92,7 +92,7 @@ export class SlackService {
       // const recipientIds = recipients.map((recipient) => recipient.employeeId);
 
       const channelName = await this.fetchChannelNameBySlackId(message.channel);
-      const newChannel = await this.channelService.create({
+      const channel = await this.channelService.getChannel({
         name: channelName,
         slackId: message.channel,
       });
@@ -118,9 +118,9 @@ export class SlackService {
 
         await this.messageService.create({
           authorId: author.employeeId,
-          channel: newChannel,
+          channel,
           elements: messageElements,
-          recipients: recipients,
+          recipients,
           text: message.text,
         });
       }
