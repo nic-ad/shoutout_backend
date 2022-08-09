@@ -8,22 +8,22 @@ export class ShoutoutsService {
   constructor(private helperService: HelperService) {}
 
   async latestShoutouts(): Promise<Message[]> {
-    const latestShoutouts = await this.helperService.getShoutouts()
+    const shoutouts = await this.helperService.getShoutouts()
       .orderBy('shoutout.createDate', 'DESC')
       .limit(LATEST_SHOUTOUTS_LIMIT)
       .getMany();
 
-    await this.helperService.mapRecipients(latestShoutouts);
+    await this.helperService.mapRecipients(shoutouts);
 
-    return latestShoutouts;
+    return shoutouts;
   }
 
   async shoutoutsByYear(year: string): Promise<Message[]> {
     const requestedYear = Number(year);
-    let yearShoutouts;
+    let shoutouts;
 
     if (requestedYear) {
-      yearShoutouts = await this.helperService.getShoutouts()
+      shoutouts = await this.helperService.getShoutouts()
         .where('EXTRACT(YEAR from shoutout.createDate) = :requestedYear', {
           requestedYear,
         })
@@ -33,13 +33,13 @@ export class ShoutoutsService {
       const twelveMonthsAgo = new Date();
       twelveMonthsAgo.setMonth(now.getMonth() - 12);
 
-      yearShoutouts = await this.helperService.getShoutouts()
+      shoutouts = await this.helperService.getShoutouts()
         .where('shoutout.createDate >= :twelveMonthsAgo', { twelveMonthsAgo })
         .getMany();
     }
 
-    await this.helperService.mapRecipients(yearShoutouts);
+    await this.helperService.mapRecipients(shoutouts);
 
-    return yearShoutouts;
+    return shoutouts;
   }
 }
