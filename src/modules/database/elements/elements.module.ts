@@ -6,5 +6,6 @@ import { ElementsService } from './elements.service';
 @Module({
   imports: [DatabaseModule],
   providers: [...elementsProviders, ElementsService],
+  exports: [ElementsService],
 })
 export class ElementsModule {}

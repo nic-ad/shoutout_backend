@@ -98,10 +98,28 @@ export class SlackService {
       });
 
       if (recipients.length) {
+        const messageElements: Elements[] = [];
+
+        for (const element of elements) {
+          for (const elementItem of element.elements) {
+            let elementEntity = new Elements();
+            elementEntity.text = elementItem.text;
+            elementEntity.type = elementItem.type;
+
+            if (elementEntity.type === 'user') {
+              const person = await this.personService.findPerson(elementItem.slackUser);
+              elementEntity.employeeId = person.employeeId;
+            }
+
+            elementEntity = await this.elementsService.create(elementEntity);
+            messageElements.push(elementEntity);
+          }
+        }
+
         await this.messageService.create({
           authorId: author.employeeId,
           channel,
-          elements: elements,
+          elements: messageElements,
           recipients,
           text: message.text,
         });

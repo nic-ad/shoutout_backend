@@ -32,7 +32,7 @@ export class Message {
   @ManyToOne(() => Channel, (channel) => channel.messages)
   channel: Channel;
 
-  @ManyToMany(() => Message)
+  @ManyToMany(() => Elements, (element) => element.messages, { cascade: true })
   @JoinTable()
   elements: Elements[];
 }
