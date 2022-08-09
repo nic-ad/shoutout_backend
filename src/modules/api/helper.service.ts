@@ -16,7 +16,7 @@ export class HelperService {
    * elements (items that comprise the actual shououtout e.g. its text and any slack users that were @'d)
    * @param personId specific author to join shoutouts on (if not passed in, each shoutout just joins to its author)
    */
-  async getShoutouts(personId?: string): Promise<SelectQueryBuilder<Message>> {
+  getShoutouts(personId?: string): SelectQueryBuilder<Message> {
     const id = personId ? "'" + personId + "'" : 'person."employeeId"';
 
     return this.messageRepository
