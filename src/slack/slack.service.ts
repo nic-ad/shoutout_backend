@@ -97,10 +97,12 @@ export class SlackService {
         const messageElements: Elements[] = [];
 
         for (const element of elements) {
-          for (const elementItem of element.elements) {
+          for (let i = 0; i < element.elements.length; i++) {
             const elementEntity = new Elements();
+            const elementItem = element.elements[i];
             elementEntity.text = elementItem.text;
             elementEntity.type = elementItem.type;
+            elementEntity.sequence = i;
 
             if (elementEntity.type === 'user') {
               const person = await this.personService.findPerson(elementItem.slackUser);

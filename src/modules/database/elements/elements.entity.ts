@@ -17,4 +17,7 @@ export class Elements {
 
   @ManyToMany(() => Message, (message) => message.elements)
   messages: Message[];
+  
+  @Column()
+  sequence: number;
 }

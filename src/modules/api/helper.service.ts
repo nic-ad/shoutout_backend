@@ -26,11 +26,14 @@ export class HelperService {
   }
 
   /**
-   * Maps each shoutout's array of recipient ids into actual Person entity fields
+   * Maps each shoutout's array of recipient ids into actual Person entity fields,
+   * as well as sorts each shoutout's elements to ensure correct order of words in shoutout
    * @param shoutouts list of shoutouts, each with array of recipient ids
    */
-  async mapRecipients(shoutouts) {
+  async postProcessShoutouts(shoutouts) {
     for (const message of shoutouts) {
+      message.elements = message.elements.sort((a, b) => a.sequence - b.sequence);
+
       message.recipients = await Promise.all(
         message.recipients.map(async (recipientId): Promise<Person> => {
           return this.personRepository.findOne({ where: { employeeId: recipientId }});
