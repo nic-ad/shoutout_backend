@@ -1,4 +1,5 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
+import { Message } from '../message/message.entity';
 
 @Entity()
 export class Channel {
@@ -10,4 +11,7 @@ export class Channel {
 
   @Column()
   name: string;
+
+  @OneToMany(() => Message, message => message.channel)
+  messages: Message;
 }

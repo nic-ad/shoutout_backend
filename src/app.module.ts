@@ -1,6 +1,4 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
 import { ChannelModule } from './modules/database/channel/channel.module';
 import { ElementsModule } from './modules/database/elements/elements.module';
@@ -21,7 +19,5 @@ import { SlackModule } from './slack/slack.module';
     ShoutoutsModule,
     SlackModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
 })
 export class AppModule {}

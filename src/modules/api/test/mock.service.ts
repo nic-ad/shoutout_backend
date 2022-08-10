@@ -159,12 +159,11 @@ export class MockService {
       .createQueryBuilder()
       .delete()
       .from(Message)
-      .where('text LIKE :mockText', { mockText: `${MOCK_SHOUTOUT_TEXT}%`})
+      .where('text LIKE :mockText', { mockText: `${MOCK_SHOUTOUT_TEXT}%` })
       .execute();
 
     //person repo not cleared here because only a set number of people are mocked, whereas mock messages (shoutouts) accumulate and bog down the table after a while
 
     return this.dataSource.destroy();
-
   }
 }
