@@ -12,7 +12,6 @@ The backend code that gathers Slack messages containing shoutout of Depsters
 1. First time setup - change .env variable `SYNCHRONIZE` from false to true the first time you start the application for the inital DB schema. After inital setup use migrations to update and set back to false.
 1. run `npm start` start the app.
 1. To Seed/Update users in your local database by running `npm run seed:users`
-1. (For legacy app) Run `node bin/syncBamboo.js` to populate users
 
 ## Running the App
 
