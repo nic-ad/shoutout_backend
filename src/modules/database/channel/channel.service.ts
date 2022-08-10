@@ -11,12 +11,14 @@ export class ChannelService {
     private channelRepository: Repository<Channel>,
   ) {}
 
-  async create(channelData: CreateChannelDto): Promise<Channel> {
-    const newChannel = await this.channelRepository.create({
-      slackId: channelData.slackId,
-      name: channelData.name,
-    });
-    return this.channelRepository.save(newChannel);
+  async getChannel(channelData: CreateChannelDto): Promise<Channel> {
+    const channel = await this.channelRepository.findOne({ where: { ...channelData } });
+
+    if(channel){
+      return Promise.resolve(channel);
+    }
+
+    return this.channelRepository.save({ ...channelData });
   }
 
   async findAll(): Promise<Channel[]> {

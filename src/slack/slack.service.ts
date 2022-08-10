@@ -1,8 +1,8 @@
 import { App, ExpressReceiver } from '@slack/bolt';
 import { Inject, Injectable } from '@nestjs/common';
 import { Application } from 'express';
-import { convertBlocks } from '../../utils/convertBlocks';
-import { handleError } from '../../utils/handleError';
+import convertBlocks from '../utils/convertBlocks';
+import handleError from '../utils/handleError';
 import { ChannelService } from '../modules/database/channel/channel.service';
 import { Elements } from '../modules/database/elements/elements.entity';
 import { MessageService } from '../modules/database/message/message.service';
@@ -84,12 +84,11 @@ export class SlackService {
       });
 
       const promises = users.map((user) => this.personService.findPersonAndUpdateImage(user));
-      let recipients = await Promise.all(promises);
-      recipients = recipients.filter(Boolean).map((recipient) => recipient.employeeId);
-      // const recipientIds = recipients.map((recipient) => recipient.employeeId);
+      const recipients = await Promise.all(promises);
+      const recipientIds = recipients.filter(Boolean).map((recipient) => recipient.employeeId);
 
       const channelName = await this.fetchChannelNameBySlackId(message.channel);
-      const newChannel = await this.channelService.create({
+      const channel = await this.channelService.getChannel({
         name: channelName,
         slackId: message.channel,
       });
@@ -114,9 +113,9 @@ export class SlackService {
 
         await this.messageService.create({
           authorId: author.employeeId,
-          channel: newChannel,
+          channel,
           elements: messageElements,
-          recipients: recipients,
+          recipients: recipientIds,
           text: message.text,
         });
       }
