@@ -32,7 +32,7 @@ export class HelperService {
    */
   async postProcessShoutouts(shoutouts) {
     for (const message of shoutouts) {
-      message.elements = message.elements.sort((a, b) => a.sequence - b.sequence);
+      message.elements = message.elements.sort((a, b) => a.id - b.id);
 
       message.recipients = await Promise.all(
         message.recipients.map(async (recipientId): Promise<Person> => {

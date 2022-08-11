@@ -35,5 +35,6 @@ Because of this limitation, [Slack recommends](https://github.com/slackapi/bolt-
 ## Database Migrations 
 1. Make a change to one of the entities 
 1. Run `npm run migration:generate src/modules/database/migrations/NAME_OF_MIGRATION`. (You must include the file path otherwise the migration will get populated in the root directory.)
-1. You will see the file generate in the migration folder. Apply to database by runnning `npm run migration:up` and the changes will be reflected in local DB 
+1. You will see the file generate in the migrations folder. Apply to database by runnning `npm run migration:up` and the changes will be reflected in local DB 
 1. To revert changes run `npm run migration:revert`
+1. Delete the generated migrations folder to avoid error on app start.

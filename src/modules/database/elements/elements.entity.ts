@@ -3,8 +3,8 @@ import { Message } from '../message/message.entity';
 
 @Entity()
 export class Elements {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+  @PrimaryGeneratedColumn('increment')
+  id: number;
 
   @Column()
   text: string;
@@ -17,7 +17,4 @@ export class Elements {
 
   @ManyToMany(() => Message, (message) => message.elements)
   messages: Message[];
-  
-  @Column()
-  sequence: number;
 }

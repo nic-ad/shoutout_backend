@@ -15,7 +15,6 @@ export class ElementsService {
     const newElement = await this.elementsRepository.create({
       text: elementData.text,
       type: elementData.type,
-      sequence: elementData.sequence,
       employeeId: elementData.employeeId,
     });
     return this.elementsRepository.save(newElement);

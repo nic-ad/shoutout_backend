@@ -102,7 +102,6 @@ export class SlackService {
             const elementItem = element.elements[i];
             elementEntity.text = elementItem.text;
             elementEntity.type = elementItem.type;
-            elementEntity.sequence = i;
 
             if (elementEntity.type === 'user') {
               const person = await this.personService.findPerson(elementItem.slackUser);
