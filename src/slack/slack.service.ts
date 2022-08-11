@@ -26,30 +26,30 @@ export class SlackService {
       endpoints: '/', // Defaults to /slack/events. We already scoped it in main.ts to /slack/events.
     });
 
-    // TODO: Better way to switch between socket mode and events in prod/staging/dev
-
     // Use this definition for local development
-    this.boltApp = new App({
-      appToken: process.env.SLACK_APP_TOKEN,
-      token: process.env.SLACK_BOT_TOKEN,
-      signingSecret: process.env.SLACK_SIGNING_SECRET,
-      socketMode: true,
-    });
-
-    // Use this definition for staging/production
-    // this.boltApp = new App({
-    //   appToken: process.env.SLACK_APP_TOKEN,
-    //   token: process.env.SLACK_BOT_TOKEN,
-    //   receiver: this.receiver,
-    // });
+    if (process.env.NODE_ENV === 'development') {
+      this.boltApp = new App({
+        appToken: process.env.SLACK_APP_TOKEN,
+        token: process.env.SLACK_BOT_TOKEN,
+        signingSecret: process.env.SLACK_SIGNING_SECRET,
+        socketMode: true,
+      });
+    } else {
+      this.boltApp = new App({
+        appToken: process.env.SLACK_APP_TOKEN,
+        token: process.env.SLACK_BOT_TOKEN,
+        receiver: this.receiver,
+      });
+    }
 
     const shoutoutExpression = new RegExp(process.env.SHOUTOUT_PATTERN, 'i');
     const logExpression = new RegExp(`^${process.env.LOG_PATTERN}$`, 'i');
     this.boltApp.message(shoutoutExpression, this.handleMessage.bind(this));
     this.boltApp.message(logExpression, this.handleLogMessage.bind(this));
 
-    // Finally, this.boltApp.start() should be uncommented for local development
-    this.boltApp.start();
+    if (process.env.NODE_ENV === 'development') {
+      this.boltApp.start();
+    }
   }
 
   async fetchChannelNameBySlackId(slackId) {
