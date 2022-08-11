@@ -97,9 +97,8 @@ export class SlackService {
         const messageElements: Elements[] = [];
 
         for (const element of elements) {
-          for (let i = 0; i < element.elements.length; i++) {
+          for (const elementItem of element.elements) {
             const elementEntity = new Elements();
-            const elementItem = element.elements[i];
             elementEntity.text = elementItem.text;
             elementEntity.type = elementItem.type;
 
