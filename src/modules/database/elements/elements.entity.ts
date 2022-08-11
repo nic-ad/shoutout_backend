@@ -3,8 +3,8 @@ import { Message } from '../message/message.entity';
 
 @Entity()
 export class Elements {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+  @PrimaryGeneratedColumn('increment')
+  id: number;
 
   @Column()
   text: string;

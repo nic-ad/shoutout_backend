@@ -49,7 +49,7 @@ export class ProfileService {
     }
 
     const shoutoutsGiven = await this.helperService.getShoutouts().where('shoutout."authorId" = :id', { id }).getMany();
-    await this.helperService.mapRecipients(shoutoutsGiven);
+    await this.helperService.postProcessShoutouts(shoutoutsGiven);
 
     const shoutoutsReceived = await this.messageRepository
       .createQueryBuilder('shoutout')
@@ -64,7 +64,7 @@ export class ProfileService {
       .where(':id = ANY(shoutout.recipients)', { id })
       .getMany();
 
-    await this.helperService.mapRecipients(shoutoutsReceived);
+    await this.helperService.postProcessShoutouts(shoutoutsReceived);
 
     return {
       ...profile,

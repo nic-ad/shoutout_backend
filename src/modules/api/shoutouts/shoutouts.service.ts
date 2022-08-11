@@ -13,7 +13,7 @@ export class ShoutoutsService {
       .limit(LATEST_SHOUTOUTS_LIMIT)
       .getMany();
 
-    await this.helperService.mapRecipients(shoutouts);
+    await this.helperService.postProcessShoutouts(shoutouts);
 
     return shoutouts;
   }
@@ -38,7 +38,7 @@ export class ShoutoutsService {
         .getMany();
     }
 
-    await this.helperService.mapRecipients(shoutouts);
+    await this.helperService.postProcessShoutouts(shoutouts);
 
     return shoutouts;
   }
