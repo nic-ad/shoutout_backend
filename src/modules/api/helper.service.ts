@@ -30,7 +30,7 @@ export class HelperService {
    * as well as sorts each shoutout's elements to ensure correct order of words in shoutout
    * @param shoutouts list of shoutouts, each with array of recipient ids
    */
-  async postProcessShoutouts(shoutouts) {
+  async postProcessShoutouts(shoutouts): Promise<void> {
     for (const message of shoutouts) {
       message.elements = message.elements.sort((a, b) => a.id - b.id);
 

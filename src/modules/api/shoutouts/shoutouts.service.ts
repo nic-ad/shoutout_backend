@@ -2,13 +2,14 @@ import { Injectable } from '@nestjs/common';
 import { Message } from 'src/modules/database/message/message.entity';
 import { LATEST_SHOUTOUTS_LIMIT } from '../constants';
 import { HelperService } from '../helper.service';
+import { ShoutoutDto } from './dto/shoutout.dto';
 
 @Injectable()
 export class ShoutoutsService {
   constructor(private helperService: HelperService) {}
 
-  async latestShoutouts(): Promise<Message[]> {
-    const shoutouts = await this.helperService.getShoutouts()
+  async latestShoutouts(): Promise<ShoutoutDto[]> {
+    const shoutouts: ShoutoutDto[] = await this.helperService.getShoutouts()
       .orderBy('shoutout.createDate', 'DESC')
       .limit(LATEST_SHOUTOUTS_LIMIT)
       .getMany();
@@ -18,9 +19,9 @@ export class ShoutoutsService {
     return shoutouts;
   }
 
-  async shoutoutsByYear(year: string): Promise<Message[]> {
+  async shoutoutsByYear(year: string): Promise<ShoutoutDto[]> {
     const requestedYear = Number(year);
-    let shoutouts;
+    let shoutouts: ShoutoutDto[];
 
     if (requestedYear) {
       shoutouts = await this.helperService.getShoutouts()

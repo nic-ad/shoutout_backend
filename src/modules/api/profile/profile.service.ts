@@ -9,6 +9,7 @@ import {
   PROFILE_SEARCH_BAD_REQUEST,
 } from '../constants';
 import { HelperService } from '../helper.service';
+import { BasicProfileDto, FullProfileDto } from './dto/profile.dto';
 
 @Injectable()
 export class ProfileService {
@@ -18,7 +19,7 @@ export class ProfileService {
     private helperService: HelperService,
   ) {}
 
-  async profilesBySearch(searchQueries: any): Promise<Person[]> {
+  async profilesBySearch(searchQueries: any): Promise<BasicProfileDto[]> {
     const nameSearch = searchQueries.name;
     const emailSearch = searchQueries.email;
 
@@ -39,7 +40,7 @@ export class ProfileService {
     return await query.limit(MANY_PROFILES_LIMIT).getMany();
   }
 
-  async profileById(id: string): Promise<Person> {
+  async profileById(id: string): Promise<FullProfileDto> {
     let profile;
 
     profile = await this.personRepository.findOne({ where: { employeeId: id } });
