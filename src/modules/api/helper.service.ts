@@ -13,7 +13,7 @@ export class HelperService {
 
   /**
    * Maps fields from Person entity for each shoutout's author based on id, as well as retrieves each shoutout's
-   * elements (items that comprise the actual shououtout e.g. its text and any slack users that were @'d)
+   * elements (items that comprise the actual shououtout e.g. its text and any slack users that were @'d) and channel
    * @param personId specific author to join shoutouts on (if not passed in, each shoutout just joins to its author)
    */
   getShoutouts(personId?: string): SelectQueryBuilder<Message> {
