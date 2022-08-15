@@ -7,7 +7,6 @@ import {
   ApiQuery,
   ApiTags,
 } from '@nestjs/swagger';
-import { Message } from 'src/modules/database/message/message.entity';
 import { ShoutoutDto } from './dto/shoutout.dto';
 import { ShoutoutsService } from './shoutouts.service';
 @ApiTags('shoutouts')

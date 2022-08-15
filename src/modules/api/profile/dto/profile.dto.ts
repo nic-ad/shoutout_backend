@@ -1,6 +1,9 @@
 import { ApiProperty, OmitType } from '@nestjs/swagger';
 import { ShoutoutDto } from '../../shoutouts/dto/shoutout.dto';
 
+/*
+ * User profile with shoutouts the person has given and received
+ */
 export class FullProfileDto  {
   @ApiProperty()
   employeeId: string;
@@ -15,14 +18,14 @@ export class FullProfileDto  {
   })
   team: string;
 
-  @ApiProperty({
+  @ApiProperty({ 
     nullable: true,
-  })
+    description: 'Person\'s country of residence', 
+    example: 'US',
+  }) 
   country: string;
 
-  @ApiProperty({
-    nullable: true,
-  })
+  @ApiProperty({ nullable: true })
   name: string;
 
   @ApiProperty({ 
@@ -56,4 +59,7 @@ export class FullProfileDto  {
   shoutoutsReceived: ShoutoutDto[];
 }
 
+/*
+ * User profile without shoutouts the person has given and received
+ */
 export class BasicProfileDto extends OmitType(FullProfileDto, ['shoutoutsGiven', 'shoutoutsReceived'] as const) { }

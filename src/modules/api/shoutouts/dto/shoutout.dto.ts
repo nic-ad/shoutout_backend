@@ -47,7 +47,7 @@ export class ShoutoutDto {
   id: string;
 
   @ApiProperty({ 
-    description: 'Full text of the shoutout (broken down into pieces in the "elements" property)', 
+    description: 'Full text of the shoutout (broken down into frontend-friendly array in the "elements" property)', 
     example: 'Shoutout to <@UJDNSKJDN> for great work!',
   })
   text: string;
@@ -67,7 +67,11 @@ export class ShoutoutDto {
   })
   recipients: BasicProfileDto[] | string[];
 
-  @ApiProperty({ type: [ElementsDto] })
+  @ApiProperty({ 
+    type: [ElementsDto],
+    description: `Array of pieces making up the shoutout allowing frontend to reconstruct the message
+      (e.g. name elements are actual names instead of in slack format as seen in the "text" property)`,
+  })
   elements: ElementsDto[];
 
   @ApiProperty({ 

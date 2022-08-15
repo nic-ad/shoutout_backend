@@ -8,7 +8,6 @@ import {
   ApiQuery,
   ApiTags,
 } from '@nestjs/swagger';
-import { Person } from 'src/modules/database/person/person.entity';
 import { PROFILE_ID_NOT_FOUND, PROFILE_SEARCH_BAD_REQUEST } from 'src/modules/api/constants';
 import { ProfileService } from './profile.service';
 import { BasicProfileDto, FullProfileDto } from './dto/profile.dto';
@@ -20,7 +19,7 @@ export class ProfileController {
 
   @Get('search')
   @ApiOperation({
-    summary: 'Searches for people given name and/or email and returns their profile info',
+    summary: 'Searches for people given name and/or email and returns their basic profile info',
   })
   @ApiQuery({
     name: 'email',
@@ -47,7 +46,7 @@ export class ProfileController {
 
   @Get(':id')
   @ApiOperation({
-    summary: 'Returns profile info for given id including shoutouts given and received',
+    summary: 'Returns full profile info for given id including shoutouts the person has given and received',
   })
   @ApiOkResponse({ type: FullProfileDto })
   //@ApiUnauthorizedResponse({ description: 'Unauthorized'} )
