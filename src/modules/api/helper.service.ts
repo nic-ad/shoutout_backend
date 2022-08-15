@@ -3,6 +3,7 @@ import { MESSAGE_REPOSITORY, PERSON_REPOSITORY } from 'src/modules/database/cons
 import { Message } from 'src/modules/database/message/message.entity';
 import { Person } from 'src/modules/database/person/person.entity';
 import { Repository, SelectQueryBuilder } from 'typeorm';
+import { BasicProfileDto } from './profile/dto/profile.dto';
 
 @Injectable()
 export class HelperService {
@@ -36,7 +37,7 @@ export class HelperService {
       message.elements = message.elements.sort((a, b) => a.id - b.id);
 
       message.recipients = await Promise.all(
-        message.recipients.map(async (recipientId): Promise<Person> => {
+        message.recipients.map(async (recipientId): Promise<BasicProfileDto> => {
           return this.personRepository.findOne({ where: { employeeId: recipientId }});
         }),
       );

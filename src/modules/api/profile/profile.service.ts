@@ -9,6 +9,7 @@ import {
   PROFILE_SEARCH_BAD_REQUEST,
 } from '../constants';
 import { HelperService } from '../helper.service';
+import { ShoutoutDto } from '../shoutouts/dto/shoutout.dto';
 import { BasicProfileDto, FullProfileDto } from './dto/profile.dto';
 
 @Injectable()
@@ -49,10 +50,10 @@ export class ProfileService {
       throw new NotFoundException(PROFILE_ID_NOT_FOUND);
     }
 
-    const shoutoutsGiven = await this.helperService.getShoutouts().where('shoutout."authorId" = :id', { id }).getMany();
+    const shoutoutsGiven: ShoutoutDto[] = await this.helperService.getShoutouts().where('shoutout."authorId" = :id', { id }).getMany();
     await this.helperService.postProcessShoutouts(shoutoutsGiven);
 
-    const shoutoutsReceived = await this.messageRepository
+    const shoutoutsReceived: ShoutoutDto[] = await this.messageRepository
       .createQueryBuilder('shoutout')
       .select()
       .innerJoinAndMapOne(
