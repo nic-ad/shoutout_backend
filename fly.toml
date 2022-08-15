@@ -1,5 +1,3 @@
-# fly.toml file generated for shoutout-backend2 on 2022-08-10T10:53:46-04:00
-
 app = "shoutout-backend"
 kill_signal = "SIGINT"
 kill_timeout = 5
@@ -7,6 +5,8 @@ processes = []
 
 [env]
   PORT = "8080"
+  LOG_PATTERN = "log messages"
+  SHOUTOUT_PATTERN = "shoutout"
 
 [experimental]
   allowed_public_ports = []
