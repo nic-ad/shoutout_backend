@@ -10,7 +10,7 @@ class ElementsDto {
 
   @ApiProperty({ 
     description: 'Single word, name or string of text for this piece of the shoutout',
-    examples: ['Shoutout to', 'Hard McWorker', 'for great work!']
+    examples: ['Shoutout to', 'Hard McWorker', 'for great work!'],
   })
   text: string;
 
@@ -27,6 +27,20 @@ class ElementsDto {
   })
   employeeId: string;
 };
+
+class ChannelDto {
+  @ApiProperty( {description: 'Auto-generated database id'} )
+  id: string;
+
+  @ApiProperty({ 
+    description: 'Slack id for the channel',
+    example: 'C03HR04D338',
+  })
+  slackId: string;
+
+  @ApiProperty({ example: 'peakon-test-channel' })
+  name: string;
+}
 
 export class ShoutoutDto {
   @ApiProperty()
@@ -51,12 +65,16 @@ export class ShoutoutDto {
     type: () => [BasicProfileDto],
     description: 'List of profiles for people who were shouted out', 
   })
-  //string[] needed to satisfy type conversion from typeorm query result type (Message, which has recipients: string[]) to 
-  //API response type (ShoutoutDto with recipients: BasicProfileDto[], which is the string[] mapped into profiles) in API service functions
   recipients: BasicProfileDto[] | string[];
 
   @ApiProperty({ type: [ElementsDto] })
   elements: ElementsDto[];
+
+  @ApiProperty({ 
+    type: ChannelDto,
+    description: 'Slack channel that the shoutout was authored in'
+  })
+  channel: ChannelDto;
 
   @ApiProperty({ 
     type: () => BasicProfileDto,
