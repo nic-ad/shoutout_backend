@@ -9,6 +9,8 @@ import {
   PROFILE_SEARCH_BAD_REQUEST,
 } from '../constants';
 import { HelperService } from '../helper.service';
+import { ShoutoutDto } from '../shoutouts/dto/shoutout.dto';
+import { BasicProfileDto, FullProfileDto } from './dto/profile.dto';
 
 @Injectable()
 export class ProfileService {
@@ -18,7 +20,7 @@ export class ProfileService {
     private helperService: HelperService,
   ) {}
 
-  async profilesBySearch(searchQueries: any): Promise<Person[]> {
+  async profilesBySearch(searchQueries: any): Promise<BasicProfileDto[]> {
     const nameSearch = searchQueries.name;
     const emailSearch = searchQueries.email;
 
@@ -39,7 +41,7 @@ export class ProfileService {
     return await query.limit(MANY_PROFILES_LIMIT).getMany();
   }
 
-  async profileById(id: string): Promise<Person> {
+  async profileById(id: string): Promise<FullProfileDto> {
     let profile;
 
     profile = await this.personRepository.findOne({ where: { employeeId: id } });
@@ -48,10 +50,10 @@ export class ProfileService {
       throw new NotFoundException(PROFILE_ID_NOT_FOUND);
     }
 
-    const shoutoutsGiven = await this.helperService.getShoutouts().where('shoutout."authorId" = :id', { id }).getMany();
+    const shoutoutsGiven: ShoutoutDto[] = await this.helperService.getShoutouts().where('shoutout."authorId" = :id', { id }).getMany();
     await this.helperService.postProcessShoutouts(shoutoutsGiven);
 
-    const shoutoutsReceived = await this.messageRepository
+    const shoutoutsReceived: ShoutoutDto[] = await this.messageRepository
       .createQueryBuilder('shoutout')
       .select()
       .innerJoinAndMapOne(
@@ -61,6 +63,7 @@ export class ProfileService {
         'shoutout."authorId" = person."employeeId"',
       )
       .innerJoinAndSelect('shoutout.elements', 'elements')
+      .innerJoinAndSelect('shoutout.channel', 'channel')
       .where(':id = ANY(shoutout.recipients)', { id })
       .getMany();
 
