@@ -23,6 +23,6 @@ async function bootstrap() {
   const slack = app.get(SlackService);
   app.use('/slack/events', slack.use());
 
-  await app.listen(3000);
+  await app.listen(process.env.PORT);
 }
 bootstrap();
