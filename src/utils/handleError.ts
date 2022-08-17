@@ -10,6 +10,8 @@ export default function handleError(error, client): void {
   console.error(error);
   client.chat.postMessage({
     channel: CHANNEL,
-    text: '```' + error.stack + '```',
+    text: `
+ENV: ${process.env.NODE_ENV}
+\`\`\`${error.stack}\`\`\``,
   });
 }
