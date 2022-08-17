@@ -11,8 +11,8 @@ export default function handleError(error, client): void {
   client.chat.postMessage({
     channel: CHANNEL,
     text: `
-      Shoutout Trigger: ${process.env.SHOUTOUT_PATTERN}
-      ENV: ${process.env.NODE_ENV}
-      Error: \`\`\`${error.stack}\`\`\``,
+    Shoutout Trigger: ${process.env.SHOUTOUT_PATTERN}
+ENV: ${process.env.NODE_ENV}
+\`\`\`${error.stack}\`\`\``,
   });
 }
