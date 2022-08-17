@@ -18,8 +18,6 @@ jobs:
       - name: Install dependencies
         run: |
           npm install
-      - name: Start a MongoDB server for testing
-        uses: supercharge/mongodb-github-action@1.7.0
       - name: Run linter and tests
         run: |
           npm run lint
