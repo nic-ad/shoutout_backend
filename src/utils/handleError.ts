@@ -10,6 +10,13 @@ export default function handleError(error, client): void {
   console.error(error);
   client.chat.postMessage({
     channel: CHANNEL,
-    text: '```' + error.stack + '```',
+    text:
+      '```' +
+      'SHOUTOUT:' +
+      process.env.SHOUTOUT_PATTERN +
+      'ENV: ' +
+      process.env.NODE_ENV +
+      error.stack +
+      '```',
   });
 }
