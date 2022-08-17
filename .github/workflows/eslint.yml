@@ -1,7 +1,7 @@
 # This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
 # For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
 
-name: Node.js CI
+name: ESLint
 
 on:
   pull_request:
@@ -19,7 +19,4 @@ jobs:
           cache: "npm"
       - run: npm install
       - run: npm run lint
-      - run: npm run prettier
-      - name: Start a MongoDB server for testing
-        uses: supercharge/mongodb-github-action@1.7.0
       - run: npm run test

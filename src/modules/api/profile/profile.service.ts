@@ -2,7 +2,7 @@ import { BadRequestException, Inject, Injectable, NotFoundException } from '@nes
 import { MESSAGE_REPOSITORY, PERSON_REPOSITORY } from 'src/modules/database/constants';
 import { Message } from 'src/modules/database/message/message.entity';
 import { Person } from 'src/modules/database/person/person.entity';
-import { Raw, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import {
   MANY_PROFILES_LIMIT,
   PROFILE_ID_NOT_FOUND,
@@ -42,15 +42,16 @@ export class ProfileService {
   }
 
   async profileById(id: string): Promise<FullProfileDto> {
-    let profile;
-
-    profile = await this.personRepository.findOne({ where: { employeeId: id } });
+    const profile = await this.personRepository.findOne({ where: { employeeId: id } });
 
     if (!profile) {
       throw new NotFoundException(PROFILE_ID_NOT_FOUND);
     }
 
-    const shoutoutsGiven: ShoutoutDto[] = await this.helperService.getShoutouts().where('shoutout."authorId" = :id', { id }).getMany();
+    const shoutoutsGiven: ShoutoutDto[] = await this.helperService
+      .getShoutouts()
+      .where('shoutout."authorId" = :id', { id })
+      .getMany();
     await this.helperService.postProcessShoutouts(shoutoutsGiven);
 
     const shoutoutsReceived: ShoutoutDto[] = await this.messageRepository

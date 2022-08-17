@@ -38,7 +38,7 @@ export class HelperService {
 
       message.recipients = await Promise.all(
         message.recipients.map(async (recipientId): Promise<BasicProfileDto> => {
-          return this.personRepository.findOne({ where: { employeeId: recipientId }});
+          return this.personRepository.findOne({ where: { employeeId: recipientId } });
         }),
       );
     }

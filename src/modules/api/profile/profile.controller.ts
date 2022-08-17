@@ -46,7 +46,8 @@ export class ProfileController {
 
   @Get(':id')
   @ApiOperation({
-    summary: 'Returns full profile info for given id including shoutouts the person has given and received',
+    summary:
+      'Returns full profile info for given id including shoutouts the person has given and received',
   })
   @ApiOkResponse({ type: FullProfileDto })
   //@ApiUnauthorizedResponse({ description: 'Unauthorized'} )

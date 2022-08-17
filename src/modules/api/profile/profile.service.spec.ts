@@ -25,13 +25,10 @@ describe('ProfileService', () => {
   describe('profile search by name/email', function () {
     it('should find only profiles with name containing the search query', async () => {
       const searchQuery = 'shoutOUT TesT';
-      const response = await request(mockApp).get(
-        `/profile/search?name=${searchQuery}`,
-      );
+      const response = await request(mockApp).get(`/profile/search?name=${searchQuery}`);
       const results = response.body;
       const resultWithoutQueryInName = results.find(
-        (profile) =>
-          !profile.name.toLowerCase().includes(searchQuery.toLowerCase()),
+        (profile) => !profile.name.toLowerCase().includes(searchQuery.toLowerCase()),
       );
 
       expect(response.status).toBe(200);
@@ -41,13 +38,10 @@ describe('ProfileService', () => {
 
     it('should find only profiles with email containing the search query', async () => {
       const searchQuery = 'test.one';
-      const response = await request(mockApp).get(
-        `/profile/search?email=${searchQuery}`,
-      );
+      const response = await request(mockApp).get(`/profile/search?email=${searchQuery}`);
       const results = response.body;
       const resultWithoutQueryInEmail = results.find(
-        (profile) =>
-          !profile.email.toLowerCase().includes(searchQuery.toLowerCase()),
+        (profile) => !profile.email.toLowerCase().includes(searchQuery.toLowerCase()),
       );
 
       expect(response.status).toBe(200);
@@ -57,9 +51,7 @@ describe('ProfileService', () => {
 
     it('should return correct match for the given full name search', async function () {
       const searchQuery = mocks.data.mockPerson2.name;
-      const response = await request(mockApp).get(
-        `/profile/search?name=${searchQuery}`,
-      );
+      const response = await request(mockApp).get(`/profile/search?name=${searchQuery}`);
       const results = response.body;
 
       expect(response.status).toBe(200);
@@ -69,9 +61,7 @@ describe('ProfileService', () => {
 
     it('should return correct match for the given full email search', async function () {
       const searchQuery = mocks.data.mockPerson3.email;
-      const response = await request(mockApp).get(
-        `/profile/search?email=${searchQuery}`,
-      );
+      const response = await request(mockApp).get(`/profile/search?email=${searchQuery}`);
       const results = response.body;
 
       expect(response.status).toBe(200);
@@ -80,9 +70,7 @@ describe('ProfileService', () => {
     });
 
     it('should return no results given garbage search query', async function () {
-      const response = await request(mockApp).get(
-        '/profile/search?name=jkasdjkabsisdhkabkjn',
-      );
+      const response = await request(mockApp).get('/profile/search?name=jkasdjkabsisdhkabkjn');
       const results = response.body;
 
       expect(response.status).toBe(200);
@@ -96,17 +84,11 @@ describe('ProfileService', () => {
       const togetherResults = await request(mockApp).get(
         `/profile/search?name=${searchQuery}&email=${searchQuery}`,
       );
-      const nameResults = await request(mockApp).get(
-        `/profile/search?name=${searchQuery}`,
-      );
-      const emailResults = await request(mockApp).get(
-        `/profile/search?email=${searchQuery}`,
-      );
+      const nameResults = await request(mockApp).get(`/profile/search?name=${searchQuery}`);
+      const emailResults = await request(mockApp).get(`/profile/search?email=${searchQuery}`);
 
       const namePlusEmailResults = [...nameResults.body, ...emailResults.body];
-      const distinctResults = [
-        ...new Set(namePlusEmailResults.map((result) => result.employeeId)),
-      ];
+      const distinctResults = [...new Set(namePlusEmailResults.map((result) => result.employeeId))];
 
       expect(togetherResults.body.length).toBe(distinctResults.length);
     });
@@ -114,7 +96,7 @@ describe('ProfileService', () => {
 
   describe('profile search by common name (that returns many results)', function () {
     beforeAll(async () => {
-      let commonPersonProfiles: Person[] = [];
+      const commonPersonProfiles: Person[] = [];
 
       if (await mockCommonProfileNeedsInsert()) {
         //insert 1 more than the limit so we can test that only the limit is returned
@@ -148,9 +130,7 @@ describe('ProfileService', () => {
   describe('profile search by id', function () {
     it('should return correct result given valid id', async function () {
       const mockPerson = mocks.data.mockPerson1;
-      const response = await request(mockApp).get(
-        `/profile/${mockPerson.employeeId}`,
-      );
+      const response = await request(mockApp).get(`/profile/${mockPerson.employeeId}`);
       const result = response.body;
 
       expect(response.status).toBe(200);
@@ -172,7 +152,9 @@ describe('ProfileService', () => {
       shoutout.text.includes(shoutoutUuid.toString()),
     );
 
-    const recipientIds = testShoutoutsReceived[0].recipients.map(recipient => recipient.employeeId);
+    const recipientIds = testShoutoutsReceived[0].recipients.map(
+      (recipient) => recipient.employeeId,
+    );
 
     expect(response.status).toBe(200);
     expect(testShoutoutsReceived.length).toBe(1);
@@ -189,7 +171,7 @@ describe('ProfileService', () => {
         `/profile/${mocks.data.singleRecipientShoutout.authorId}`,
       );
       const result = response.body;
-      
+
       const testShoutoutsGiven = result.shoutoutsGiven.filter((shoutout) =>
         shoutout.text.includes(shoutoutUuid.toString()),
       );
