@@ -4,6 +4,7 @@
   "description": "",
   "scripts": {
     "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
     "prettier": "prettier --check .",
     "prebuild": "rimraf dist",
     "build": "nest build",

@@ -20,6 +20,4 @@ jobs:
       - run: npm install
       - run: npm run lint
       - run: npm run prettier
-      - name: Start a MongoDB server for testing
-        uses: supercharge/mongodb-github-action@1.7.0
       - run: npm run test

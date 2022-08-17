@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { Message } from 'src/modules/database/message/message.entity';
 import { LATEST_SHOUTOUTS_LIMIT } from '../constants';
 import { HelperService } from '../helper.service';
 import { ShoutoutDto } from './dto/shoutout.dto';
@@ -9,7 +8,8 @@ export class ShoutoutsService {
   constructor(private helperService: HelperService) {}
 
   async latestShoutouts(): Promise<ShoutoutDto[]> {
-    const shoutouts: ShoutoutDto[] = await this.helperService.getShoutouts()
+    const shoutouts: ShoutoutDto[] = await this.helperService
+      .getShoutouts()
       .orderBy('shoutout.createDate', 'DESC')
       .limit(LATEST_SHOUTOUTS_LIMIT)
       .getMany();
@@ -24,7 +24,8 @@ export class ShoutoutsService {
     let shoutouts: ShoutoutDto[];
 
     if (requestedYear) {
-      shoutouts = await this.helperService.getShoutouts()
+      shoutouts = await this.helperService
+        .getShoutouts()
         .where('EXTRACT(YEAR from shoutout.createDate) = :requestedYear', {
           requestedYear,
         })
@@ -34,7 +35,8 @@ export class ShoutoutsService {
       const twelveMonthsAgo = new Date();
       twelveMonthsAgo.setMonth(now.getMonth() - 12);
 
-      shoutouts = await this.helperService.getShoutouts()
+      shoutouts = await this.helperService
+        .getShoutouts()
         .where('shoutout.createDate >= :twelveMonthsAgo', { twelveMonthsAgo })
         .getMany();
     }

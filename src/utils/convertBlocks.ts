@@ -26,7 +26,11 @@ async function fetchRecipient(slackClient, slackId, cache = {}): Promise<any> {
   }
 }
 
-export default async function convertBlocks({ blocks, client, uniqueUsers = {} }): Promise<ConvertedBlocks> {
+export default async function convertBlocks({
+  blocks,
+  client,
+  uniqueUsers = {},
+}): Promise<ConvertedBlocks> {
   try {
     const outputElements: Element[] = [];
 
@@ -55,7 +59,7 @@ export default async function convertBlocks({ blocks, client, uniqueUsers = {} }
           if (block.style) {
             outputElement.subtype = block.style;
           }
-          
+
           outputElements.push(outputElement);
           break;
         }

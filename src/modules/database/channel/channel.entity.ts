@@ -12,6 +12,6 @@ export class Channel {
   @Column()
   name: string;
 
-  @OneToMany(() => Message, message => message.channel)
+  @OneToMany(() => Message, (message) => message.channel)
   messages: Message;
 }
