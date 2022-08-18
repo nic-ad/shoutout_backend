@@ -27,10 +27,10 @@ export class Message {
   @Column('text', { array: true })
   recipients: string[];
 
-  @ManyToOne(() => Channel, (channel) => channel.messages, { onDelete: 'CASCADE' })
+  @ManyToOne(() => Channel, (channel) => channel.messages )
   channel: Channel;
 
-  @ManyToMany(() => Elements, (element) => element.messages, { cascade: true, onDelete: 'CASCADE' })
+  @ManyToMany(() => Elements, (element) => element.messages, { cascade: true })
   @JoinTable()
   elements: Elements[];
 }
