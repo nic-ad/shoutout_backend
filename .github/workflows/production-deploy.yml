@@ -1,19 +1,19 @@
 name: Deploy to production
 
-env: 
-  POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
-  POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
-  POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
-  
 on:
   push:
     branches:
-      - main
+      - ISSUE-78-failing-workflow-tests
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
+      env: 
+        POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
+        POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+        POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
