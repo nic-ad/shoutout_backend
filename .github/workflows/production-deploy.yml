@@ -3,15 +3,10 @@ name: Deploy to production
 on:
   push:
     branches:
-      - ISSUE-78-failing-workflow-tests
+      - main
 
 jobs:
   deploy:
-    env:
-      POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
-      POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
-      POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
-
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -27,15 +22,7 @@ jobs:
         run: |
           npm run lint
           npm run prettier
-      - name: Start database instance for testing
-        uses: harmon758/postgresql-action@v1
-        with:
-          postgresql db: ${{ env.POSTGRES_DB }}
-          postgresql user: ${{ env.POSTGRES_USER }}
-          postgresql password: ${{ env.POSTGRES_PASSWORD }}
-      - run: npm run test
-        env:
-          SYNCHRONIZE: true
+          npm run test
       - uses: akhileshns/heroku-deploy@v3.12.12
         with:
           heroku_api_key: ${{secrets.HEROKU_API_KEY}}
