@@ -23,8 +23,8 @@ export class HelperService {
     return this.messageRepository
       .createQueryBuilder('shoutout')
       .innerJoinAndMapOne('shoutout.author', Person, 'person', `shoutout."authorId" = ${id}`)
-      .leftJoinAndSelect('shoutout.elements', 'elements')
-      .leftJoinAndSelect('shoutout.channel', 'channel');
+      .innerJoinAndSelect('shoutout.elements', 'elements')
+      .innerJoinAndSelect('shoutout.channel', 'channel');
   }
 
   /**
