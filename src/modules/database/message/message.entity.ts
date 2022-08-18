@@ -27,7 +27,7 @@ export class Message {
   @Column('text', { array: true })
   recipients: string[];
 
-  @ManyToOne(() => Channel, (channel) => channel.messages )
+  @ManyToOne(() => Channel, (channel) => channel.messages)
   channel: Channel;
 
   @ManyToMany(() => Elements, (element) => element.messages, { cascade: true })
