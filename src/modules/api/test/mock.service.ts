@@ -31,6 +31,7 @@ export class MockService {
     recipients: [],
     authorId: '',
     elements: [],
+    channel: null,
   };
 
   private person1: Person;
@@ -164,6 +165,6 @@ export class MockService {
 
     //person repo not cleared here because only a set number of people are mocked, whereas mock messages (shoutouts) accumulate and bog down the table after a while
 
-    return this.dataSource.destroy();
+    return;// this.dataSource.destroy();
   }
 }

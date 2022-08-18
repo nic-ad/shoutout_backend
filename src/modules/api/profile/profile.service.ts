@@ -63,8 +63,8 @@ export class ProfileService {
         'person',
         'shoutout."authorId" = person."employeeId"',
       )
-      .innerJoinAndSelect('shoutout.elements', 'elements')
-      .innerJoinAndSelect('shoutout.channel', 'channel')
+      .leftJoinAndSelect('shoutout.elements', 'elements')
+      .leftJoinAndSelect('shoutout.channel', 'channel')
       .where(':id = ANY(shoutout.recipients)', { id })
       .getMany();
 
