@@ -25,9 +25,9 @@ jobs:
           postgresql db: ${{ env.POSTGRES_DB }}
           postgresql user: ${{ env.POSTGRES_USER }}
           postgresql password: ${{ env.POSTGRES_PASSWORD }}
+      - run: npm run test
         env:
           SYNCHRONIZE: true
-      - run: npm run test
   deploy:
     name: Deploy proxy
     runs-on: ubuntu-latest
