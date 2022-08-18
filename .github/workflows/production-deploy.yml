@@ -16,12 +16,16 @@ jobs:
           cache: "npm"
       - run: npm install
       - run: npm run lint
-      - name: Start postgres instance for testing
+      - name: Start database instance for testing
         uses: harmon758/postgresql-action@v1
+        env: 
+          POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
+          POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
         with:
-          postgresql db: ${{ secrets.POSTGRES_DB }}
-          postgresql user: ${{ secrets.POSTGRES_USER }}
-          postgresql password: ${{ secrets.POSTGRES_PASSWORD }}
+          postgresql db: ${{ env.POSTGRES_DB }}
+          postgresql user: ${{ env.POSTGRES_USER }}
+          postgresql password: ${{ env.POSTGRES_PASSWORD }}
       - run: npm run test
   deploy:
     name: Deploy proxy
