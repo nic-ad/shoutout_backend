@@ -1,4 +1,3 @@
-import { Elements } from 'src/modules/database/elements/elements.entity';
 import { Message } from 'src/modules/database/message/message.entity';
 import { Person } from 'src/modules/database/person/person.entity';
 
