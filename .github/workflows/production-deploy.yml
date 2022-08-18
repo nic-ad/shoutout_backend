@@ -1,24 +1,32 @@
 name: Deploy to production
+
 env: 
   POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
   POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
   POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+  
 on:
   push:
     branches:
       - main
 
 jobs:
-  build:
-    name: Lint and Test
+  deploy:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
           cache: "npm"
-      - run: npm install
-      - run: npm run lint
+          node-version: "14"
+
+      - name: Install dependencies
+        run: |
+          npm install
+      - name: Run linter and tests
+        run: |
+          npm run lint
+          npm run prettier
       - name: Start database instance for testing
         uses: harmon758/postgresql-action@v1
         with:
@@ -28,12 +36,8 @@ jobs:
       - run: npm run test
         env:
           SYNCHRONIZE: true
-  deploy:
-    name: Deploy proxy
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: superfly/flyctl-actions/setup-flyctl@master
-      - run: flyctl deploy --remote-only
-        env:
-          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+      - uses: akhileshns/heroku-deploy@v3.12.12
+        with:
+          heroku_api_key: ${{secrets.HEROKU_API_KEY}}
+          heroku_app_name: "shoutoutapp"
+          heroku_email: "devops@rocketinsights.com"
