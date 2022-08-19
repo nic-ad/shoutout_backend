@@ -1,3 +1,5 @@
+name: Deploy to Staging
+
 on:
   pull_request:
     types:
@@ -20,4 +22,5 @@ jobs:
         run: |
           npm install
       - name: Build and deploy staging
+        run: echo staging...
       ###

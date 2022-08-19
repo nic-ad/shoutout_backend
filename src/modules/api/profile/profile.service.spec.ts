@@ -32,7 +32,7 @@ describe('ProfileService', () => {
       );
 
       expect(response.status).toBe(200);
-      expect(results.length).toBe(2);
+      expect(results.length).toBe(200);
       expect(resultWithoutQueryInName).toBeFalsy();
     });
 
