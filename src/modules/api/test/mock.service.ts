@@ -1,7 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import {
   CHANNEL_REPOSITORY,
-  DATA_SOURCE,
   MESSAGE_REPOSITORY,
   PERSON_REPOSITORY,
 } from 'src/modules/database/constants';
@@ -11,7 +10,6 @@ import { Repository } from 'typeorm';
 import { MOCK_COMMON_PERSON_NAME, MOCK_SHOUTOUT_TEXT } from './constants';
 import { ApiMocks, MockMessage } from './types';
 import { Channel } from 'src/modules/database/channel/channel.entity';
-import { DataSource } from 'typeorm';
 
 @Injectable()
 export class MockService {
@@ -30,7 +28,8 @@ export class MockService {
     createDate: null,
     recipients: [],
     authorId: '',
-    elements: [],
+    elements: [ { text: '', type: '', employeeId: ''} ],//stub out elements until test logic for that field is written
+    channel: null,
   };
 
   private person1: Person;
@@ -44,7 +43,6 @@ export class MockService {
     @Inject(PERSON_REPOSITORY) private personRepository: Repository<Person>,
     @Inject(MESSAGE_REPOSITORY) private messageRepository: Repository<Message>,
     @Inject(CHANNEL_REPOSITORY) private channelRepository: Repository<Channel>,
-    @Inject(DATA_SOURCE) private dataSource: DataSource,
   ) {
     this.person1 = {
       ...this.basePerson,
@@ -118,23 +116,22 @@ export class MockService {
       slackId: '',
     });
 
-    const params = [
-      `${MOCK_SHOUTOUT_TEXT} ${shoutout.text}`,
-      shoutout.createDate || new Date(),
-      shoutout.authorId,
-      channel.id,
-      shoutout.recipients[0],
-    ];
+    const recipients: string[] = [shoutout.recipients[0]];
 
     if (shoutout.multiRecipient) {
-      params.push(shoutout.recipients[1]);
+      recipients.push(shoutout.recipients[1]);
     }
 
-    return await this.messageRepository.query(
-      `INSERT INTO message (text, "createDate", "authorId", "channelId", recipients) 
-        VALUES ($1, $2, $3, $4, ARRAY[$5${shoutout.multiRecipient ? ',$6' : ''}])`,
-      params,
-    );
+    const mockMessage = await this.messageRepository.create({
+      authorId: shoutout.authorId,
+      channel,
+      elements: this.baseShoutout.elements,
+      recipients,
+      text: `${MOCK_SHOUTOUT_TEXT} ${shoutout.text}`,
+      createDate: shoutout.createDate || new Date(),
+    });
+
+    return this.messageRepository.save(mockMessage);
   }
 
   async insertSingleRecipientShoutout(shoutout: any): Promise<Message> {
@@ -164,6 +161,6 @@ export class MockService {
 
     //person repo not cleared here because only a set number of people are mocked, whereas mock messages (shoutouts) accumulate and bog down the table after a while
 
-    return this.dataSource.destroy();
+    return;// this.dataSource.destroy();
   }
 }
