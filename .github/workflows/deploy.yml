@@ -15,10 +15,10 @@ jobs:
     
     steps:
       - name: Deploy staging
-        if: github.base_ref == 'dummy_staging'
+        if: github.base_ref == 'staging'
         run: echo staging...
       - name: Deploy production
-        if: github.base_ref == 'dummy_main'
+        if: github.base_ref == 'main'
         run: echo prodding...
 
       #- uses: actions/checkout@v2
