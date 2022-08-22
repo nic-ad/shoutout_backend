@@ -6,8 +6,8 @@ on:
       - opened
       - synchronize
     branches:
-      - 'dummy_staging'
-      - 'dummy_main'
+      - dummy_staging
+      - dummy_main
 
 jobs:
   build:
@@ -19,7 +19,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
           cache: "npm"
