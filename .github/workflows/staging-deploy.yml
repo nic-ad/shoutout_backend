@@ -7,20 +7,13 @@ on:
     branches: 'dummy_staging'
 
 jobs:
-  if_merged:
-    name: Build Staging and Deploy
-    if: github.event.pull_request.merged == true
+  setup_env:
+    uses: ./.github/workflows/setup-env.yml
+  
+  build_and_deploy:
     runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with:
-          cache: "npm"
-          node-version: "14"
 
-      - name: Install dependencies
-        run: |
-          npm install
-      - name: Build and deploy staging
-        run: echo staging...
-      ###
+    steps:
+    - name: Build and deploy staging
+      run: echo staging...
+    ###
