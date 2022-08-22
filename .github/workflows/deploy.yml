@@ -5,8 +5,8 @@ on:
     types:
       - closed
     branches:
-      - dummy_staging
-      - dummy_main
+      - staging
+      - main
 
 jobs:
   deploy:
