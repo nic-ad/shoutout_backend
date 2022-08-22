@@ -1,4 +1,4 @@
-import { DataSource } from 'typeorm';
+import { DataSource, DataSourceOptions } from 'typeorm';
 import { DATA_SOURCE } from './constants';
 import { Person } from './person/person.entity';
 import { Channel } from './channel/channel.entity';
@@ -12,28 +12,7 @@ if (result.error) {
 
 const SYNC = process.env.SYNCHRONIZE === 'true';
 
-export const databaseProviders = [
-  {
-    provide: DATA_SOURCE,
-    useFactory: async () => {
-      const dataSource = new DataSource({
-        type: 'postgres',
-        host: process.env.POSTGRES_HOST,
-        port: parseInt(process.env.POSTGRES_PORT) || 5432,
-        username: process.env.POSTGRES_USER,
-        password: process.env.POSTGRES_PASSWORD,
-        database: process.env.POSTGRES_DB,
-        entities: [Person, Channel, Elements, Message],
-        migrations: ['dist/modules/database/migrations/**/*{.js}'],
-        migrationsTableName: 'migrations_table',
-        synchronize: SYNC,
-      });
-      return dataSource.initialize();
-    },
-  },
-];
-
-export const dataSourceInstance = new DataSource({
+const sharedConfig = {
   type: 'postgres',
   host: process.env.POSTGRES_HOST,
   port: parseInt(process.env.POSTGRES_PORT) || 5432,
@@ -41,7 +20,24 @@ export const dataSourceInstance = new DataSource({
   password: process.env.POSTGRES_PASSWORD,
   database: process.env.POSTGRES_DB,
   entities: [Person, Channel, Elements, Message],
-  migrations: ['src/modules/database/migrations/**/*{.ts,.js}'],
   migrationsTableName: 'migrations_table',
   synchronize: SYNC,
+} as DataSourceOptions;
+
+export const databaseProviders = [
+  {
+    provide: DATA_SOURCE,
+    useFactory: async () => {
+      const dataSource = new DataSource({
+        ...sharedConfig,
+        migrations: ['dist/modules/database/migrations/**/*{.js}'],
+      });
+      return dataSource.initialize();
+    },
+  },
+];
+
+export const dataSourceInstance = new DataSource({
+  ...sharedConfig,
+  migrations: ['src/modules/database/migrations/**/*{.ts,.js}'],
 });
