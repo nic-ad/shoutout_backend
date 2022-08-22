@@ -8,9 +8,8 @@ on:
 
 jobs:
   build_and_deploy:
-    uses: ./.github/workflows/setup-env.yml
-
     steps:
     - name: Build and deploy staging
+      uses: ./.github/workflows/setup-env.yml
       run: echo prodding...
     ###
