@@ -6,13 +6,9 @@ on:
       - closed
     branches: 'dummy_staging'
 
-jobs:
-  setup_env:
-    uses: ./.github/workflows/setup-env.yml
-  
+jobs:  
   build_and_deploy:
-    needs: setup_env
-    runs-on: ubuntu-latest
+    uses: ./.github/workflows/setup-env.yml
 
     steps:
     - name: Build and deploy staging
