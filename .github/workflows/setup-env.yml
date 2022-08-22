@@ -1,4 +1,4 @@
-name: Setup Workflow Environment On PR Merge
+name: Setup Workflow Environment on PR Merge
 
 on:
   workflow_call:
@@ -6,7 +6,7 @@ on:
 jobs:
   setup_environment:
     if: github.event.pull_request.merged == true
-    
+
     runs-on: ubuntu-latest
 
     steps:
