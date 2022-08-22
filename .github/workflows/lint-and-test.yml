@@ -6,8 +6,8 @@ on:
       - opened
       - synchronize
     branches:
-      - 'dummy_staging'
-      - 'dummy_main'
+      - dummy_staging
+      - dummy_main
 
 jobs:
   build:
