@@ -1,14 +1,14 @@
-name: Deploy to Production
+name: Deploy to Staging
 
 on:
   pull_request:
     types:
       - closed
-    branches: 'dummy_main'
+    branches: 'dummy_staging'
 
 jobs:
   if_merged:
-    name: Build Production and Deploy
+    name: Build Staging and Deploy
     if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     steps:
@@ -21,6 +21,6 @@ jobs:
       - name: Install dependencies
         run: |
           npm install
-      - name: Build and deploy production
-        run: echo prodding...
+      - name: Build and deploy staging
+        run: echo staging...
       ###
