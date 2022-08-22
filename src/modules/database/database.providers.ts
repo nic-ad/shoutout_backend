@@ -16,7 +16,18 @@ export const databaseProviders = [
   {
     provide: DATA_SOURCE,
     useFactory: async () => {
-      const dataSource = dataSourceInstance;
+      const dataSource = new DataSource({
+        type: 'postgres',
+        host: process.env.POSTGRES_HOST,
+        port: parseInt(process.env.POSTGRES_PORT) || 5432,
+        username: process.env.POSTGRES_USER,
+        password: process.env.POSTGRES_PASSWORD,
+        database: process.env.POSTGRES_DB,
+        entities: [Person, Channel, Elements, Message],
+        migrations: ['dist/modules/database/migrations/**/*{.js}'],
+        migrationsTableName: 'migrations_table',
+        synchronize: SYNC,
+      });
       return dataSource.initialize();
     },
   },
