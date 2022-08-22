@@ -11,6 +11,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: ./.github/workflows/setup-env.yml
+      - uses: ./.github/workflows/setup-env
       - name: Build and deploy staging
         run: echo staging...
