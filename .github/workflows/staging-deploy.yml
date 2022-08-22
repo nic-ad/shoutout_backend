@@ -8,9 +8,7 @@ on:
 
 jobs:  
   build_and_deploy:
-    name: Build and deploy staging
-
     steps:
       - uses: ./.github/workflows/setup-env.yml
+      - name: Build and deploy staging
         run: echo staging...
-        
