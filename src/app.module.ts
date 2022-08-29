@@ -7,6 +7,7 @@ import { ProfileModule } from './modules/api/profile/profile.module';
 import { ShoutoutsModule } from './modules/api/shoutouts/shoutouts.module';
 import { DatabaseModule } from './modules/database/database.module';
 import { SlackModule } from './slack/slack.module';
+import { AuthModule } from './modules/auth/auth.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { SlackModule } from './slack/slack.module';
     ProfileModule,
     ShoutoutsModule,
     SlackModule,
+    AuthModule,
   ],
 })
 export class AppModule {}
