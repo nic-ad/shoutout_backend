@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { SlackService } from './slack/slack.service';
+import { AuthGuard } from '@nestjs/passport';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -22,6 +23,8 @@ async function bootstrap() {
 
   const slack = app.get(SlackService);
   app.use('/slack/events', slack.use());
+  
+  app.useGlobalGuards(new (AuthGuard('jwt')));
 
   await app.listen(process.env.PORT);
 }

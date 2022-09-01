@@ -2,3 +2,5 @@ export const PROFILE_SEARCH_BAD_REQUEST = "Valid 'name' or 'email' URL Parameter
 export const PROFILE_ID_NOT_FOUND = 'No Profile Found for ID Provided';
 export const LATEST_SHOUTOUTS_LIMIT = 10;
 export const MANY_PROFILES_LIMIT = 100;
+export const UNAUTHORIZED = 'Unauthorized';
+export const INTERNAL_SERVER_ERROR = 'Unexpected Error';
