@@ -7,8 +7,14 @@ import {
   ApiOperation,
   ApiQuery,
   ApiTags,
+  ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { PROFILE_ID_NOT_FOUND, PROFILE_SEARCH_BAD_REQUEST } from 'src/modules/api/constants';
+import { 
+  INTERNAL_SERVER_ERROR, 
+  PROFILE_ID_NOT_FOUND, 
+  PROFILE_SEARCH_BAD_REQUEST, 
+  UNAUTHORIZED 
+} from 'src/modules/api/constants';
 import { ProfileService } from './profile.service';
 import { BasicProfileDto, FullProfileDto } from './dto/profile.dto';
 
@@ -35,8 +41,8 @@ export class ProfileController {
   @ApiBadRequestResponse({
     description: `Bad Request (${PROFILE_SEARCH_BAD_REQUEST})`,
   })
-  //@ApiUnauthorizedResponse({ description: 'Unauthorized'} )
-  @ApiInternalServerErrorResponse({ description: 'Unexpected Error' })
+  @ApiUnauthorizedResponse({ description: UNAUTHORIZED})
+  @ApiInternalServerErrorResponse({ description: INTERNAL_SERVER_ERROR })
   getProfilesBySearch(
     @Query('email') email: string,
     @Query('name') name: string,
@@ -50,9 +56,9 @@ export class ProfileController {
       'Returns full profile info for given id including shoutouts the person has given and received',
   })
   @ApiOkResponse({ type: FullProfileDto })
-  //@ApiUnauthorizedResponse({ description: 'Unauthorized'} )
+  @ApiUnauthorizedResponse({ description: UNAUTHORIZED})
   @ApiNotFoundResponse({ description: PROFILE_ID_NOT_FOUND })
-  @ApiInternalServerErrorResponse({ description: 'Unexpected Error' })
+  @ApiInternalServerErrorResponse({ description: INTERNAL_SERVER_ERROR })
   getProfileById(@Param('id') id: string) {
     return this.profileService.profileById(id);
   }
