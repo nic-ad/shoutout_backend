@@ -11,6 +11,7 @@ import { AuthModule } from './modules/auth/auth.module';
 
 @Module({
   imports: [
+    AuthModule,
     ConfigModule.forRoot({ isGlobal: true }),
     DatabaseModule,
     ChannelModule,
@@ -19,7 +20,6 @@ import { AuthModule } from './modules/auth/auth.module';
     ProfileModule,
     ShoutoutsModule,
     SlackModule,
-    AuthModule,
   ],
 })
 export class AppModule {}
