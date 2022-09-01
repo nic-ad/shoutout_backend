@@ -9,11 +9,9 @@ import {
 } from '@nestjs/swagger';
 import { ShoutoutDto } from './dto/shoutout.dto';
 import { ShoutoutsService } from './shoutouts.service';
-import { AuthGuard } from '@nestjs/passport';
 
 @ApiTags('shoutouts')
 @Controller('shoutouts')
-@UseGuards(AuthGuard('jwt'))
 export class ShoutoutsController {
   constructor(private readonly shoutoutsService: ShoutoutsService) {}
 

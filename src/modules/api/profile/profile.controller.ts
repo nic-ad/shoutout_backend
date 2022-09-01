@@ -12,11 +12,9 @@ import {
 import { PROFILE_ID_NOT_FOUND, PROFILE_SEARCH_BAD_REQUEST } from 'src/modules/api/constants';
 import { ProfileService } from './profile.service';
 import { BasicProfileDto, FullProfileDto } from './dto/profile.dto';
-import { AuthGuard } from '@nestjs/passport';
 
 @ApiTags('profile')
 @Controller('profile')
-@UseGuards(AuthGuard('jwt'))
 export class ProfileController {
   constructor(private readonly profileService: ProfileService) {}
 
