@@ -1,12 +1,13 @@
-import { ShoutoutsModule } from './shoutouts.module';
 import * as request from 'supertest';
+
+import { LATEST_SHOUTOUTS_LIMIT } from '../constants';
 import {
   closeDatabase,
   getShoutoutTestUuid,
   initTests,
   insertSingleRecipientShoutout,
 } from '../test/utils';
-import { LATEST_SHOUTOUTS_LIMIT } from '../constants';
+import { ShoutoutsModule } from './shoutouts.module';
 
 describe('ShoutoutsService', () => {
   let mocks: any;

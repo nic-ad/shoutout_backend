@@ -7,6 +7,7 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
+
 import { INTERNAL_SERVER_ERROR, UNAUTHORIZED } from '../constants';
 import { ShoutoutDto } from './dto/shoutout.dto';
 import { ShoutoutsService } from './shoutouts.service';

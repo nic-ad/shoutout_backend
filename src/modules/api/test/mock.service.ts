@@ -1,4 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
+import { Channel } from 'src/modules/database/channel/channel.entity';
 import {
   CHANNEL_REPOSITORY,
   MESSAGE_REPOSITORY,
@@ -7,9 +8,9 @@ import {
 import { Message } from 'src/modules/database/message/message.entity';
 import { Person } from 'src/modules/database/person/person.entity';
 import { Repository } from 'typeorm';
+
 import { MOCK_COMMON_PERSON_NAME, MOCK_SHOUTOUT_TEXT } from './constants';
 import { ApiMocks, MockMessage } from './types';
-import { Channel } from 'src/modules/database/channel/channel.entity';
 
 @Injectable()
 export class MockService {
@@ -28,7 +29,7 @@ export class MockService {
     createDate: null,
     recipients: [],
     authorId: '',
-    elements: [ { text: '', type: '', employeeId: ''} ],//stub out elements until test logic for that field is written
+    elements: [{ text: '', type: '', employeeId: '' }], //stub out elements until test logic for that field is written
     channel: null,
   };
 
@@ -161,6 +162,6 @@ export class MockService {
 
     //person repo not cleared here because only a set number of people are mocked, whereas mock messages (shoutouts) accumulate and bog down the table after a while
 
-    return;// this.dataSource.destroy();
+    return; // this.dataSource.destroy();
   }
 }
