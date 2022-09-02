@@ -1,6 +1,7 @@
 import { DataSource } from 'typeorm';
+
+import { DATA_SOURCE, MESSAGE_REPOSITORY } from '../constants';
 import { Message } from './message.entity';
-import { MESSAGE_REPOSITORY, DATA_SOURCE } from '../constants';
 
 export const messageProviders = [
   {
