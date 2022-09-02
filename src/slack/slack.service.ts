@@ -43,7 +43,7 @@ export class SlackService {
       });
     }
 
-    const shoutoutExpression = new RegExp(`\\b${process.env.SHOUTOUT_PATTERN}\\b`, 'i');
+    const shoutoutExpression = new RegExp(`\\b${process.env.SHOUTOUT_PATTERN}(?!-)\\b`, 'i');
     const logExpression = new RegExp(`\\b${process.env.LOG_PATTERN}\\b`, 'i');
 
     this.boltApp.message(shoutoutExpression, this.handleMessage.bind(this));
