@@ -3,6 +3,7 @@ import { MESSAGE_REPOSITORY, PERSON_REPOSITORY } from 'src/modules/database/cons
 import { Message } from 'src/modules/database/message/message.entity';
 import { Person } from 'src/modules/database/person/person.entity';
 import { Repository } from 'typeorm';
+
 import {
   MANY_PROFILES_LIMIT,
   PROFILE_ID_NOT_FOUND,

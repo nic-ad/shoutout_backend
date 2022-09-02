@@ -1,12 +1,13 @@
 import {
-  Entity,
   Column,
-  PrimaryGeneratedColumn,
   CreateDateColumn,
+  Entity,
   JoinTable,
   ManyToMany,
   ManyToOne,
+  PrimaryGeneratedColumn,
 } from 'typeorm';
+
 import { Channel } from '../channel/channel.entity';
 import { Elements } from '../elements/elements.entity';
 

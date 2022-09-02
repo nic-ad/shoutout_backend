@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+
 import { LATEST_SHOUTOUTS_LIMIT } from '../constants';
 import { HelperService } from '../helper.service';
 import { ShoutoutDto } from './dto/shoutout.dto';

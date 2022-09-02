@@ -1,8 +1,9 @@
-import { Injectable, Inject } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
-import { Elements } from './elements.entity';
+
 import { ELEMENTS_REPOSITORY } from '../constants';
 import CreateElementsDto from './dto/createElements.dto';
+import { Elements } from './elements.entity';
 
 @Injectable()
 export class ElementsService {

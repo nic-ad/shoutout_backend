@@ -1,17 +1,18 @@
-import { ProfileModule } from './profile.module';
+import { Person } from 'src/modules/database/person/person.entity';
 import * as request from 'supertest';
-import {
-  initTests,
-  mockCommonProfileNeedsInsert,
-  insertCommonProfiles,
-  insertSingleRecipientShoutout,
-  getShoutoutTestUuid,
-  insertMultiRecipientShoutout,
-  closeDatabase,
-} from '../test/utils';
+
 import { MANY_PROFILES_LIMIT } from '../constants';
 import { MOCK_COMMON_PERSON_NAME } from '../test/constants';
-import { Person } from 'src/modules/database/person/person.entity';
+import {
+  closeDatabase,
+  getShoutoutTestUuid,
+  initTests,
+  insertCommonProfiles,
+  insertMultiRecipientShoutout,
+  insertSingleRecipientShoutout,
+  mockCommonProfileNeedsInsert,
+} from '../test/utils';
+import { ProfileModule } from './profile.module';
 
 describe('ProfileService', () => {
   let mocks: any;

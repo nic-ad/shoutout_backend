@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+
 import { ChannelModule } from '../modules/database/channel/channel.module';
 import { DatabaseModule } from '../modules/database/database.module';
 import { ElementsModule } from '../modules/database/elements/elements.module';
