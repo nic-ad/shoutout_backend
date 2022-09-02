@@ -74,6 +74,14 @@ export default async function convertBlocks({
 
           break;
         }
+        case 'emoji': {
+          outputElements.push({
+            ...block,
+            text: block.unicode,
+          });
+
+          break;
+        }
         default:
           outputElements.push(block);
       }
