@@ -1,12 +1,13 @@
-import { App, ExpressReceiver } from '@slack/bolt';
 import { Inject, Injectable } from '@nestjs/common';
+import { App, ExpressReceiver } from '@slack/bolt';
 import { Application } from 'express';
-import convertBlocks from '../utils/convertBlocks';
-import handleError from '../utils/handleError';
+
 import { ChannelService } from '../modules/database/channel/channel.service';
 import { Elements } from '../modules/database/elements/elements.entity';
 import { MessageService } from '../modules/database/message/message.service';
 import { PersonService } from '../modules/database/person/person.service';
+import convertBlocks from '../utils/convertBlocks';
+import handleError from '../utils/handleError';
 
 @Injectable()
 export class SlackService {
@@ -42,7 +43,7 @@ export class SlackService {
       });
     }
 
-    const shoutoutExpression = new RegExp(`\\b${process.env.SHOUTOUT_PATTERN}\\b`, 'i');
+    const shoutoutExpression = new RegExp(`\\b${process.env.SHOUTOUT_PATTERN}(?!-)\\b`, 'i');
     const logExpression = new RegExp(`\\b${process.env.LOG_PATTERN}\\b`, 'i');
 
     this.boltApp.message(shoutoutExpression, this.handleMessage.bind(this));

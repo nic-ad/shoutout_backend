@@ -1,10 +1,11 @@
+import * as dotenv from 'dotenv';
 import { DataSource, DataSourceOptions } from 'typeorm';
-import { DATA_SOURCE } from './constants';
-import { Person } from './person/person.entity';
+
 import { Channel } from './channel/channel.entity';
+import { DATA_SOURCE } from './constants';
 import { Elements } from './elements/elements.entity';
 import { Message } from './message/message.entity';
-import * as dotenv from 'dotenv';
+import { Person } from './person/person.entity';
 const result = dotenv.config({ path: '.env' });
 if (result.error) {
   //TODO: Handle error
