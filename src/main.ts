@@ -25,7 +25,8 @@ async function bootstrap() {
   const slack = app.get(SlackService);
   app.use('/slack/events', slack.use());
 
-  app.useGlobalGuards(new (AuthGuard('jwt'))());
+  const JwtGuard = AuthGuard('jwt');
+  app.useGlobalGuards(new JwtGuard());
 
   await app.listen(process.env.PORT);
 }
