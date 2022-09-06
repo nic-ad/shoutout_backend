@@ -77,7 +77,7 @@ export default async function convertBlocks({
         case 'emoji': {
           outputElements.push({
             ...block,
-            text: block.unicode,
+            text: block.unicode || block.name,
           });
 
           break;
