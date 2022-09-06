@@ -10,14 +10,14 @@ class ElementsDto {
   id: number;
 
   @ApiProperty({
-    description: 'Single word, name or string of text for this piece of the shoutout',
-    examples: ['Shoutout to', 'Hard McWorker', 'for great work!'],
+    description: 'Single word, name, string of text, unicode or emoji name (the latter two for when "type" is "emoji") for this piece of the shoutout',
+    examples: ['Shoutout to', 'Hard McWorker', 'for great work!', '1f604'],
   })
   text: string;
 
   @ApiProperty({
     description: 'The type for this piece of the shoutout',
-    examples: ['text', 'user'],
+    examples: ['text', 'user', 'emoji'],
   })
   type: string;
 
@@ -50,7 +50,7 @@ export class ShoutoutDto {
   @ApiProperty({
     description:
       'Full text of the shoutout (broken down into frontend-friendly array in the "elements" property)',
-    example: 'Shoutout to <@UJDNSKJDN> for great work!',
+    example: 'Shoutout to <@UJDNSKJDN> for great work!:smile:',
   })
   text: string;
 

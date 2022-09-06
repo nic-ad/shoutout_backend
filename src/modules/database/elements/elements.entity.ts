@@ -7,7 +7,7 @@ export class Elements {
   @PrimaryGeneratedColumn('increment')
   id: number;
 
-  @Column()
+  @Column({ default: '' })
   text: string;
 
   @Column()
