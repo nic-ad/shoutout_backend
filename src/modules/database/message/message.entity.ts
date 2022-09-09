@@ -2,9 +2,8 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  JoinTable,
-  ManyToMany,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
@@ -31,7 +30,6 @@ export class Message {
   @ManyToOne(() => Channel, (channel) => channel.messages)
   channel: Channel;
 
-  @ManyToMany(() => Elements, (element) => element.messages, { cascade: true })
-  @JoinTable()
+  @OneToMany(() => Elements, element => element.message, { cascade: true })
   elements: Elements[];
 }
