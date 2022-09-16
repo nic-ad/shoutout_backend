@@ -7,6 +7,7 @@ export class CreateMessageDto {
   elements: Elements[];
   recipients: string[];
   text: string;
+  createDate?: Date;
 }
 
 export default CreateMessageDto;

@@ -40,7 +40,7 @@ export class PersonService {
     } catch (error) {
       console.log('findPersonAndUpdateImage: error');
       console.log(error);
-      // handleError(error, this.boltApp.client);
+      // logError(error, this.boltApp.client);
     }
   }
 }

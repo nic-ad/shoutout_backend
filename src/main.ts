@@ -1,11 +1,13 @@
+import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
-import { AuthGuard } from '@nestjs/passport';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import * as dotenv from 'dotenv';
 
 import { AppModule } from './app.module';
 import { SlackService } from './slack/slack.service';
 
 async function bootstrap() {
+  dotenv.config();
   const app = await NestFactory.create(AppModule);
 
   const config = new DocumentBuilder()
@@ -17,6 +19,7 @@ async function bootstrap() {
     .addTag('shoutouts')
     .addTag('profile')
     .setBasePath('/api')
+    .addBearerAuth()
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
@@ -25,9 +28,8 @@ async function bootstrap() {
   const slack = app.get(SlackService);
   app.use('/slack/events', slack.use());
 
-  const JwtGuard = AuthGuard('jwt');
-  app.useGlobalGuards(new JwtGuard());
-
+  app.useGlobalPipes(new ValidationPipe({ transform: true }));
+  
   await app.listen(process.env.PORT);
 }
 bootstrap();

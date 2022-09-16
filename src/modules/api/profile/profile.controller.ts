@@ -1,6 +1,8 @@
-import { Controller, Get, Param, Query } from '@nestjs/common';
+import { Controller, Get, Param, Query, UseGuards } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 import {
   ApiBadRequestResponse,
+  ApiBearerAuth,
   ApiInternalServerErrorResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
@@ -9,6 +11,7 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
+import { DEFAULT_JWT } from 'src/modules/auth/constants';
 import {
   INTERNAL_SERVER_ERROR,
   PROFILE_ID_NOT_FOUND,
@@ -20,7 +23,11 @@ import { BasicProfileDto, FullProfileDto } from './dto/profile.dto';
 import { ProfileService } from './profile.service';
 
 @ApiTags('profile')
+@ApiBearerAuth()
+@UseGuards(AuthGuard(DEFAULT_JWT))
 @Controller('profile')
+@ApiUnauthorizedResponse({ description: UNAUTHORIZED })
+@ApiInternalServerErrorResponse({ description: INTERNAL_SERVER_ERROR })
 export class ProfileController {
   constructor(private readonly profileService: ProfileService) {}
 
@@ -42,8 +49,6 @@ export class ProfileController {
   @ApiBadRequestResponse({
     description: `Bad Request (${PROFILE_SEARCH_BAD_REQUEST})`,
   })
-  @ApiUnauthorizedResponse({ description: UNAUTHORIZED })
-  @ApiInternalServerErrorResponse({ description: INTERNAL_SERVER_ERROR })
   getProfilesBySearch(
     @Query('email') email: string,
     @Query('name') name: string,
@@ -57,9 +62,7 @@ export class ProfileController {
       'Returns full profile info for given id including shoutouts the person has given and received',
   })
   @ApiOkResponse({ type: FullProfileDto })
-  @ApiUnauthorizedResponse({ description: UNAUTHORIZED })
   @ApiNotFoundResponse({ description: PROFILE_ID_NOT_FOUND })
-  @ApiInternalServerErrorResponse({ description: INTERNAL_SERVER_ERROR })
   getProfileById(@Param('id') id: string) {
     return this.profileService.profileById(id);
   }

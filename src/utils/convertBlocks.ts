@@ -1,4 +1,4 @@
-import handleError from './handleError';
+import { logError } from './logger';
 
 type ConvertedBlocks = {
   elements: Element[];
@@ -22,7 +22,7 @@ async function fetchRecipient(slackClient, slackId, cache = {}): Promise<any> {
     cache[slackId] = user;
     return user;
   } catch (error) {
-    handleError(error, slackClient);
+    logError(error, slackClient);
   }
 }
 
@@ -92,6 +92,6 @@ export default async function convertBlocks({
       users: Object.values(uniqueUsers),
     };
   } catch (error) {
-    handleError(error, client);
+    logError(error, client);
   }
 }
