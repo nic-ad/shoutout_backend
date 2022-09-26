@@ -31,7 +31,7 @@ jobs:
           postgresql user: ${{ env.POSTGRES_USER }}
           postgresql password: ${{ env.POSTGRES_PASSWORD }}
       - name: Clear test messages from database
-      - run: npm run test:clear
+        run: npm run test:clear
         env:
           SYNCHRONIZE: true
       - run: npm run test
