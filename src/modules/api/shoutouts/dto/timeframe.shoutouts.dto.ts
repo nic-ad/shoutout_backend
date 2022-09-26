@@ -4,7 +4,7 @@ import { Expose } from 'class-transformer';
 
 export class TimeframeShoutoutsDto {
   @ApiProperty({
-    description: 'Only messages after this Unix timestamp will be included in results (default is the current time)',
+    description: 'Only messages after this Unix timestamp will be included in results (default is 0)',
     example: '1657209690.925999',
     required: false,
   })
@@ -14,7 +14,7 @@ export class TimeframeShoutoutsDto {
   oldest?: string;
 
   @ApiProperty({
-    description: 'Only messages before this Unix timestamp will be included in results (default 0)',
+    description: 'Only messages before this Unix timestamp will be included in results (default is current time)',
     example: '1663189167.355109',
     required: false,
   })
