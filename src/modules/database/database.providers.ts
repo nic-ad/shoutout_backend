@@ -35,7 +35,7 @@ export const getInitializedDataSource = (database?: string, port?: string) => {
   const dataSource = new DataSource({
     ...sharedConfig,
     database: database || process.env.POSTGRES_DB,
-    port: parseInt(port || process.env.POSTGRES_PORT),
+    port: parseInt(port || process.env.POSTGRES_DEFAULT_PORT),
   } as DataSourceOptions);
 
   return dataSource.initialize();

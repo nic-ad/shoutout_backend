@@ -20,7 +20,6 @@ describe('ProfileService', function () {
     const mockModule: TestingModule = await initTestingModule(ProfileModule);
     mockService = await mockModule.resolve(MockService);
     mockData = await mockService.getMockData();
- 
     mockApp = mockModule.createNestApplication();
     await mockApp.init();
     mockAppServer = mockApp.getHttpServer();

@@ -21,12 +21,14 @@ describe('ShoutoutsService', function () {
   });
 
   describe('latest shoutouts', function () {
+    const OLDEST_SHOUTOUTS = 'oldest shoutout';
+
     it(`should return ${LATEST_SHOUTOUTS_LIMIT} shoutouts and exclude the oldest one given that more than ${LATEST_SHOUTOUTS_LIMIT + 1} exist`, async function () {
       const shoutoutUuid = getShoutoutTestUuid();
 
       await mockService.insertSingleRecipientShoutout({
         uuid: shoutoutUuid,
-        text: 'oldest shoutout',
+        text: OLDEST_SHOUTOUTS,
       });
 
       //insert our own shoutouts in case database has less than we need
@@ -39,11 +41,20 @@ describe('ShoutoutsService', function () {
 
       const response = await request(mockAppServer).get('/shoutouts/latest');
       const results = response.body;
-      const oldestShoutout = results.find((result) => result.text.includes('oldest shoutout'));
 
       expect(response.status).toBe(200);
       expect(results.length).toBe(LATEST_SHOUTOUTS_LIMIT);
-      expect(oldestShoutout).toBeFalsy();
+    });
+      
+    it(`should not include the oldest shoutout when given ${
+        LATEST_SHOUTOUTS_LIMIT + 1
+      } of them`, async function () {
+        const response = await request(mockAppServer).get('/shoutouts/latest');
+        const results = response.body;
+        const oldestShoutout = results.find((result) => result.text.includes(OLDEST_SHOUTOUTS));
+  
+        expect(response.status).toBe(200);
+        expect(oldestShoutout).toBeFalsy();
     });
   });
 
