@@ -10,7 +10,8 @@ class ElementsDto {
   id: number;
 
   @ApiProperty({
-    description: 'Single word, name, string of text, unicode or emoji name (the latter two for when "type" is "emoji") for this piece of the shoutout',
+    description:
+      'Single word, name, string of text, unicode or emoji name (the latter two for when "type" is "emoji") for this piece of the shoutout',
     examples: ['Shoutout to', 'Hard McWorker', 'for great work!', '1f604'],
   })
   text: string;
