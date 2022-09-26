@@ -45,16 +45,16 @@ describe('ShoutoutsService', function () {
       expect(response.status).toBe(200);
       expect(results.length).toBe(LATEST_SHOUTOUTS_LIMIT);
     });
-      
+
     it(`should not include the oldest shoutout when given ${
-        LATEST_SHOUTOUTS_LIMIT + 1
-      } of them`, async function () {
-        const response = await request(mockAppServer).get('/shoutouts/latest');
-        const results = response.body;
-        const oldestShoutout = results.find((result) => result.text.includes(OLDEST_SHOUTOUTS));
-  
-        expect(response.status).toBe(200);
-        expect(oldestShoutout).toBeFalsy();
+      LATEST_SHOUTOUTS_LIMIT + 1
+    } of them`, async function () {
+      const response = await request(mockAppServer).get('/shoutouts/latest');
+      const results = response.body;
+      const oldestShoutout = results.find((result) => result.text.includes(OLDEST_SHOUTOUTS));
+
+      expect(response.status).toBe(200);
+      expect(oldestShoutout).toBeFalsy();
     });
   });
 
