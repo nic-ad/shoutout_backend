@@ -7,6 +7,7 @@ import { messageProviders } from 'src/modules/database/message/message.providers
 import { personProviders } from 'src/modules/database/person/person.providers';
 import { DataSource } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
+
 import { MockService } from '../test/mock.service';
 
 export async function initTestingModule(moduleBeingTested: any): Promise<TestingModule> {
@@ -14,13 +15,16 @@ export async function initTestingModule(moduleBeingTested: any): Promise<Testing
     imports: [DatabaseModule, moduleBeingTested],
     providers: [...personProviders, ...messageProviders, ...channelProviders, MockService],
   })
-  .overrideProvider(DATA_SOURCE)
-  .useFactory({
-    factory: async (): Promise<DataSource> => {
-      return getInitializedDataSource(process.env.POSTGRES_TEST_DB, process.env.POSTGRES_TEST_PORT);
-    }
-  })
-  .compile();
+    .overrideProvider(DATA_SOURCE)
+    .useFactory({
+      factory: async (): Promise<DataSource> => {
+        return getInitializedDataSource(
+          process.env.POSTGRES_TEST_DB,
+          process.env.POSTGRES_TEST_PORT,
+        );
+      },
+    })
+    .compile();
 
   return mockModule;
 }

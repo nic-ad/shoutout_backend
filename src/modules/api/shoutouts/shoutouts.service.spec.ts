@@ -23,7 +23,9 @@ describe('ShoutoutsService', function () {
   describe('latest shoutouts', function () {
     const OLDEST_SHOUTOUTS = 'oldest shoutout';
 
-    it(`should return ${LATEST_SHOUTOUTS_LIMIT} shoutouts and exclude the oldest one given that more than ${LATEST_SHOUTOUTS_LIMIT + 1} exist`, async function () {
+    it(`should return ${LATEST_SHOUTOUTS_LIMIT} shoutouts and exclude the oldest one given that more than ${
+      LATEST_SHOUTOUTS_LIMIT + 1
+    } exist`, async function () {
       const shoutoutUuid = getShoutoutTestUuid();
 
       await mockService.insertSingleRecipientShoutout({

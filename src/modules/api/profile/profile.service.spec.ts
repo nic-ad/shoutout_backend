@@ -73,7 +73,9 @@ describe('ProfileService', function () {
     });
 
     it('should return no results given garbage search query', async function () {
-      const response = await request(mockAppServer).get('/profile/search?name=jkasdjkabsisdhkabkjn');
+      const response = await request(mockAppServer).get(
+        '/profile/search?name=jkasdjkabsisdhkabkjn',
+      );
       const results = response.body;
 
       expect(response.status).toBe(200);
@@ -99,7 +101,7 @@ describe('ProfileService', function () {
 
   describe('profile search by common name (that returns many results)', function () {
     beforeAll(async function () {
-      let commonPersonProfiles: Person[] = [];
+      const commonPersonProfiles: Person[] = [];
 
       //insert 1 more than the limit so we can test that only the limit is returned
       const numberOfMocksToInsert = MANY_PROFILES_LIMIT + 1;

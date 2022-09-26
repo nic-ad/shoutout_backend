@@ -10,7 +10,7 @@ import { Message } from 'src/modules/database/message/message.entity';
 import { Person } from 'src/modules/database/person/person.entity';
 import { DataSource, Repository } from 'typeorm';
 
-import { MOCK_SHOUTOUT_TEXT, MOCK_PERSON_NAME } from './constants';
+import { MOCK_PERSON_NAME, MOCK_SHOUTOUT_TEXT } from './constants';
 import { ApiMocks, MockMessage } from './types';
 
 @Injectable()
@@ -30,7 +30,7 @@ export class MockService {
     createDate: null,
     recipients: [],
     authorId: '',
-    
+
     //stub these out until test logic for these fields is written
     elements: [{ text: '', type: '', employeeId: '' }],
     channel: null,
@@ -67,7 +67,7 @@ export class MockService {
       ...this.basePerson,
       email: 'shoutout.test.three@deptagency.com',
       employeeId: 'XX3',
-      name: `${MOCK_PERSON_NAME} Test-Three`
+      name: `${MOCK_PERSON_NAME} Test-Three`,
     };
 
     this.singleRecipientShoutout.authorId = this.person1.employeeId;

@@ -53,7 +53,7 @@ export class ProfileService {
       .getShoutouts()
       .where('shoutout."authorId" = :id', { id })
       .getMany();
-      
+
     await this.helperService.postProcessShoutouts(shoutoutsGiven);
 
     const shoutoutsReceived: ShoutoutDto[] = await this.messageRepository
