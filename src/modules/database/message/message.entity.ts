@@ -30,6 +30,6 @@ export class Message {
   @ManyToOne(() => Channel, (channel) => channel.messages)
   channel: Channel;
 
-  @OneToMany(() => Elements, element => element.message, { cascade: true })
+  @OneToMany(() => Elements, (element) => element.message, { cascade: true })
   elements: Elements[];
 }

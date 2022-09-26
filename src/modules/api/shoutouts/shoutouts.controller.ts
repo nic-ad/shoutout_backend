@@ -1,4 +1,14 @@
-import { BadRequestException, Body, Controller, createParamDecorator, ExecutionContext, Get, Post, Query, UseGuards } from '@nestjs/common';
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  createParamDecorator,
+  ExecutionContext,
+  Get,
+  Post,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import {
   ApiBadRequestResponse,
@@ -14,23 +24,29 @@ import {
 } from '@nestjs/swagger';
 import { plainToInstance } from 'class-transformer';
 import { validate } from 'class-validator';
-
 import { DEFAULT_JWT, RESTRICTED_JWT } from 'src/modules/auth/constants';
-import { INTERNAL_SERVER_ERROR, API_RESTRICTED, UNAUTHORIZED, TIMEFRAME_SHOUTOUTS_BAD_REQUEST, SHOUTOUTS } from '../constants';
-import { ShoutoutDto } from './dto/shoutout.dto';
-import { ShoutoutsService } from './shoutouts.service';
+
+import {
+  API_RESTRICTED,
+  INTERNAL_SERVER_ERROR,
+  SHOUTOUTS,
+  TIMEFRAME_SHOUTOUTS_BAD_REQUEST,
+  UNAUTHORIZED,
+} from '../constants';
 import { InsertShoutoutDto } from './dto/insert.shoutout.dto';
+import { ShoutoutDto } from './dto/shoutout.dto';
 import { TimeframeShoutoutsDto } from './dto/timeframe.shoutouts.dto';
+import { ShoutoutsService } from './shoutouts.service';
 
 const TimeframeQuery = createParamDecorator(async (dtoClass: any, ctx: ExecutionContext) => {
   const request = ctx.switchToHttp().getRequest();
   const dto = plainToInstance(dtoClass, request.query, { excludeExtraneousValues: true });
   const errors = await validate(dto);
 
-  if(errors.length){
+  if (errors.length) {
     throw new BadRequestException(TIMEFRAME_SHOUTOUTS_BAD_REQUEST);
   }
-  
+
   return dto;
 });
 
@@ -66,11 +82,15 @@ export class ShoutoutsController {
   @Get('by-timeframe')
   @UseGuards(AuthGuard(RESTRICTED_JWT))
   @ApiTags(API_RESTRICTED)
-  @ApiOperation({ summary: `Fetches shoutouts with Slack\'s conversations.history API (https://api.slack.com/methods/conversations.history)` })
+  @ApiOperation({
+    summary: `Fetches shoutouts with Slack\'s conversations.history API (https://api.slack.com/methods/conversations.history)`,
+  })
   @ApiQuery({ type: TimeframeShoutoutsDto })
   @ApiOkResponse({ description: 'Messages (and metadata) returned for the given timeframe' })
   @ApiBadRequestResponse()
-  async getByTimeframe(@TimeframeQuery(TimeframeShoutoutsDto) timeframeShoutoutsDto: TimeframeShoutoutsDto): Promise<any> {
+  async getByTimeframe(
+    @TimeframeQuery(TimeframeShoutoutsDto) timeframeShoutoutsDto: TimeframeShoutoutsDto,
+  ): Promise<any> {
     return this.shoutoutsService.shoutoutsByTimeframe(timeframeShoutoutsDto);
   }
 

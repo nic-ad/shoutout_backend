@@ -29,7 +29,7 @@ async function bootstrap() {
   app.use('/slack/events', slack.use());
 
   app.useGlobalPipes(new ValidationPipe({ transform: true }));
-  
+
   await app.listen(process.env.PORT);
 }
 bootstrap();

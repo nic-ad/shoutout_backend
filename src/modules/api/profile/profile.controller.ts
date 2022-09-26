@@ -11,13 +11,13 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { DEFAULT_JWT } from 'src/modules/auth/constants';
 import {
   INTERNAL_SERVER_ERROR,
   PROFILE_ID_NOT_FOUND,
   PROFILE_SEARCH_BAD_REQUEST,
   UNAUTHORIZED,
 } from 'src/modules/api/constants';
+import { DEFAULT_JWT } from 'src/modules/auth/constants';
 
 import { BasicProfileDto, FullProfileDto } from './dto/profile.dto';
 import { ProfileService } from './profile.service';

@@ -1,15 +1,15 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { App, ExpressReceiver } from '@slack/bolt';
 import { Application } from 'express';
+import { TimeframeShoutoutsDto } from 'src/modules/api/shoutouts/dto/timeframe.shoutouts.dto';
 
 import { ChannelService } from '../modules/database/channel/channel.service';
 import { Elements } from '../modules/database/elements/elements.entity';
-import { logError, logInsertedMessage } from '../utils/logger';
 import { Message } from '../modules/database/message/message.entity';
 import { MessageService } from '../modules/database/message/message.service';
 import { PersonService } from '../modules/database/person/person.service';
-import { TimeframeShoutoutsDto } from 'src/modules/api/shoutouts/dto/timeframe.shoutouts.dto';
 import convertBlocks from '../utils/convertBlocks';
+import { logError, logInsertedMessage } from '../utils/logger';
 
 @Injectable()
 export class SlackService {
@@ -132,7 +132,7 @@ export class SlackService {
   }
 
   async getShoutoutsInTimeframe(params: TimeframeShoutoutsDto): Promise<any> {
-    try{
+    try {
       return this.boltApp.client.conversations.history({
         token: process.env.SLACK_BOT_TOKEN,
         channel: process.env.SHOUTOUT_CHANNEL_ID,
@@ -148,8 +148,8 @@ export class SlackService {
 
   async insertMessage(message: any) {
     const insertedMessage = await this.handleMessage({ client: this.boltApp.client, message });
-    
-    if(insertedMessage){
+
+    if (insertedMessage) {
       logInsertedMessage({ client: this.boltApp.client, message: insertedMessage });
     }
   }

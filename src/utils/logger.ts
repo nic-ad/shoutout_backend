@@ -1,4 +1,4 @@
-const CHANNEL = 'C03KJCMQSP9';//#shoutout-logs
+const CHANNEL = 'C03KJCMQSP9'; //#shoutout-logs
 
 /**
  * @param {Object} error
