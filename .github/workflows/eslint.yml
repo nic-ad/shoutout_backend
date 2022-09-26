@@ -11,7 +11,7 @@ on:
 jobs:
   build:
     env:
-      POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
+      POSTGRES_DB: ${{ secrets.POSTGRES_TEST_DB }}
       POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
       POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
 
@@ -30,6 +30,8 @@ jobs:
           postgresql db: ${{ env.POSTGRES_DB }}
           postgresql user: ${{ env.POSTGRES_USER }}
           postgresql password: ${{ env.POSTGRES_PASSWORD }}
-      - run: npm run test
+      - run: npm run test:clear
+      - name: Clear test messages from database
         env:
           SYNCHRONIZE: true
+      - run: npm run test

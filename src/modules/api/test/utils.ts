@@ -1,41 +1,28 @@
-import { INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { channelProviders } from 'src/modules/database/channel/channel.providers';
+import { DATA_SOURCE } from 'src/modules/database/constants';
 import { DatabaseModule } from 'src/modules/database/database.module';
-import { Message } from 'src/modules/database/message/message.entity';
+import { getInitializedDataSource } from 'src/modules/database/database.providers';
 import { messageProviders } from 'src/modules/database/message/message.providers';
-import { Person } from 'src/modules/database/person/person.entity';
 import { personProviders } from 'src/modules/database/person/person.providers';
+import { DataSource } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
-
-import { MANY_PROFILES_LIMIT } from '../constants';
 import { MockService } from '../test/mock.service';
-import { ApiMocks } from './types';
 
-let mockService: MockService;
-
-export async function initTests(moduleBeingTested): Promise<any> {
+export async function initTestingModule(moduleBeingTested: any): Promise<TestingModule> {
   const mockModule: TestingModule = await Test.createTestingModule({
     imports: [DatabaseModule, moduleBeingTested],
     providers: [...personProviders, ...messageProviders, ...channelProviders, MockService],
-  }).compile();
+  })
+  .overrideProvider(DATA_SOURCE)
+  .useFactory({
+    factory: async (): Promise<DataSource> => {
+      return getInitializedDataSource(process.env.POSTGRES_TEST_DB, process.env.POSTGRES_TEST_PORT);
+    }
+  })
+  .compile();
 
-  mockService = mockModule.get<MockService>(MockService);
-  const data: ApiMocks = await mockService.setupData();
-
-  const app: INestApplication = mockModule.createNestApplication();
-  await app.init();
-
-  return { mockService, data, app };
-}
-
-export async function mockCommonProfileNeedsInsert(): Promise<boolean> {
-  const count = await mockService.getMockCommonProfileCount();
-  return count < MANY_PROFILES_LIMIT;
-}
-
-export function insertCommonProfiles(commonPersonProfiles: Person[]): Promise<Person[]> {
-  return mockService.insertCommonProfiles(commonPersonProfiles);
+  return mockModule;
 }
 
 /**
@@ -44,19 +31,4 @@ export function insertCommonProfiles(commonPersonProfiles: Person[]): Promise<Pe
  */
 export function getShoutoutTestUuid() {
   return uuidv4();
-}
-
-export function insertSingleRecipientShoutout(shoutout: any): Promise<Message> {
-  return mockService.insertSingleRecipientShoutout({
-    text: `${shoutout.text || 'single shoutout'} ${shoutout.uuid}`,
-    createDate: shoutout.createDate,
-  });
-}
-
-export function insertMultiRecipientShoutout(shoutoutUuid: number): Promise<Message> {
-  return mockService.insertMultiRecipientShoutout(`multi shoutout ${shoutoutUuid}`);
-}
-
-export function closeDatabase(): Promise<void> {
-  return mockService.closeDatabase();
 }
