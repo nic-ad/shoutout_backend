@@ -9,6 +9,7 @@ import { DatabaseModule } from 'src/modules/database/database.module';
 import { getInitializedDataSource } from 'src/modules/database/database.providers';
 import { messageProviders } from 'src/modules/database/message/message.providers';
 import { personProviders } from 'src/modules/database/person/person.providers';
+import { SlackService } from 'src/slack/slack.service';
 import { DataSource } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -30,6 +31,8 @@ export async function initTestingModule(moduleBeingTested: any): Promise<any> {
     })
     .overrideGuard(AuthGuard(DEFAULT_JWT))
     .useValue({ canActivate: () => true })
+    .overrideProvider(SlackService)
+    .useValue({})
     .compile();
 
   const mockService: MockService = await mockModule.resolve(MockService);
@@ -37,7 +40,7 @@ export async function initTestingModule(moduleBeingTested: any): Promise<any> {
 
   await mockApp.init();
 
-  const mockAppServer:any = mockApp.getHttpServer();
+  const mockAppServer: any = mockApp.getHttpServer();
 
   return {
     service: mockService,
