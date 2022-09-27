@@ -1,23 +1,13 @@
-import { INestApplication } from '@nestjs/common';
-import { TestingModule } from '@nestjs/testing';
 import * as request from 'supertest';
-
 import { LATEST_SHOUTOUTS_LIMIT } from '../constants';
-import { MockService } from '../test/mock.service';
 import { getShoutoutTestUuid, initTestingModule } from '../test/utils';
 import { ShoutoutsModule } from './shoutouts.module';
 
 describe('ShoutoutsService', function () {
-  let mockAppServer: any;
-  let mockApp: INestApplication;
-  let mockService: MockService;
+  let mocks: any;
 
   beforeAll(async function () {
-    const mockModule: TestingModule = await initTestingModule(ShoutoutsModule);
-    mockService = await mockModule.resolve(MockService);
-    mockApp = mockModule.createNestApplication();
-    await mockApp.init();
-    mockAppServer = mockApp.getHttpServer();
+    mocks = await initTestingModule(ShoutoutsModule);
   });
 
   describe('latest shoutouts', function () {
@@ -28,20 +18,20 @@ describe('ShoutoutsService', function () {
     } exist`, async function () {
       const shoutoutUuid = getShoutoutTestUuid();
 
-      await mockService.insertSingleRecipientShoutout({
+      await mocks.service.insertSingleRecipientShoutout({
         uuid: shoutoutUuid,
         text: OLDEST_SHOUTOUTS,
       });
 
       //insert our own shoutouts in case database has less than we need
       for (let i = 0; i < LATEST_SHOUTOUTS_LIMIT; i++) {
-        await mockService.insertSingleRecipientShoutout({
+        await mocks.service.insertSingleRecipientShoutout({
           uuid: shoutoutUuid,
           text: 'newest shoutouts',
         });
       }
 
-      const response = await request(mockAppServer).get('/shoutouts/latest');
+      const response = await request(mocks.appServer).get('/shoutouts/latest');
       const results = response.body;
 
       expect(response.status).toBe(200);
@@ -51,7 +41,7 @@ describe('ShoutoutsService', function () {
     it(`should not include the oldest shoutout when given ${
       LATEST_SHOUTOUTS_LIMIT + 1
     } of them`, async function () {
-      const response = await request(mockAppServer).get('/shoutouts/latest');
+      const response = await request(mocks.appServer).get('/shoutouts/latest');
       const results = response.body;
       const oldestShoutout = results.find((result) => result.text.includes(OLDEST_SHOUTOUTS));
 
@@ -83,7 +73,7 @@ describe('ShoutoutsService', function () {
     }
 
     beforeAll(async function () {
-      const mockShoutout = mockService.getBaseShoutout();
+      const mockShoutout = mocks.service.getBaseShoutout();
 
       const mockByYearShoutout = {
         ...mockShoutout,
@@ -104,28 +94,28 @@ describe('ShoutoutsService', function () {
         },
       ];
 
-      await mockService.insertSingleRecipientShoutout(mockShoutoutsPastTwelveMonths[0]);
-      await mockService.insertSingleRecipientShoutout(mockShoutoutsPastTwelveMonths[1]);
+      await mocks.service.insertSingleRecipientShoutout(mockShoutoutsPastTwelveMonths[0]);
+      await mocks.service.insertSingleRecipientShoutout(mockShoutoutsPastTwelveMonths[1]);
 
       //2021
-      await mockService.insertSingleRecipientShoutout({
+      await mocks.service.insertSingleRecipientShoutout({
         ...mockByYearShoutout,
         createDate: new Date('2021-06-25'),
       });
 
       //2020
-      await mockService.insertSingleRecipientShoutout({
+      await mocks.service.insertSingleRecipientShoutout({
         ...mockByYearShoutout,
         createDate: new Date('2020-07-27'),
       });
 
-      await mockService.insertSingleRecipientShoutout({
+      await mocks.service.insertSingleRecipientShoutout({
         ...mockByYearShoutout,
         createDate: new Date('2020-12-31'),
       });
 
       //1991
-      await mockService.insertSingleRecipientShoutout({
+      await mocks.service.insertSingleRecipientShoutout({
         ...mockByYearShoutout,
         createDate: new Date('1991-03-23'),
       });
@@ -133,7 +123,7 @@ describe('ShoutoutsService', function () {
 
     it('should return only shoutouts for the given year', async function () {
       const year = 2020;
-      const response = await request(mockAppServer).get(`/shoutouts/by-year?year=${year}`);
+      const response = await request(mocks.appServer).get(`/shoutouts/by-year?year=${year}`);
       const results = response.body;
       const testShoutouts = getTestShoutouts(results);
       const shoutoutsFromYear = testShoutouts.filter(
@@ -146,7 +136,7 @@ describe('ShoutoutsService', function () {
     });
 
     it('should return all shoutouts from the past 12 months by default when no year requested', async function () {
-      const response = await request(mockAppServer).get('/shoutouts/by-year');
+      const response = await request(mocks.appServer).get('/shoutouts/by-year');
       const results = response.body;
       const testShoutouts = getTestShoutouts(results);
       const shoutoutsInPastTwelveMonths = testShoutouts.filter(getShoutoutsWithinTwelveMonths);
@@ -158,7 +148,7 @@ describe('ShoutoutsService', function () {
 
     it('should not return any shoutouts when given year has none', async function () {
       const year = '2002';
-      const response = await request(mockAppServer).get(`/shoutouts/by-year?year=${year}`);
+      const response = await request(mocks.appServer).get(`/shoutouts/by-year?year=${year}`);
       const results = response.body;
       const testShoutouts = getTestShoutouts(results);
 
@@ -168,7 +158,7 @@ describe('ShoutoutsService', function () {
 
     it('should return all shoutouts from the past 12 months by default when invalid (non-number) year is given', async function () {
       const year = '200X';
-      const response = await request(mockAppServer).get(`/shoutouts/by-year?year=${year}`);
+      const response = await request(mocks.appServer).get(`/shoutouts/by-year?year=${year}`);
       const results = response.body;
       const testShoutouts = getTestShoutouts(results);
       const shoutoutsInPastTwelveMonths = testShoutouts.filter(getShoutoutsWithinTwelveMonths);
@@ -179,7 +169,7 @@ describe('ShoutoutsService', function () {
   });
 
   afterAll(async function () {
-    await mockService.closeDatabase();
-    await mockApp.close();
+    await mocks.service.closeDatabase();
+    await mocks.app.close();
   });
 });

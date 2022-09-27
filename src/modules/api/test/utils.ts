@@ -1,4 +1,8 @@
+import { INestApplication } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 import { Test, TestingModule } from '@nestjs/testing';
+import { AuthModule } from 'src/modules/auth/auth.module';
+import { DEFAULT_JWT } from 'src/modules/auth/constants';
 import { channelProviders } from 'src/modules/database/channel/channel.providers';
 import { DATA_SOURCE } from 'src/modules/database/constants';
 import { DatabaseModule } from 'src/modules/database/database.module';
@@ -10,9 +14,9 @@ import { v4 as uuidv4 } from 'uuid';
 
 import { MockService } from '../test/mock.service';
 
-export async function initTestingModule(moduleBeingTested: any): Promise<TestingModule> {
+export async function initTestingModule(moduleBeingTested: any): Promise<any> {
   const mockModule: TestingModule = await Test.createTestingModule({
-    imports: [DatabaseModule, moduleBeingTested],
+    imports: [DatabaseModule, AuthModule, moduleBeingTested],
     providers: [...personProviders, ...messageProviders, ...channelProviders, MockService],
   })
     .overrideProvider(DATA_SOURCE)
@@ -24,9 +28,22 @@ export async function initTestingModule(moduleBeingTested: any): Promise<Testing
         );
       },
     })
+    .overrideGuard(AuthGuard(DEFAULT_JWT))
+    .useValue({ canActivate: () => true })
     .compile();
 
-  return mockModule;
+  const mockService: MockService = await mockModule.resolve(MockService);
+  const mockApp: INestApplication = mockModule.createNestApplication();
+
+  await mockApp.init();
+
+  const mockAppServer:any = mockApp.getHttpServer();
+
+  return {
+    service: mockService,
+    app: mockApp,
+    appServer: mockAppServer,
+  };
 }
 
 /**

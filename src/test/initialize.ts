@@ -4,7 +4,7 @@
 
 import { getInitializedDataSource } from '../modules/database/database.providers';
 
-async function initTestDatabase(){
+async function initTestDatabase() {
   try {
     const dataSource = await getInitializedDataSource(
       process.env.POSTGRES_TEST_DB,
