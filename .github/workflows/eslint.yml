@@ -7,6 +7,7 @@ on:
   pull_request:
     branches:
       - main
+      - staging #will delete
 
 jobs:
   build:
@@ -30,8 +31,9 @@ jobs:
           postgresql db: ${{ env.POSTGRES_DB }}
           postgresql user: ${{ env.POSTGRES_USER }}
           postgresql password: ${{ env.POSTGRES_PASSWORD }}
-      - name: Clear test messages from database
-        run: npm run test:clear
+      - name: Create/synchronize database tables before tests
+        run: npm run test:init
         env:
-          SYNCHRONIZE: true
+          POSTGRES_TEST_DB: ${{ secrets.POSTGRES_TEST_DB }}
+          POSTGRES_TEST_PORT: ${{ secrets.POSTGRES_TEST_PORT }}
       - run: npm run test

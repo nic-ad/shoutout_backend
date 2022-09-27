@@ -3,7 +3,7 @@ import { getInitializedDataSource } from '../modules/database/database.providers
 import { Message } from '../modules/database/message/message.entity';
 
 /**
- * Clears messages and channels from database so that test runs/table hits remain performant.
+ * Use this script to clear messages and channels from local test database so that test runs/table hits remain performant
  */
 const clearTestMessages = async () => {
   try {

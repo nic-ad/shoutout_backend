@@ -13,6 +13,7 @@
     "start:prod": "node dist/main",
     "test": "jest",
     "test:clear": "./node_modules/.bin/ts-node src/test/clear-test-messages.ts",
+    "test:init": "./node_modules/.bin/ts-node src/test/initialize.ts",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
