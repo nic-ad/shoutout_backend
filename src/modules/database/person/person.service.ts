@@ -1,7 +1,8 @@
-import { Injectable, Inject } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
-import { Person } from './person.entity';
+
 import { PERSON_REPOSITORY } from '../constants';
+import { Person } from './person.entity';
 
 @Injectable()
 export class PersonService {
@@ -39,7 +40,7 @@ export class PersonService {
     } catch (error) {
       console.log('findPersonAndUpdateImage: error');
       console.log(error);
-      // handleError(error, this.boltApp.client);
+      // logError(error, this.boltApp.client);
     }
   }
 }

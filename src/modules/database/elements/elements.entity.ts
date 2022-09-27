@@ -1,4 +1,5 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToMany } from 'typeorm';
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+
 import { Message } from '../message/message.entity';
 
 @Entity()
@@ -6,7 +7,7 @@ export class Elements {
   @PrimaryGeneratedColumn('increment')
   id: number;
 
-  @Column()
+  @Column({ default: '' })
   text: string;
 
   @Column()
@@ -15,6 +16,6 @@ export class Elements {
   @Column({ nullable: true })
   employeeId: string;
 
-  @ManyToMany(() => Message, (message) => message.elements)
-  messages: Message[];
+  @ManyToOne(() => Message, (message) => message.elements, { onDelete: 'CASCADE' })
+  message: Message;
 }

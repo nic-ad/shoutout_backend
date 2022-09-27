@@ -1,15 +1,16 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { personProviders } from 'src/modules/database/person/person.providers';
-import { DatabaseModule } from 'src/modules/database/database.module';
-import { MockService } from '../test/mock.service';
 import { INestApplication } from '@nestjs/common';
-import { ApiMocks } from './types';
-import { MANY_PROFILES_LIMIT } from '../constants';
-import { Person } from 'src/modules/database/person/person.entity';
+import { Test, TestingModule } from '@nestjs/testing';
+import { channelProviders } from 'src/modules/database/channel/channel.providers';
+import { DatabaseModule } from 'src/modules/database/database.module';
 import { Message } from 'src/modules/database/message/message.entity';
 import { messageProviders } from 'src/modules/database/message/message.providers';
+import { Person } from 'src/modules/database/person/person.entity';
+import { personProviders } from 'src/modules/database/person/person.providers';
 import { v4 as uuidv4 } from 'uuid';
-import { channelProviders } from 'src/modules/database/channel/channel.providers';
+
+import { MANY_PROFILES_LIMIT } from '../constants';
+import { MockService } from '../test/mock.service';
+import { ApiMocks } from './types';
 
 let mockService: MockService;
 

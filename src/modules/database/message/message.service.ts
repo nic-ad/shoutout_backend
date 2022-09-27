@@ -1,8 +1,9 @@
-import { Injectable, Inject } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
-import { Message } from './message.entity';
+
 import { MESSAGE_REPOSITORY } from '../constants';
 import { CreateMessageDto } from './dto/createMessage.dto';
+import { Message } from './message.entity';
 
 @Injectable()
 export class MessageService {
@@ -18,6 +19,7 @@ export class MessageService {
       elements: messageData.elements,
       recipients: messageData.recipients,
       text: messageData.text,
+      createDate: messageData.createDate,
     });
     return this.messageRepository.save(newMessage);
   }

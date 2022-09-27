@@ -1,12 +1,15 @@
-import { App, ExpressReceiver } from '@slack/bolt';
 import { Inject, Injectable } from '@nestjs/common';
+import { App, ExpressReceiver } from '@slack/bolt';
 import { Application } from 'express';
-import convertBlocks from '../utils/convertBlocks';
-import handleError from '../utils/handleError';
+import { TimeframeShoutoutsDto } from 'src/modules/api/shoutouts/dto/timeframe.shoutouts.dto';
+
 import { ChannelService } from '../modules/database/channel/channel.service';
 import { Elements } from '../modules/database/elements/elements.entity';
+import { Message } from '../modules/database/message/message.entity';
 import { MessageService } from '../modules/database/message/message.service';
 import { PersonService } from '../modules/database/person/person.service';
+import convertBlocks from '../utils/convertBlocks';
+import { logError, logInsertedMessage } from '../utils/logger';
 
 @Injectable()
 export class SlackService {
@@ -42,7 +45,7 @@ export class SlackService {
       });
     }
 
-    const shoutoutExpression = new RegExp(`\\b${process.env.SHOUTOUT_PATTERN}\\b`, 'i');
+    const shoutoutExpression = new RegExp(`\\b${process.env.SHOUTOUT_PATTERN}(?!-)\\b`, 'i');
     const logExpression = new RegExp(`\\b${process.env.LOG_PATTERN}\\b`, 'i');
 
     this.boltApp.message(shoutoutExpression, this.handleMessage.bind(this));
@@ -60,7 +63,7 @@ export class SlackService {
       });
       return info?.channel?.name;
     } catch (error) {
-      handleError(error, this.boltApp.client);
+      logError(error, this.boltApp.client);
     }
   }
 
@@ -70,11 +73,11 @@ export class SlackService {
       // const messages = await Message.find().exec();
       // say('```' + JSON.stringify(messages) + '```');
     } catch (error) {
-      handleError(error, this.boltApp.client);
+      logError(error, this.boltApp.client);
     }
   }
 
-  async handleMessage({ client, message }) {
+  async handleMessage({ client, message }): Promise<Message> {
     try {
       const authorInfo = await client.users.info({ user: message.user });
       const author = await this.personService.findPersonAndUpdateImage(authorInfo.user);
@@ -112,18 +115,42 @@ export class SlackService {
           }
         }
 
-        await this.messageService.create({
+        return await this.messageService.create({
           authorId: author.employeeId,
           channel,
           elements: messageElements,
           recipients: recipientIds,
           text: message.text,
+          createDate: message.createDate,
         });
       }
     } catch (error) {
       console.log('Error in slack.service: handleMessage');
       console.log(error);
-      handleError(error, this.boltApp.client);
+      logError(error, this.boltApp.client);
+    }
+  }
+
+  async getShoutoutsInTimeframe(params: TimeframeShoutoutsDto): Promise<any> {
+    try {
+      return this.boltApp.client.conversations.history({
+        token: process.env.SLACK_BOT_TOKEN,
+        channel: process.env.SHOUTOUT_CHANNEL_ID,
+        latest: params.latest,
+        oldest: params.oldest,
+        limit: params.limit,
+        inclusive: true,
+      });
+    } catch (error) {
+      logError(error, this.boltApp.client);
+    }
+  }
+
+  async insertMessage(message: any) {
+    const insertedMessage = await this.handleMessage({ client: this.boltApp.client, message });
+
+    if (insertedMessage) {
+      logInsertedMessage({ client: this.boltApp.client, message: insertedMessage });
     }
   }
 
