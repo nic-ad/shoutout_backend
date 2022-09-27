@@ -19,6 +19,7 @@ export class MessageService {
       elements: messageData.elements,
       recipients: messageData.recipients,
       text: messageData.text,
+      createDate: messageData.createDate,
     });
     return this.messageRepository.save(newMessage);
   }
