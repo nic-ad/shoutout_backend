@@ -1,11 +1,12 @@
-# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
-# For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
-
-name: ESLint
+name: Lint and Test
 
 on:
   pull_request:
+    types:
+      - opened
+      - synchronize
     branches:
+      - staging
       - main
       - staging #will delete
 
@@ -37,6 +38,3 @@ jobs:
           POSTGRES_TEST_DB: ${{ secrets.POSTGRES_TEST_DB }}
           POSTGRES_TEST_PORT: ${{ secrets.POSTGRES_TEST_PORT }}
       - run: npm run test
-        env:
-          SLACK_APP_TOKEN: ${{ secrets.SLACK_APP_TOKEN }}
-          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
