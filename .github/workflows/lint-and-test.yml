@@ -13,7 +13,9 @@ on:
 jobs:
   build:
     env:
-      POSTGRES_DB: ${{ secrets.POSTGRES_TEST_DB }}
+      POSTGRES_TEST_DB: ${{ secrets.POSTGRES_TEST_DB }}
+      POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+      POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
 
     runs-on: ubuntu-latest
 
@@ -27,9 +29,9 @@ jobs:
       - name: Start database instance for testing
         uses: harmon758/postgresql-action@v1
         with:
-          postgresql db: ${{ env.POSTGRES_DB }}
+          postgresql db: ${{ env.POSTGRES_TEST_DB }}
+          postgresql user: ${{ env.POSTGRES_USER }}
+          postgresql password: ${{ env.POSTGRES_PASSWORD }}
       - name: Create/synchronize database tables before tests
         run: npm run test:init
-        env:
-          POSTGRES_TEST_DB: ${{ env.POSTGRES_DB }}
       - run: npm run test
