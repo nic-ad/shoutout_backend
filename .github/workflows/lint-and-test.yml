@@ -12,6 +12,9 @@ on:
 
 jobs:
   build:
+    env:
+      POSTGRES_DB: ${{ secrets.POSTGRES_TEST_DB }}
+
     runs-on: ubuntu-latest
 
     steps:
@@ -23,6 +26,10 @@ jobs:
       - run: npm run lint
       - name: Start database instance for testing
         uses: harmon758/postgresql-action@v1
+        with:
+          postgresql db: ${{ env.POSTGRES_DB }}
       - name: Create/synchronize database tables before tests
         run: npm run test:init
+        env:
+          POSTGRES_TEST_DB: ${{ env.POSTGRES_DB }}
       - run: npm run test
