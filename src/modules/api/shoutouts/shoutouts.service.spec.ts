@@ -1,4 +1,5 @@
 import * as request from 'supertest';
+
 import { LATEST_SHOUTOUTS_LIMIT } from '../constants';
 import { getShoutoutTestUuid, initTestingModule } from '../test/utils';
 import { ShoutoutsModule } from './shoutouts.module';

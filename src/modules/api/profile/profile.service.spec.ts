@@ -81,7 +81,9 @@ describe('ProfileService', function () {
         `/profile/search?name=${searchQuery}&email=${searchQuery}`,
       );
       const nameResults = await request(mocks.appServer).get(`/profile/search?name=${searchQuery}`);
-      const emailResults = await request(mocks.appServer).get(`/profile/search?email=${searchQuery}`);
+      const emailResults = await request(mocks.appServer).get(
+        `/profile/search?email=${searchQuery}`,
+      );
 
       const namePlusEmailResults = [...nameResults.body, ...emailResults.body];
       const distinctResults = [...new Set(namePlusEmailResults.map((result) => result.employeeId))];
