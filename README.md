@@ -37,3 +37,10 @@ Because of this limitation, [Slack recommends](https://github.com/slackapi/bolt-
 1. Run `npm run migration:generate src/modules/database/migrations/NAME_OF_MIGRATION`. (You must include the file path otherwise the migration will get populated in the root directory.)
 1. You will see the file generate in the migrations folder. Apply to database by runnning `npm run migration:up` and the changes will be reflected in local DB 
 1. To revert changes run `npm run migration:revert`
+
+## Testing
+1. In local, a test database is spun up via the `docker-compose:up` step mentioned in Setup above.  You should see two postgres containers running [(Docker Desktop recommended)](https://www.docker.com/products/docker-desktop/) -- one for the default database and one for the test database.  If not, your Docker may be up and running from a time before the latest code, so stop the container and re-run the command.
+1. Ensure you have the all the POSTGRES `.env` variables set from `.env.example`.
+1. Run `npm run test:init` to create the actual tables under the spun up test database.  You only need to do this the first time you run tests and when there are schema changes that need to be synchronized to the test database.
+1. Run `npm run test`.
+1. As time goes on, the test tables will accumulate mock shoutouts and may slow down test runs.  Run `npm run test:clear` to clear out the tables.

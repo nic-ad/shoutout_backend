@@ -16,27 +16,30 @@ const SYNC = process.env.SYNCHRONIZE === 'true';
 const sharedConfig = {
   type: 'postgres',
   host: process.env.POSTGRES_HOST,
-  port: parseInt(process.env.POSTGRES_PORT) || 5432,
   username: process.env.POSTGRES_USER,
   password: process.env.POSTGRES_PASSWORD,
-  database: process.env.POSTGRES_DB,
   entities: [Person, Channel, Elements, Message],
   migrationsTableName: 'migrations_table',
+  migrations: ['dist/modules/database/migrations/**/*{.js}'],
   synchronize: SYNC,
 } as DataSourceOptions;
 
 export const databaseProviders = [
   {
     provide: DATA_SOURCE,
-    useFactory: async () => {
-      const dataSource = new DataSource({
-        ...sharedConfig,
-        migrations: ['dist/modules/database/migrations/**/*{.js}'],
-      });
-      return dataSource.initialize();
-    },
+    useFactory: async () => getInitializedDataSource(),
   },
 ];
+
+export const getInitializedDataSource = (database?: string, port?: string) => {
+  const dataSource = new DataSource({
+    ...sharedConfig,
+    database: database || process.env.POSTGRES_DB,
+    port: parseInt(port || process.env.POSTGRES_DEFAULT_PORT),
+  } as DataSourceOptions);
+
+  return dataSource.initialize();
+};
 
 export const dataSourceInstance = new DataSource({
   ...sharedConfig,
