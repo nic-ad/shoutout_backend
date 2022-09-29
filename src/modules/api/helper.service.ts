@@ -5,6 +5,7 @@ import { Person } from 'src/modules/database/person/person.entity';
 import { Repository, SelectQueryBuilder } from 'typeorm';
 
 import { BasicProfileDto } from './profile/dto/profile.dto';
+import { ShoutoutDto } from './shoutouts/dto/shoutout.dto';
 
 @Injectable()
 export class HelperService {
@@ -33,7 +34,7 @@ export class HelperService {
    * as well as sorts each shoutout's elements to ensure correct order of words in shoutout
    * @param shoutouts list of shoutouts, each with array of recipient ids
    */
-  async postProcessShoutouts(shoutouts): Promise<void> {
+  async postProcessShoutouts(shoutouts: ShoutoutDto[]): Promise<void> {
     for (const message of shoutouts) {
       message.elements = message.elements.sort((a, b) => a.id - b.id);
 

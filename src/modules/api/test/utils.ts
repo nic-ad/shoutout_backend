@@ -1,41 +1,52 @@
 import { INestApplication } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 import { Test, TestingModule } from '@nestjs/testing';
+import { AuthModule } from 'src/modules/auth/auth.module';
+import { DEFAULT_JWT } from 'src/modules/auth/constants';
 import { channelProviders } from 'src/modules/database/channel/channel.providers';
+import { DATA_SOURCE } from 'src/modules/database/constants';
 import { DatabaseModule } from 'src/modules/database/database.module';
-import { Message } from 'src/modules/database/message/message.entity';
+import { getInitializedDataSource } from 'src/modules/database/database.providers';
 import { messageProviders } from 'src/modules/database/message/message.providers';
-import { Person } from 'src/modules/database/person/person.entity';
 import { personProviders } from 'src/modules/database/person/person.providers';
+import { SlackService } from 'src/slack/slack.service';
+import { DataSource } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
 
-import { MANY_PROFILES_LIMIT } from '../constants';
 import { MockService } from '../test/mock.service';
-import { ApiMocks } from './types';
 
-let mockService: MockService;
-
-export async function initTests(moduleBeingTested): Promise<any> {
+export async function initTestingModule(moduleBeingTested: any): Promise<any> {
   const mockModule: TestingModule = await Test.createTestingModule({
-    imports: [DatabaseModule, moduleBeingTested],
+    imports: [DatabaseModule, AuthModule, moduleBeingTested],
     providers: [...personProviders, ...messageProviders, ...channelProviders, MockService],
-  }).compile();
+  })
+    .overrideProvider(DATA_SOURCE)
+    .useFactory({
+      factory: async (): Promise<DataSource> => {
+        return getInitializedDataSource(
+          process.env.POSTGRES_TEST_DB,
+          process.env.POSTGRES_TEST_PORT,
+        );
+      },
+    })
+    .overrideGuard(AuthGuard(DEFAULT_JWT))
+    .useValue({ canActivate: () => true })
+    .overrideProvider(SlackService)
+    .useValue({})
+    .compile();
 
-  mockService = mockModule.get<MockService>(MockService);
-  const data: ApiMocks = await mockService.setupData();
+  const mockService: MockService = await mockModule.resolve(MockService);
+  const mockApp: INestApplication = mockModule.createNestApplication();
 
-  const app: INestApplication = mockModule.createNestApplication();
-  await app.init();
+  await mockApp.init();
 
-  return { mockService, data, app };
-}
+  const mockAppServer: any = mockApp.getHttpServer();
 
-export async function mockCommonProfileNeedsInsert(): Promise<boolean> {
-  const count = await mockService.getMockCommonProfileCount();
-  return count < MANY_PROFILES_LIMIT;
-}
-
-export function insertCommonProfiles(commonPersonProfiles: Person[]): Promise<Person[]> {
-  return mockService.insertCommonProfiles(commonPersonProfiles);
+  return {
+    service: mockService,
+    app: mockApp,
+    appServer: mockAppServer,
+  };
 }
 
 /**
@@ -44,19 +55,4 @@ export function insertCommonProfiles(commonPersonProfiles: Person[]): Promise<Pe
  */
 export function getShoutoutTestUuid() {
   return uuidv4();
-}
-
-export function insertSingleRecipientShoutout(shoutout: any): Promise<Message> {
-  return mockService.insertSingleRecipientShoutout({
-    text: `${shoutout.text || 'single shoutout'} ${shoutout.uuid}`,
-    createDate: shoutout.createDate,
-  });
-}
-
-export function insertMultiRecipientShoutout(shoutoutUuid: number): Promise<Message> {
-  return mockService.insertMultiRecipientShoutout(`multi shoutout ${shoutoutUuid}`);
-}
-
-export function closeDatabase(): Promise<void> {
-  return mockService.closeDatabase();
 }

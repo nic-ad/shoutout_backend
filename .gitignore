@@ -105,3 +105,7 @@ dist
 
 # Postgres local files
 pg-data/
+
+# Mac files
+.DS_Store
+default.profraw
