@@ -12,7 +12,7 @@ The backend code that gathers Slack messages containing shoutout of Depsters
 1. First time setup - change .env variable `SYNCHRONIZE` from false to true the first time you start the application for the inital DB schema. After inital setup use migrations to update and set back to false.
 1. run `npm start` start the app.
 1. To Seed/Update users in your local database by running `npm run seed:users`
-1. To seed the skills table and an initial set of users with their skills, run `npm run seed:skills`.
+1. To seed the `skills` table and an initial set of users with their skills, run `npm run seed:skills`.
 
 ## Running the App
 

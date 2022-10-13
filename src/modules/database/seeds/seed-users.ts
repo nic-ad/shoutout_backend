@@ -7,8 +7,6 @@ import * as dotenv from 'dotenv';
 
 import dataSourceInstance from '../migration-config';
 import { Person } from '../person/person.entity';
-
-
 const result = dotenv.config({ path: '.env' });
 if (result.error) {
   //TODO: Handle error
