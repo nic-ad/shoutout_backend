@@ -17,7 +17,7 @@ export class ShoutoutsService {
     const shoutouts: ShoutoutDto[] = await this.helperService
       .getShoutouts()
       .orderBy('shoutout.createDate', 'DESC')
-      .limit(LATEST_SHOUTOUTS_LIMIT)
+      .take(LATEST_SHOUTOUTS_LIMIT)
       .getMany();
 
     await this.helperService.postProcessShoutouts(shoutouts);
