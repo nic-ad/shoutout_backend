@@ -49,7 +49,7 @@ const seedSkills = async () => {
       }
 
       //populate skills column with the skill ids for this user
-      await personRepository.update({ email: user.email }, { skills: [...languageSkillIdsToSet, ...platformSkillIdsToSet]});
+      await personRepository.update({ email: user.email }, { skillIds: [...languageSkillIdsToSet, ...platformSkillIdsToSet]});
     }
     
     console.log('skills successfully seeded');
