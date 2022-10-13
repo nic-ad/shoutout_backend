@@ -7,6 +7,8 @@ import * as dotenv from 'dotenv';
 
 import dataSourceInstance from '../migration-config';
 import { Person } from '../person/person.entity';
+
+
 const result = dotenv.config({ path: '.env' });
 if (result.error) {
   //TODO: Handle error
@@ -27,7 +29,7 @@ const getUser = async () => {
   dataSourceInstance
     .initialize()
     .then(() => {
-      console.log('run-seeds: dataSource initialized');
+      console.log('dataSource initialized');
     })
     .catch((err) => {
       console.error('errror', err);

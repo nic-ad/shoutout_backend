@@ -25,4 +25,7 @@ export class Person {
 
   @Column({ nullable: true })
   image512: string;
+
+  @Column('text', { nullable: true, array: true })
+  skills: string[];
 }
