@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-
+import { AlgoliaModule } from './modules/algolia/algolia.module';
 import { ProfileModule } from './modules/api/profile/profile.module';
 import { ShoutoutsModule } from './modules/api/shoutouts/shoutouts.module';
 import { AuthModule } from './modules/auth/auth.module';
@@ -21,6 +21,7 @@ import { SlackModule } from './slack/slack.module';
     ProfileModule,
     ShoutoutsModule,
     SlackModule,
+    AlgoliaModule
   ],
 })
 export class AppModule {}
