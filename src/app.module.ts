@@ -8,6 +8,7 @@ import { ChannelModule } from './modules/database/channel/channel.module';
 import { DatabaseModule } from './modules/database/database.module';
 import { ElementsModule } from './modules/database/elements/elements.module';
 import { MessageModule } from './modules/database/message/message.module';
+import { SkillsModule } from './modules/database/skills/skills.module';
 import { SlackModule } from './slack/slack.module';
 
 @Module({
@@ -20,6 +21,7 @@ import { SlackModule } from './slack/slack.module';
     MessageModule,
     ProfileModule,
     ShoutoutsModule,
+    SkillsModule,
     SlackModule,
     AlgoliaModule
   ],

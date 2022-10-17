@@ -21,7 +21,8 @@
     "migration:generate": "./node_modules/.bin/ts-node ./node_modules/.bin/typeorm migration:generate -d src/modules/database/migration-config.ts",
     "migration:up": "./node_modules/.bin/ts-node ./node_modules/.bin/typeorm migration:run -d src/modules/database/migration-config.ts",
     "migration:revert": "./node_modules/.bin/ts-node ./node_modules/.bin/typeorm migration:revert -d src/modules/database/migration-config.ts",
-    "seed:users": "./node_modules/.bin/ts-node src/modules/database/seeds/run-seeds.ts"
+    "seed:users": "./node_modules/.bin/ts-node src/modules/database/seeds/seed-users.ts",
+    "seed:skills": "./node_modules/.bin/ts-node src/modules/database/seeds/skills/seed-skills.ts"
   },
   "author": "",
   "license": "ISC",

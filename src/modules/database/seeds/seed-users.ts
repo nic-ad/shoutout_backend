@@ -27,7 +27,7 @@ const getUser = async () => {
   dataSourceInstance
     .initialize()
     .then(() => {
-      console.log('run-seeds: dataSource initialized');
+      console.log('dataSource initialized');
     })
     .catch((err) => {
       console.error('errror', err);
