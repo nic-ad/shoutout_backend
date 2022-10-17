@@ -11,14 +11,38 @@ export class AlgoliaService {
     this.userIndex = this.client.initIndex(process.env.ALGOLIA_INDEX_NAME);
   }
 
-  async indexUser(id: string, user: Record<string, unknown>) {
-    return this.userIndex.saveObject({ objectID: id, ...user });
+  async indexUser(user: Record<string, unknown>) {
+    return this.userIndex.saveObject(user);
   }
 
-  async updateUser(id: string, partialUser: Record<string, unknown>) {
-    return this.userIndex.partialUpdateObject({
-      objectID: id,
-      ...partialUser,
-    });
+  async updateUser(partialUser: Record<string, unknown>) {
+    return this.userIndex.partialUpdateObject(partialUser);
+  }
+
+  async getUser(id: string) {
+    return this.userIndex.getObject(id);
+  }
+
+  async modifyIndex(id: string, user: Record<string, unknown>) {
+    // will need to test the responses on this
+    try {
+      await this.getUser(id);
+
+      // if this returns a user then
+      // UPDATE
+      this.updateUser({
+        objectID: id,
+        ...user,
+      });
+
+      // else if no record exists
+      // CREATE
+      this.indexUser({
+        objectID: id,
+        ...user,
+      });
+    } catch (error) {
+      console.error(error);
+    }
   }
 }
