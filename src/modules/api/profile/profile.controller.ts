@@ -13,6 +13,7 @@ import {
 } from '@nestjs/swagger';
 import {
   INTERNAL_SERVER_ERROR,
+  PROFILE,
   PROFILE_ID_NOT_FOUND,
   PROFILE_SEARCH_BAD_REQUEST,
   UNAUTHORIZED,
@@ -22,10 +23,10 @@ import { DEFAULT_JWT } from 'src/modules/auth/constants';
 import { BasicProfileDto, FullProfileDto } from './dto/profile.dto';
 import { ProfileService } from './profile.service';
 
-@ApiTags('profile')
+@ApiTags(PROFILE)
 @ApiBearerAuth()
 @UseGuards(AuthGuard(DEFAULT_JWT))
-@Controller('profile')
+@Controller(PROFILE)
 @ApiUnauthorizedResponse({ description: UNAUTHORIZED })
 @ApiInternalServerErrorResponse({ description: INTERNAL_SERVER_ERROR })
 export class ProfileController {

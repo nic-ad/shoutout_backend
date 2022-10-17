@@ -1,7 +1,7 @@
-import userSkills from './seed.file';
-import { Skills } from '../../skills/skills.entity';
-import { Person } from '../../person/person.entity';
 import dataSourceInstance from '../../migration-config';
+import { Person } from '../../person/person.entity';
+import { Skills } from '../../skills/skills.entity';
+import userSkills from './seed.file';
 
 const seedSkills = async () => {
   try {
@@ -11,8 +11,10 @@ const seedSkills = async () => {
     const personRepository = dataSourceInstance.getRepository(Person);
     const people = await personRepository.count();
 
-    if(!people){
-      console.error(`The person table is empty.  Please run "npm run seed:users" before running this script so that skills can be added to an initial set of people.`);
+    if (!people) {
+      console.error(
+        `The person table is empty.  Please run "npm run seed:users" before running this script so that skills can be added to an initial set of people.`,
+      );
       process.exit(1);
     }
 
@@ -23,15 +25,15 @@ const seedSkills = async () => {
       const languageSkillIdsToSet = [];
       const platformSkillIdsToSet = [];
 
-      if(!person){
+      if (!person) {
         console.error(`Skipping skills seeding for ${user.email} (not found in person table)...`);
       }
 
-      const handleSkill = async function(skill, skillIdArray){
+      const handleSkill = async function (skill, skillIdArray) {
         //check if skill alreayd in skills table
         let savedSkill = await skillsRepository.findOneBy(skill);
 
-        if(!savedSkill){
+        if (!savedSkill) {
           //insert if not
           savedSkill = await skillsRepository.save(skill);
         }
@@ -41,7 +43,7 @@ const seedSkills = async () => {
       };
 
       for (let j = 0; j < user.languages.length; j++) {
-       await handleSkill({ name: user.languages[j], type: 'language' }, languageSkillIdsToSet);
+        await handleSkill({ name: user.languages[j], type: 'language' }, languageSkillIdsToSet);
       }
 
       for (let l = 0; l < user.platforms.length; l++) {
@@ -49,9 +51,12 @@ const seedSkills = async () => {
       }
 
       //populate skills column with the skill ids for this user
-      await personRepository.update({ email: user.email }, { skillIds: [...languageSkillIdsToSet, ...platformSkillIdsToSet]});
+      await personRepository.update(
+        { email: user.email },
+        { skillIds: [...languageSkillIdsToSet, ...platformSkillIdsToSet] },
+      );
     }
-    
+
     console.log('skills successfully seeded');
     process.exit();
   } catch (error) {

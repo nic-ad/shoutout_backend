@@ -1,5 +1,5 @@
-import algoliasearch, { SearchClient, SearchIndex } from 'algoliasearch';
 import { Injectable } from '@nestjs/common';
+import algoliasearch, { SearchClient, SearchIndex } from 'algoliasearch';
 
 @Injectable()
 export class AlgoliaService {
