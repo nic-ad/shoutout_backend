@@ -4,7 +4,7 @@ import { PERSON_REPOSITORY } from 'src/modules/database/constants';
 import { Person } from 'src/modules/database/person/person.entity';
 import { Repository, UpdateResult } from 'typeorm';
 
-import { BasicProfileDto } from '../profile/dto/profile.dto';
+import { SkillIdsDto } from './dto/skill.ids.dto';
 
 @Injectable()
 export class SkillsService {
@@ -13,10 +13,10 @@ export class SkillsService {
     private algoliaService: AlgoliaService,
   ) {}
 
-  async updateSkills(profileDto: BasicProfileDto): Promise<UpdateResult> {
+  async updateSkills(employeeId: string, skills: SkillIdsDto): Promise<UpdateResult> {
     const updateResult = await this.personRepository.update(
-      { employeeId: profileDto.employeeId },
-      { skillIds: profileDto.skillIds },
+      { employeeId },
+      { skillIds: skills.ids },
     );
 
     //this.algoliaService.modifyIndex()

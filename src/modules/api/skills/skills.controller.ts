@@ -1,4 +1,4 @@
-import { Body, Controller, Patch, UseGuards } from '@nestjs/common';
+import { Body, Controller, Param, Patch, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import {
   ApiBadRequestResponse,
@@ -14,7 +14,7 @@ import { INTERNAL_SERVER_ERROR, SKILLS, UNAUTHORIZED } from 'src/modules/api/con
 import { DEFAULT_JWT } from 'src/modules/auth/constants';
 import { UpdateResult } from 'typeorm';
 
-import { BasicProfileDto } from '../profile/dto/profile.dto';
+import { SkillIdsDto } from './dto/skill.ids.dto';
 import { SkillsService } from './skills.service';
 
 @ApiTags(SKILLS)
@@ -26,14 +26,18 @@ import { SkillsService } from './skills.service';
 export class SkillsController {
   constructor(private readonly skillsService: SkillsService) {}
 
-  @Patch('update')
+  @Patch(':employeeId/update')
   @ApiOperation({
-    summary: 'Updates profile with skill ids corresponding to skills a person has (see "skills" table)',
+    summary:
+      'Updates profile with skill ids corresponding to skills a person has (see "skills" table)',
   })
-  @ApiBody({ type: BasicProfileDto })
+  @ApiBody({ type: SkillIdsDto })
   @ApiOkResponse()
   @ApiBadRequestResponse()
-  updateSkills(@Body() profileDto: BasicProfileDto): Promise<UpdateResult> {
-    return this.skillsService.updateSkills(profileDto);
+  updateSkills(
+    @Param('employeeId') employeeId: string,
+    @Body() skills: SkillIdsDto,
+  ): Promise<UpdateResult> {
+    return this.skillsService.updateSkills(employeeId, skills);
   }
 }

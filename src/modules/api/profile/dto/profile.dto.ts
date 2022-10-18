@@ -1,7 +1,8 @@
 import { ApiProperty, OmitType } from '@nestjs/swagger';
-import { IsString } from 'class-validator';
+import { IsArray, IsString } from 'class-validator';
 
 import { ShoutoutDto } from '../../shoutouts/dto/shoutout.dto';
+import { SkillDto } from '../../skills/dto/skill.dto';
 
 /*
  * User profile with shoutouts the person has given and received
@@ -63,11 +64,10 @@ export class FullProfileDto {
 
   @ApiProperty({
     nullable: true,
-    description:
-      'List of skill ids (via "skills" table) corresponding to the skills this person has',
+    description: 'List of skills this person has',
   })
-  @IsString({ each: true })
-  skillIds: string[];
+  @IsArray()
+  skills: SkillDto[];
 }
 
 /*
@@ -76,4 +76,5 @@ export class FullProfileDto {
 export class BasicProfileDto extends OmitType(FullProfileDto, [
   'shoutoutsGiven',
   'shoutoutsReceived',
+  'skills',
 ] as const) {}
