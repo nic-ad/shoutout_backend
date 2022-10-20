@@ -38,9 +38,9 @@ export class AlgoliaService {
     const modifiedUser = modifyProfileData(user);
 
     try {
-      const userRes = await this.getUser(user.employeeId as string);
+      const res = await this.getUser(user.employeeId as string);
 
-      if (!userRes.ok) {
+      if (!res) {
         throw new Error('Something went wrong');
       }
 
