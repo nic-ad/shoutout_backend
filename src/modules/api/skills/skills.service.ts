@@ -1,26 +1,45 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { AlgoliaService } from 'src/modules/algolia/algolia.service';
-import { PERSON_REPOSITORY } from 'src/modules/database/constants';
+import { PERSON_REPOSITORY, SKILLS_REPOSITORY } from 'src/modules/database/constants';
 import { Person } from 'src/modules/database/person/person.entity';
-import { Repository, UpdateResult } from 'typeorm';
+import { Skills } from 'src/modules/database/skills/skills.entity';
+import { Repository } from 'typeorm';
 
-import { SkillIdsDto } from './dto/skill.ids.dto';
+import { PROFILE_ID_NOT_FOUND } from '../constants';
+import { HelperService } from '../helper.service';
+import { SkillsProfileDto } from '../profile/dto/profile.dto';
+import { SkillDto } from './dto/skill.dto';
 
 @Injectable()
 export class SkillsService {
   constructor(
     @Inject(PERSON_REPOSITORY) private personRepository: Repository<Person>,
+    @Inject(SKILLS_REPOSITORY) private skillsRepository: Repository<Skills>,
     private algoliaService: AlgoliaService,
+    private helperService: HelperService,
   ) {}
 
-  async updateSkills(employeeId: string, skills: SkillIdsDto): Promise<UpdateResult> {
-    const updateResult = await this.personRepository.update(
-      { employeeId },
-      { skillIds: skills.ids },
-    );
+  async updateSkills(employeeId: string, skillIds: string[]): Promise<SkillsProfileDto> {
+    const person = await this.personRepository.findOne({ where: { employeeId } });
+
+    if (!person) {
+      throw new BadRequestException(PROFILE_ID_NOT_FOUND);
+    }
+
+    await this.personRepository.update({ employeeId }, { skillIds });
 
     //this.algoliaService.modifyIndex()
 
-    return updateResult; //TODO: don't know what we want to return, change as needed
+    const skillDetails = await this.helperService.getSkillDetails(skillIds);
+    delete person.skillIds;
+
+    return {
+      ...person,
+      skills: skillDetails,
+    };
+  }
+
+  async getAllSkills(): Promise<SkillDto[]> {
+    return await this.skillsRepository.find();
   }
 }

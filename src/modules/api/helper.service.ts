@@ -1,17 +1,24 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { MESSAGE_REPOSITORY, PERSON_REPOSITORY } from 'src/modules/database/constants';
+import {
+  MESSAGE_REPOSITORY,
+  PERSON_REPOSITORY,
+  SKILLS_REPOSITORY,
+} from 'src/modules/database/constants';
 import { Message } from 'src/modules/database/message/message.entity';
 import { Person } from 'src/modules/database/person/person.entity';
 import { Repository, SelectQueryBuilder } from 'typeorm';
 
+import { Skills } from '../database/skills/skills.entity';
 import { BasicProfileDto } from './profile/dto/profile.dto';
 import { ShoutoutDto } from './shoutouts/dto/shoutout.dto';
+import { SkillDto } from './skills/dto/skill.dto';
 
 @Injectable()
 export class HelperService {
   constructor(
     @Inject(PERSON_REPOSITORY) private personRepository: Repository<Person>,
     @Inject(MESSAGE_REPOSITORY) private messageRepository: Repository<Message>,
+    @Inject(SKILLS_REPOSITORY) private skillsRepository: Repository<Skills>,
   ) {}
 
   /**
@@ -44,5 +51,13 @@ export class HelperService {
         }),
       );
     }
+  }
+
+  async getSkillDetails(skillIds: string[]): Promise<SkillDto[]> {
+    return await this.skillsRepository
+      .createQueryBuilder('skills')
+      .select()
+      .where('skills.id::text = ANY(:skillIds)', { skillIds })
+      .getMany();
   }
 }

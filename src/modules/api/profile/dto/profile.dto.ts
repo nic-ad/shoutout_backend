@@ -70,11 +70,16 @@ export class FullProfileDto {
   skills: SkillDto[];
 }
 
-/*
- * User profile without shoutouts the person has given and received
- */
 export class BasicProfileDto extends OmitType(FullProfileDto, [
   'shoutoutsGiven',
   'shoutoutsReceived',
   'skills',
+] as const) {}
+
+/*
+ * Basic user profile with skills listed out
+ */
+export class SkillsProfileDto extends OmitType(FullProfileDto, [
+  'shoutoutsGiven',
+  'shoutoutsReceived',
 ] as const) {}

@@ -3,6 +3,7 @@ import { DatabaseModule } from 'src/modules/database/database.module';
 import { elementsProviders } from 'src/modules/database/elements/elements.providers';
 import { messageProviders } from 'src/modules/database/message/message.providers';
 import { personProviders } from 'src/modules/database/person/person.providers';
+import { SkillsProvider } from 'src/modules/database/skills/skills.providers';
 import { SlackModule } from 'src/slack/slack.module';
 
 import { HelperService } from '../helper.service';
@@ -18,6 +19,7 @@ import { ShoutoutsService } from './shoutouts.service';
     ...elementsProviders,
     HelperService,
     ShoutoutsService,
+    SkillsProvider,
   ],
 })
 export class ShoutoutsModule {}

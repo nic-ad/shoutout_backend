@@ -55,11 +55,7 @@ export class ProfileService {
       throw new NotFoundException(PROFILE_ID_NOT_FOUND);
     }
 
-    const skills = await this.skillsRepository
-      .createQueryBuilder('skills')
-      .select()
-      .where('skills.id::text = ANY(:skills)', { skills: profile.skillIds })
-      .getMany();
+    const skills = await this.helperService.getSkillDetails(profile.skillIds);
 
     //no need for list of ids on the response since skills objects contain ids and more
     delete profile.skillIds;
