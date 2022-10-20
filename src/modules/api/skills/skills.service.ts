@@ -28,10 +28,13 @@ export class SkillsService {
 
     await this.personRepository.update({ employeeId }, { skillIds });
 
-    //this.algoliaService.modifyIndex()
-
     const skillDetails = await this.helperService.getSkillDetails(skillIds);
     delete person.skillIds;
+
+    this.algoliaService.modifyIndex({
+      ...person,
+      skills: skillDetails,
+    });
 
     return {
       ...person,
