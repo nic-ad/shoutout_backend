@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import algoliasearch, { SearchClient, SearchIndex } from 'algoliasearch';
 
+import { modifyProfileData } from './helpers';
+
 @Injectable()
 export class AlgoliaService {
   private client: SearchClient;
@@ -12,37 +14,45 @@ export class AlgoliaService {
   }
 
   async indexUser(user: Record<string, unknown>) {
-    return this.userIndex.saveObject(user);
+    console.log('Create User Record');
+    return this.userIndex.saveObject({
+      objectID: user.employeeId,
+      ...user,
+    });
   }
 
   async updateUser(partialUser: Record<string, unknown>) {
-    return this.userIndex.partialUpdateObject(partialUser);
+    console.log('Update User Record');
+
+    return this.userIndex.partialUpdateObject({
+      objectID: partialUser.employeeId,
+      ...partialUser,
+    });
   }
 
-  async getUser(id: string) {
+  async getUser(id: string): Promise<Response> {
     return this.userIndex.getObject(id);
   }
 
-  async modifyIndex(id: string, user: Record<string, unknown>) {
-    // will need to test the responses on this
+  async modifyIndex(user: any) {
+    const modifiedUser = modifyProfileData(user);
+
     try {
-      await this.getUser(id);
+      const userRes = await this.getUser(user.employeeId as string);
 
-      // if this returns a user then
-      // UPDATE
-      this.updateUser({
-        objectID: id,
-        ...user,
-      });
+      if (!userRes.ok) {
+        throw new Error('Something went wrong');
+      }
 
-      // else if no record exists
-      // CREATE
-      this.indexUser({
-        objectID: id,
-        ...user,
-      });
+      return await this.updateUser(modifiedUser);
     } catch (error) {
-      console.error(error);
+      if (error.status === 404) {
+        try {
+          return await this.indexUser(modifiedUser);
+        } catch (error) {
+          return error;
+        }
+      }
     }
   }
 }
