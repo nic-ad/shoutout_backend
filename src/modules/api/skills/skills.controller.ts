@@ -1,4 +1,4 @@
-import { Body, Controller, Param, Patch, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import {
   ApiBadRequestResponse,
@@ -14,6 +14,7 @@ import { INTERNAL_SERVER_ERROR, SKILLS, UNAUTHORIZED } from 'src/modules/api/con
 import { DEFAULT_JWT } from 'src/modules/auth/constants';
 import { UpdateResult } from 'typeorm';
 
+import { SkillDto } from './dto/skill.dto';
 import { SkillIdsDto } from './dto/skill.ids.dto';
 import { SkillsService } from './skills.service';
 
@@ -39,5 +40,12 @@ export class SkillsController {
     @Body() skills: SkillIdsDto,
   ): Promise<UpdateResult> {
     return this.skillsService.updateSkills(employeeId, skills);
+  }
+
+  @Get()
+  @ApiOperation({ summary: 'Returns all skills from skills table' })
+  @ApiOkResponse({ type: [SkillDto] })
+  async getSkills(): Promise<SkillDto[]> {
+    return this.skillsService.getSkills();
   }
 }
