@@ -4,6 +4,7 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import * as dotenv from 'dotenv';
 
 import { AppModule } from './app.module';
+import { PROFILE, SHOUTOUTS, SKILLS } from './modules/api/constants';
 import { SlackService } from './slack/slack.service';
 
 async function bootstrap() {
@@ -16,8 +17,9 @@ async function bootstrap() {
       'This API facilitates the ability to track who gives and receives shoutouts at DEPT®.',
     )
     .setVersion('1.0')
-    .addTag('shoutouts')
-    .addTag('profile')
+    .addTag(SHOUTOUTS)
+    .addTag(SKILLS)
+    .addTag(PROFILE)
     .setBasePath('/api')
     .addBearerAuth()
     .build();

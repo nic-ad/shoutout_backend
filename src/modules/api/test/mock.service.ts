@@ -23,6 +23,7 @@ export class MockService {
     team: '',
     shoutoutsGiven: [],
     shoutoutsReceived: [],
+    skillIds: null,
   };
 
   private baseShoutout: MockMessage = {
