@@ -7,7 +7,7 @@ import {
 import { Message } from 'src/modules/database/message/message.entity';
 import { Person } from 'src/modules/database/person/person.entity';
 import { Skills } from 'src/modules/database/skills/skills.entity';
-import { IsNull, Not, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 
 import {
   MANY_PROFILES_LIMIT,
@@ -89,29 +89,5 @@ export class ProfileService {
       shoutoutsGiven,
       shoutoutsReceived,
     };
-  }
-
-  async profilesWithSkills(): Promise<FullProfileDto[]> {
-    const profiles = await this.personRepository.find({ where: { skillIds: Not(IsNull()) }});
-    const profilesWithSkills = [];
-
-    for(let i = 0; i < profiles.length; i++){
-      const skills = await this.helperService.getSkillDetails(profiles[i].skillIds);
-
-      //no need for list of ids on the response since skills objects contain ids and more
-      delete profiles[i].skillIds;
-
-      const shoutoutsGiven = [];
-      const shoutoutsReceived = [];
-
-      profilesWithSkills.push({
-        ...profiles[i],
-        skills,
-        shoutoutsGiven,
-        shoutoutsReceived,
-      });
-    }
-
-    return profilesWithSkills;
   }
 }

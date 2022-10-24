@@ -31,7 +31,7 @@ export class SkillsService {
     const skillDetails = await this.helperService.getSkillDetails(skillIds);
     delete person.skillIds;
 
-    this.algoliaService.modifyIndex({
+    await this.algoliaService.modifyIndex({
       ...person,
       skills: skillDetails,
     });
