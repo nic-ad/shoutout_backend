@@ -1,7 +1,12 @@
 import { BadRequestException, Inject, Injectable, NotFoundException } from '@nestjs/common';
-import { MESSAGE_REPOSITORY, PERSON_REPOSITORY } from 'src/modules/database/constants';
+import {
+  MESSAGE_REPOSITORY,
+  PERSON_REPOSITORY,
+  SKILLS_REPOSITORY,
+} from 'src/modules/database/constants';
 import { Message } from 'src/modules/database/message/message.entity';
 import { Person } from 'src/modules/database/person/person.entity';
+import { Skills } from 'src/modules/database/skills/skills.entity';
 import { Repository } from 'typeorm';
 
 import {
@@ -18,6 +23,7 @@ export class ProfileService {
   constructor(
     @Inject(PERSON_REPOSITORY) private personRepository: Repository<Person>,
     @Inject(MESSAGE_REPOSITORY) private messageRepository: Repository<Message>,
+    @Inject(SKILLS_REPOSITORY) private skillsRepository: Repository<Skills>,
     private helperService: HelperService,
   ) {}
 
@@ -49,6 +55,11 @@ export class ProfileService {
       throw new NotFoundException(PROFILE_ID_NOT_FOUND);
     }
 
+    const skills = await this.helperService.getSkillDetails(profile.skillIds);
+
+    //no need for list of ids on the response since skills objects contain ids and more
+    delete profile.skillIds;
+
     const shoutoutsGiven: ShoutoutDto[] = await this.helperService
       .getShoutouts()
       .where('shoutout."authorId" = :id', { id })
@@ -74,6 +85,7 @@ export class ProfileService {
 
     return {
       ...profile,
+      skills,
       shoutoutsGiven,
       shoutoutsReceived,
     };

@@ -109,3 +109,6 @@ pg-data/
 # Mac files
 .DS_Store
 default.profraw
+
+# VS Code
+.vscode/

@@ -1,25 +1,24 @@
 import { Module } from '@nestjs/common';
+import { AlgoliaService } from 'src/modules/algolia/algolia.service';
 import { DatabaseModule } from 'src/modules/database/database.module';
-import { elementsProviders } from 'src/modules/database/elements/elements.providers';
 import { messageProviders } from 'src/modules/database/message/message.providers';
 import { personProviders } from 'src/modules/database/person/person.providers';
 import { SkillsProvider } from 'src/modules/database/skills/skills.providers';
-import { SlackModule } from 'src/slack/slack.module';
 
 import { HelperService } from '../helper.service';
-import { ShoutoutsController } from './shoutouts.controller';
-import { ShoutoutsService } from './shoutouts.service';
+import { SkillsController } from './skills.controller';
+import { SkillsService } from './skills.service';
 
 @Module({
-  imports: [DatabaseModule, SlackModule],
-  controllers: [ShoutoutsController],
+  imports: [DatabaseModule],
+  controllers: [SkillsController],
   providers: [
-    ...messageProviders,
     ...personProviders,
-    ...elementsProviders,
-    HelperService,
-    ShoutoutsService,
+    ...messageProviders,
     SkillsProvider,
+    SkillsService,
+    AlgoliaService,
+    HelperService,
   ],
 })
-export class ShoutoutsModule {}
+export class SkillsModule {}

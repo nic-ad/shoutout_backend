@@ -51,7 +51,7 @@ const TimeframeQuery = createParamDecorator(async (dtoClass: any, ctx: Execution
 });
 
 @ApiBearerAuth()
-@Controller('shoutouts')
+@Controller(SHOUTOUTS)
 @ApiUnauthorizedResponse({ description: UNAUTHORIZED })
 @ApiInternalServerErrorResponse({ description: INTERNAL_SERVER_ERROR })
 export class ShoutoutsController {
