@@ -6,7 +6,8 @@ import userSkills from './seed.file';
 const seedSkills = async () => {
   try {
     await dataSourceInstance.initialize();
-    console.log('dataSource initialized...');
+    await dataSourceInstance.synchronize();
+    console.log('dataSource initialized and synchronized...');
     const skillsRepository = dataSourceInstance.getRepository(Skills);
     const personRepository = dataSourceInstance.getRepository(Person);
     const people = await personRepository.count();
