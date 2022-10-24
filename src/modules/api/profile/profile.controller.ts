@@ -57,6 +57,13 @@ export class ProfileController {
     return this.profileService.profilesBySearch({ email, name });
   }
 
+  @Get('all-with-skills')
+  getProfilesWithSkills(): Promise<FullProfileDto[]> {
+    console.log('wtf')
+    return this.profileService.profilesWithSkills();
+  }
+
+  //TODO: REMOVE
   @Get(':id')
   @ApiOperation({
     summary:
