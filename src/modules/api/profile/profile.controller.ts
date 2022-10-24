@@ -59,7 +59,6 @@ export class ProfileController {
 
   @Get('all-with-skills')
   getProfilesWithSkills(): Promise<FullProfileDto[]> {
-    console.log('wtf')
     return this.profileService.profilesWithSkills();
   }
 
