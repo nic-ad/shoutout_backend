@@ -518,4 +518,19 @@ const userSkills: any = [
   },
 ];
 
+export const languages = ['Rust', 'Ruby', 'DataBricks', 'Solidity'];
+
+export const platforms = [
+  'Umbraco',
+  'Sanity',
+  'Magnolia',
+  'Mulesoft',
+  'Salesforce Core',
+  'Salesforce Marketing Cloud',
+  'Kafka',
+  'WordPress',
+  'Prismic',
+  'Strapi',
+];
+
 export default userSkills;
