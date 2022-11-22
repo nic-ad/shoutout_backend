@@ -11,7 +11,6 @@ const seedSkills = async () => {
     const skillsRepository = dataSourceInstance.getRepository(Skills);
     const personRepository = dataSourceInstance.getRepository(Person);
     const people = await personRepository.count();
-    
 
     for (let i = 0; i < languages.length; i++) {
       const name = languages[i];
