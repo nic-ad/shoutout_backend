@@ -1,7 +1,7 @@
 import dataSourceInstance from '../../migration-config';
 import { Person } from '../../person/person.entity';
 import { Skills } from '../../skills/skills.entity';
-import userSkills from './seed.file';
+import userSkills, { languages, platforms } from './seed.file';
 
 const seedSkills = async () => {
   try {
@@ -11,6 +11,19 @@ const seedSkills = async () => {
     const skillsRepository = dataSourceInstance.getRepository(Skills);
     const personRepository = dataSourceInstance.getRepository(Person);
     const people = await personRepository.count();
+    
+
+    for (let i = 0; i < languages.length; i++) {
+      const name = languages[i];
+
+      await skillsRepository.save({ name, type: 'language' });
+    }
+
+    for (let i = 0; i < platforms.length; i++) {
+      const name = platforms[i];
+
+      await skillsRepository.save({ name, type: 'platform' });
+    }
 
     if (!people) {
       console.error(
