@@ -45,3 +45,12 @@ Because of this limitation, [Slack recommends](https://github.com/slackapi/bolt-
 1. Run `npm run test:init` to create the actual tables under the spun up test database.  You only need to do this the first time you run tests and when there are schema changes that need to be synchronized to the test database.
 1. Run `npm run test`.
 1. As time goes on, the test tables will accumulate mock shoutouts and may slow down test runs.  Run `npm run test:clear` to clear out the tables.
+
+## Updating seeds on production
+1. [Install flyctl](https://fly.io/docs/flyctl/installing/)
+2. [Login to Fly](https://fly.io/docs/flyctl/auth-login/)
+3. Run `flyctl ssh console` to ssh into the application
+4. Change directory to app location `cd /home/node`
+5. Run commands to update seeds as needed
+   For skills: `./node_modules/.bin/ts-node dist/modules/database/seeds/skills/seed-skills.js`
+6. `exit` ssh when finished
